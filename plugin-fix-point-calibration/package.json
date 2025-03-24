@@ -1,0 +1,53 @@
+{
+  "name": "@jspsych-contrib/plugin-fix-point-calibration",
+  "version": "0.0.1",
+  "description": "This plugin implements a fix-point calibration trial used for eyetracking experiments.",
+  "unpkg": "dist/index.browser.min.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "scripts": {
+    "build": "babel index.js --presets @babel/preset-env,minify --source-maps --out-file dist/index.browser.min.js",
+    "build:watch": "npm run build -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jspsych/jspsych-contrib.git",
+    "directory": "packages/plugin-fix-point-calibration"
+  },
+  "author": "Shreshth Saxena (https://github.com/ShreshthSaxena)",
+  "contributors": [
+    {
+      "name": "Jackson Shi",
+      "url": "https://github.com/JacksonShi8"
+    },
+    {
+      "name": "Josh de Leeuw",
+      "url": "https://github.com/jodeleeuw"
+    },
+    {
+      "name": "Chris Jungerius",
+      "url": "https://github.com/cjungerius"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jspsych/jspsych-contrib/issues"
+  },
+  "homepage": "https://github.com/jspsych/jspsych-contrib/tree/main/packages/plugin-fix-point-calibration",
+  "devDependencies": {
+    "@jspsych/config": "^3.1.0",
+    "jspsych": "^8.0.0"
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "keywords": [
+    "fix-point",
+    "calibration",
+    "eye-tracking"
+  ]
+}

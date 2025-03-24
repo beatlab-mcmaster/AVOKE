@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="../src/index.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body></body>
+<script>
+
+  const jsPsych = initJsPsych({
+    on_finish: function () {
+      // Output the data on the screen
+      jsPsych.data.displayData('json');
+    }
+  });
+
+  let timeline = [];
+
+  var trial1 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '<p style="font-size:48px;">Hello! Press the button to initiate the trial demo.</p>',
+  choices: ['Continue'],
+  };
+  timeline.push(trial1);
+
+  // drawing function to be used in the calibration trial, draws the target 'E' on the canvas
+  function drawE(c, target, location, text_size, degree = 0) {
+    let ctx = c.getContext("2d");
+    ctx.clearRect(0, 0, c.width, c.height)
+    ctx.save()
+    ctx.translate(location[0], location[1]);
+    ctx.rotate((degree * Math.PI) / 180)
+    ctx.translate(-location[0], -location[1]);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = text_size + "px Arial";
+    ctx.fillText(target, location[0], location[1]);
+    ctx.restore()
+  };
+
+  const trial = {
+    type: jsPsychFixPointCalibration,
+    stimulus: drawE, // reference to the drawing function
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120], // size of the canvas with 120px margin
+    grid_4x4: false, // whether to use the 4x4 grid
+  };
+
+  timeline.push(trial);
+
+  jsPsych.run(timeline);
+</script>
+
+</html>

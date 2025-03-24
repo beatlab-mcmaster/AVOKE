@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="../src/index.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body></body>
+<script>
+  const jsPsych = initJsPsych({
+    on_finish: function () {
+      // Output the data on the screen
+      jsPsych.data.displayData('json');
+    }
+  });
+
+  let timeline = [];
+
+  var preload = {
+    type: jsPsychPreload,
+    auto_preload: true
+  };
+
+  var trial1 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '<p style="font-size:48px;">Hello! Press the button to initiate the trial demo.</p>',
+  choices: ['Continue'],
+  };
+  timeline.push(trial1);
+  
+  const trial = {
+    type: jsPsychAudioVisualButtonResponse,
+    choices: ['Next'], // Button text
+    audio_stimulus: 'example.wav', // Audio file path goes here
+    image_stimulus: 'example.jpg', // Image file path goes here
+  };
+
+  timeline.push(trial);
+  jsPsych.run(timeline);
+
+</script>
+
+</html>

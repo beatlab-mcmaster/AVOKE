@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Video Capture Setup Example</title>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <!-- Example extension the plugin was designed to work with -->
+  <script src="video-capture-extension.js"></script> 
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <script src="../src/index.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body>
+  <script>
+    const jsPsych = initJsPsych({
+      on_finish: function () {
+      // Output the data on the screen
+      jsPsych.data.displayData('json');
+    },
+    // additional extension designed to be used with this plugin to record video
+      extensions: [{ type: jsPsychVideoCapture,
+         params:{
+          "using_setup_plugin": true,
+          "default_camera_options": true
+         }
+       }],
+    });
+
+    let timeline = [];
+
+
+    var trial1 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p style="font-size:48px;">Hello! Press the button to initiate the trial demo.</p>',
+      choices: ['Continue'],
+    };
+    timeline.push(trial1);
+
+    const trial = {
+      type: jspsychVideoCaptureSetupPlugin,
+      instructions: `Below you'll see the output of recorded video. Please ensure that your face is clearly visible and you're in the center of the screen.`,
+      error_message: `The camera capture cannot be retrieved. Please try another device.`,
+      button_text: "Continue",
+      extensions: [{ type: jsPsychVideoCapture, params:{'filename': 'demo'} }, // additional extension designed to be used with this plugin to record video
+      ],
+    };
+
+    timeline.push(trial);
+    jsPsych.run(timeline);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Video Capture Extension Example</title>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="video-capture-extension.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <!-- Setup plugin designed with this extension in mind -->
+  <script src="video-capture-setup.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body>
+  <script>
+    const jsPsych = initJsPsych({
+      on_finish: function () {
+      // Output the data on the screen
+      jsPsych.data.displayData('json');
+    },
+    // set up extension
+      extensions: [{ type: jsPsychVideoCapture,
+         params:{
+          "using_setup_plugin": true,
+          "default_camera_options": true
+         }
+       }],
+    });
+
+    let timeline = [];
+
+    var trial1 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p style="font-size:48px;">Hello! Press the button to initiate the trial demo.</p>',
+      choices: ['Continue'],
+      };
+    timeline.push(trial1);
+
+    const trial = {
+      type: jspsychVideoCaptureSetupPlugin, // plugin designed with this extension in mind
+      instructions: `Below you'll see the output of recorded video. Please ensure that your face is clearly visible and you're in the center of the screen.`, // plugin parameter
+      error_message: `The camera capture cannot be retrieved. Please try another device.`, // plugin parameter
+      button_text: "Continue", // plugin parameter
+      extensions: [{ type: jsPsychVideoCapture, params:{'filename': 'demo'} }, // extension with the filename parameter
+      ],
+    };
+    timeline.push(trial);
+
+    const trial2 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p style="font-size:48px;">Thank you for participating in the trial demo. Press the button to finish.</p>',
+      choices: ['Finish'],
+    }
+
+    timeline.push(trial2);
+    jsPsych.run(timeline);
+  </script>
+</body>
+
+</html>

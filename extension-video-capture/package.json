@@ -1,0 +1,45 @@
+{
+  "name": "@jspsych-contrib/extension-video-capture",
+  "version": "0.0.1",
+  "description": "This extension allows for video recording in jsPsych experiments, particularly designed for webcam eye-tracking.",
+  "unpkg": "dist/index.browser.min.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "scripts": {
+    "build": "babel index.js --presets @babel/preset-env,minify --source-maps --out-file dist/index.browser.min.js",
+    "build:watch": "npm run build -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jspsych/jspsych-contrib.git",
+    "directory": "packages/extension-video-capture"
+  },
+  "author": "Shreshth Saxena (https://github.com/ShreshthSaxena)",
+  "contributors": [
+    {
+      "name": "Jackson Shi",
+      "url": "https://github.com/JacksonShi8"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jspsych/jspsych-contrib/issues"
+  },
+  "homepage": "https://github.com/jspsych/jspsych-contrib/tree/main/packages/extension-video-capture",
+  "devDependencies": {
+    "@jspsych/config": "^3.1.0",
+    "jspsych": "^8.0.0"
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "keywords": [
+    "eye-tracking",
+    "video",
+    "capture"
+  ]
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="../src/index.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body></body>
+<script>
+  const jsPsych = initJsPsych({
+    on_finish: function() {
+      // Output the data to the screen
+      jsPsych.data.displayData('json');
+    }
+  });
+
+  let timeline = [];
+
+  var trial1 = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:48px;">Hello! Press the button to initiate the trial demo.</p>',
+    choices: ['Continue'],
+    };
+  timeline.push(trial1);
+
+  const trial_rect = {
+    type: jsPsychSmoothPursuitCalibration,
+    stimulus: 'SP_target.png', // The path to the target image file
+    animation_duration: 10000, // The duration of the animation in milliseconds
+    stimulus_width: 40, // The width of the target image in pixels
+    stimulus_height: 40, // The height of the target image in pixels
+    path_height: window.innerHeight - 40, // The height of the path in pixels, with a 40px margin accounting for target size
+    path_width: window.innerWidth - 40,  // The width of the path in pixels, with a 40px margin accounting for target size
+    repetitions: 2, // The number of times the target will move along the path
+    starting_location:[0,0] // The starting location of the target
+  };
+  timeline.push(trial_rect)
+
+  const trial_line = {
+    type: jsPsychSmoothPursuitCalibration,
+    stimulus: 'SP_target.png', // The path to the target image file
+    animation_duration: 10000, // The duration of the animation in milliseconds
+    path_shape: "line", // The shape of the path
+    path_height: 0, // The height of the path in pixels
+    path_width: 1400, // The width of the path in pixels
+    repetitions: 5, // The number of times the target will move along the path
+    starting_location:[window.innerWidth/2, window.innerHeight/2],  // The starting location of the target
+  };
+
+  timeline.push(trial_line);
+  jsPsych.run(timeline);
+</script>
+
+</html>
