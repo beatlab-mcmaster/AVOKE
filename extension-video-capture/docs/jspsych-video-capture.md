@@ -1,6 +1,6 @@
 # video-capture extension
 
-This extension allows for video recording in jsPsych experiments, particularly designed for webcam eye-tracking. Video files are output in .mp4 format. **In cases where the video input list is not populating correctly, please try to make sure this trial does not come first in the experiment timeline.**
+This extension allows for video recording in jsPsych experiments, particularly designed for webcam eye-tracking. Video files are output in .mp4 format. **In cases where the video input list is not populating correctly, please make sure this trial does not come first in the experiment timeline.** 
 
 ## Parameters
 
