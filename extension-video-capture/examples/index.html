@@ -22,7 +22,12 @@
       extensions: [{ type: jsPsychVideoCapture,
          params:{
           "using_setup_plugin": true,
-          "default_camera_options": true
+          "default_camera_options": true,
+          "timeslice": null,
+          "download_local_only": true,
+          "video_width": 640, 
+          "video_height": 480, 
+          "framerate": 26 //min framerate to allow
          }
        }],
     });
@@ -38,18 +43,22 @@
 
     const trial = {
       type: jspsychVideoCaptureSetupPlugin, // plugin designed with this extension in mind
-      instructions: `Below you'll see the output of recorded video. Please ensure that your face is clearly visible and you're in the center of the screen.`, // plugin parameter
+      instructions: `Below you'll see the output of recorded video. Move your camera to obtain the desired view and press Continue.`, // plugin parameter
       error_message: `The camera capture cannot be retrieved. Please try another device.`, // plugin parameter
       button_text: "Continue", // plugin parameter
-      extensions: [{ type: jsPsychVideoCapture, params:{'filename': 'demo'} }, // extension with the filename parameter
+      extensions: [{ type: jsPsychVideoCapture, params:{'setup': true} }, // extension with the filename parameter
       ],
     };
     timeline.push(trial);
 
     const trial2 = {
       type: jsPsychHtmlButtonResponse,
-      stimulus: '<p style="font-size:48px;">Thank you for participating in the trial demo. Press the button to finish.</p>',
+      stimulus: `<p>Your webcam video is currently being recorded using the settings from the previous trial.</p>
+                  <p>Press the <strong>Finish</strong> button to stop the recording and complete the demo.</p>
+                  <p>By default, the recorded video will be downloaded at the end of the study.</p>
+                  <p>Thank you for your participation!</p>`,
       choices: ['Finish'],
+      extensions: [{ type: jsPsychVideoCapture, params:{'filename': "demo"} }]
     }
 
     timeline.push(trial2);
