@@ -2,6 +2,10 @@
 
 This plugin implements a fix-point calibration trial used for eyetracking experiments. A target ('E' by default) appears in random locations on a blank canvas based on whether the canvas is split into a 3x3 or 4x4 grid. The target will appear in random orientations of 0, 90, 180, and 270 degrees. The participant must look at the target and respond with an arrow key by default, with the correct direction corresponding to where to lines of the 'E' are headed. After a correct response, a new target will appear. If using a 3x3 grid, 9 targets will be presented. If using a 4x4 grid, 16 targets will be presented.
 
+## Using a Plugin
+
+Please visit [this jsPsych tutorial](https://www.jspsych.org/v8/overview/plugins/) to learn the basics of setting up a jsPsych plugin. Feel free to cross-reference our [demo code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-fix-point-calibration/examples/index.html) to get a better idea of how to implement this plugin in a working demo experiment. You'll find further detail about parameters and data output below.
+
 ## Parameters
 
 In addition to the [parameters available in all plugins](https://www.jspsych.org/latest/overview/plugins/#parameters-available-in-all-plugins), this plugin accepts the following parameters. Parameters with a default value of undefined must be specified. Other parameters can be left unspecified if the default value is acceptable.

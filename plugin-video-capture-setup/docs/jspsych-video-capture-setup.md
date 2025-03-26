@@ -2,6 +2,10 @@
 
 This plugin is to be used alongside the [jsPsychVideoCapture extension](https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/docs/jspsych-video-capture.md) and provides the extension with the required MediaStreamTrack parameters for video capture from any connected device. **In cases where the video input list is not populating correctly, please try to make sure this trial does not come first in the experiment timeline.**
 
+## Using a Plugin
+
+Please visit [this jsPsych tutorial](https://www.jspsych.org/v8/overview/plugins/) to learn the basics of setting up a jsPsych plugin. Feel free to cross-reference our [demo code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/examples/index.html) to get a better idea of how to implement this plugin in a working demo experiment. You'll find further detail about parameters and data output below.
+
 ## Parameters
 
 In addition to the [parameters available in all plugins](https://www.jspsych.org/latest/overview/plugins/#parameters-available-in-all-plugins), this plugin accepts the following parameters. Parameters with a default value of undefined must be specified. Other parameters can be left unspecified if the default value is acceptable.

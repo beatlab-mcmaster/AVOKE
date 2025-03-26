@@ -6,6 +6,10 @@ This plugin is for displaying a YouTube stream or video and records responses ge
 
 This plugin uses functions from the YouTube IFrame Player API. The script `'<script src="https://www.youtube.com/iframe_api"></script>'` must be run within the experiment file for plugin functionality. Further documentation is provided [here](https://developers.google.com/youtube/iframe_api_reference#Getting_Started).
 
+## Using a Plugin
+
+Please visit [this jsPsych tutorial](https://www.jspsych.org/v8/overview/plugins/) to learn the basics of setting up a jsPsych plugin. Feel free to cross-reference our [demo code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-youtube-button-response/examples/index.html) to get a better idea of how to implement this plugin in a working demo experiment. You'll find further detail about parameters and data output below.
+
 ## Parameters
 
 In addition to the [parameters available in all plugins](https://www.jspsych.org/latest/overview/plugins/#parameters-available-in-all-plugins), this plugin accepts the following parameters. Parameters with a default value of undefined must be specified. Other parameters can be left unspecified if the default value is acceptable.
