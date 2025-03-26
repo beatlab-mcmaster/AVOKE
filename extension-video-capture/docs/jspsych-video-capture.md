@@ -25,7 +25,7 @@ Then, to enable the extension for a trial, add the `extensions` list for the tri
       ],
     };
 ```
-Read through [this code] (https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/examples/index.html) for a better understanding of how to set up your experiment.
+Read through [this code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/examples/index.html) for a better understanding of how to set up your experiment.
 
 ## Parameters
 
