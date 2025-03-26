@@ -34,7 +34,7 @@ var jspsychVideoCaptureSetupPlugin = (function (jspsych) {
      * Use this plugin to setup video recording parameters for the jsPsychVideoCapture extension
      *
      * @author Shreshth Saxena, Jackson Shi
-     * @see {@link {https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md}}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md}}
      */
 
     class VideoCaptureSetupPlugin {

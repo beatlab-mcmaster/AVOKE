@@ -4,13 +4,13 @@
 
 A jsPsych plugin for displaying a YouTube stream or video and getting a button response.
 
-## Loading
+<!-- ## Loading
 
 ### In browser
 
 ```js
 <script src="https://unpkg.com/@jspsych-contrib/plugin-youtube-button-response@1.0.0"></script>
-```
+``` -->
 
 ## Compatibility
 
@@ -18,7 +18,7 @@ jsPsych 8.0.0
 
 ## Documentation
 
-See [documentation](https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-youtube-button-response/docs/jspsych-youtube-button-response.md)
+See [documentation](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-youtube-button-response/docs/jspsych-youtube-button-response.md)
 
 ## Author / Citation
 

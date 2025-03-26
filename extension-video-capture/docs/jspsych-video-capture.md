@@ -22,7 +22,7 @@ initJsPsych({
 
 Parameter | Type | Default Value | Description
 ----------|------|---------------|------------
-using_setup_plugin|boolean|false|If using this extension with the [video-capture-setup plugin](https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md), then true.
+using_setup_plugin|boolean|false|If using this extension with the [video-capture-setup plugin](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md), then true.
 default_camera_options|boolean|false|If using default camera parameters, then true.
 jatos|boolean|null|If used in a JATOS experiment, then true. 
 

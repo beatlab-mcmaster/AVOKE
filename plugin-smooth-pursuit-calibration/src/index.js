@@ -90,7 +90,7 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
      *
      * 
      * @author Shreshth Saxena, Jackson Shi
-     * @see {@link {https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-video-capture-setup/docs/jspsych-smooth-pursuit-calibration.md}}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-smooth-pursuit-calibration/docs/jspsych-smooth-pursuit-calibration.md}}
      */
     class SmoothPursuitCalibrationPlugin {
         constructor(jsPsych) {

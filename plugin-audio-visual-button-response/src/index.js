@@ -109,7 +109,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
        * The trial can be set to end when a button response is received or after the audio stimuli is finished playing.
        * 
        * @author Shreshth Saxena, Jackson Shi
-       * @see {@link https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-audio-visual-button-response/docs/jspsych-audio-visual-button-response.md}
+       * @see {@link https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-audio-visual-button-response/docs/jspsych-audio-visual-response.md}
        */
   class AudioVisualButtonResponsePlugin {
     constructor(jsPsych) {

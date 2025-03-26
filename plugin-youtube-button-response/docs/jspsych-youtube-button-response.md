@@ -2,6 +2,10 @@
 
 This plugin is for displaying a YouTube stream or video and records responses generated with a button click.
 
+Our plugin utilizes an embedded YouTube iframe to display video content. Please be aware that if the source stream or video on YouTube has ads enabled, they may appear during playback. Unfortunately, there is no way to prevent these ads from being shown through the plugin itself.
+
+If you have control over the source stream or video, we recommend disabling ads to ensure a seamless experience for your users or participants.
+
 ## Requirements
 
 This plugin uses functions from the YouTube IFrame Player API. The script `'<script src="https://www.youtube.com/iframe_api"></script>'` must be run within the experiment file for plugin functionality. Further documentation is provided [here](https://developers.google.com/youtube/iframe_api_reference#Getting_Started).
@@ -41,7 +45,7 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |buttonResponse:button|numeric|The array index corresponding to which value in the `'choices'` parameter the participant selected.|
 |buttonResponse:button_press_time|numeric|The time that the button was pressed, determined via `'Date.now()'`.|
 
-## Install
+<!-- ## Install
 
 Using the CDN-hosted JavaScript file:
 
@@ -63,7 +67,7 @@ npm install @jspsych-contrib/plugin-youtube-button-response
 
 ```js
 import {jsPsychYouTubeButtonResponse} from '@jspsych-contrib/plugin-youtube-button-response';
-```
+``` -->
 
 ## Examples
 

@@ -33,12 +33,12 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |presentation:time|numeric|A high resolution timestamp of when the target is presented in milliseconds, produced via `'performance.now()'`.|
 |total_wrong_keypresses|numeric|The total number of wrong keypresses made by the participant throughout the entire trial.|
 
-## Install
+<!-- ## Install
 
 Using the CDN-hosted JavaScript file:
 
 ```js
-<script src="https://unpkg.com/@jspsych-contrib/plugin-fix-point-calibration"></script>
+<script src="https://unpkg.com/@avoke/plugin-fix-point-calibration"></script>
 ```
 
 Using the JavaScript file downloaded from a GitHub release dist archive:
@@ -55,7 +55,7 @@ npm install @jspsych-contrib/plugin-fix-point-calibration
 
 ```js
 import {jsPsychFixPointCalibration} from '@jspsych-contrib/plugin-fix-point-calibration';
-```
+``` -->
 
 ## Examples
 

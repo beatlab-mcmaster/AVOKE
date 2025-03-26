@@ -101,7 +101,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
    * 
    * @author Shreshth Saxena, Jackson Shi
    * 
-   * @see {@link https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-audio-visual-button-response/docs/jspsych-youtube-button-response.md}
+   * @see {@link https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-youtube-button-response/docs/jspsych-youtube-button-response.md}
    */
   class YouTubeButtonResponsePlugin {
     constructor(jsPsych) {

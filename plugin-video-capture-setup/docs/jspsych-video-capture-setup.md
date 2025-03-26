@@ -1,6 +1,6 @@
 # video-capture-setup plugin
 
-This plugin is to be used alongside the [jsPsychVideoCapture extension](https://github.com/jspsych/jspsych-contrib/blob/main/packages/extension-video-capture/docs/jspsych-video-capture.md) and provides the extension with the required MediaStreamTrack parameters for video capture from any connected device. **In cases where the video input list is not populating correctly, please try to make sure this trial does not come first in the experiment timeline.**
+This plugin is to be used alongside the [jsPsychVideoCapture extension](https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/docs/jspsych-video-capture.md) and provides the extension with the required MediaStreamTrack parameters for video capture from any connected device. **In cases where the video input list is not populating correctly, please try to make sure this trial does not come first in the experiment timeline.**
 
 ## Parameters
 
@@ -20,7 +20,7 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 | --------- | ------- | ---------------------------------------- |
 |webcam_params|dictionary|Returns an object containing the current settings of the track, such as resolution, frame rate, and other video-related parameters.|
 
-## Install
+<!-- ## Install
 
 Using the CDN-hosted JavaScript file:
 
@@ -42,7 +42,7 @@ npm install @jspsych-contrib/plugin-video-capture-setup
 
 ```js
 import {jspsychVideoCaptureSetupPlugin} from '@jspsych-contrib/plugin-video-capture-setup';
-```
+``` -->
 
 ## Examples
 

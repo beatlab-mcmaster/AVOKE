@@ -1,5 +1,5 @@
 {
-  "name": "@jspsych-contrib/plugin-audio-visual-button-response",
+  "name": "@avoke/plugin-audio-visual-button-response",
   "version": "0.0.1",
   "description": "This plugin allows for displaying an image and playing an audio file simultaneously, and records responses generated with a button click.",
   "unpkg": "dist/index.browser.min.js",
@@ -14,8 +14,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jspsych/jspsych-contrib.git",
-    "directory": "packages/plugin-audio-visual-button-response"
+    "url": "git+https://github.com/beatlab-mcmaster/AVOKE.git",
+    "directory": "plugin-audio-visual-button-response"
   },
   "author": "Shreshth Saxena (https://github.com/ShreshthSaxena)",
   "contributors": [
@@ -26,9 +26,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jspsych/jspsych-contrib/issues"
+    "url": "https://github.com/beatlab-mcmaster/AVOKE/issues"
   },
-  "homepage": "https://github.com/jspsych/jspsych-contrib/tree/main/packages/plugin--audio-visual-button-response",
+  "homepage": "https://github.com/beatlab-mcmaster/AVOKE/tree/main/plugin-audio-visual-button-response",
   "devDependencies": {
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.26.9",

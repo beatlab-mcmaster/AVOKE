@@ -7,7 +7,7 @@ var jsPsychVideoCapture = (function(jspsych) {
      * Extension to record webcam video in JsPsych experiments
      *
      * @author Shreshth Saxena, Jackson Shi
-     * @see {@link {https://github.com/jspsych/jspsych-contrib/blob/main/packages/extension-video-capture/docs/jspsych-video-capture.md}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/docs/jspsych-video-capture.md}
      */
     class VideoCaptureExtension {
         constructor(jsPsych) {

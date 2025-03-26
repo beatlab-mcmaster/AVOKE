@@ -38,29 +38,29 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |audioEndTime|numeric|The high resolution timestamp in milliseconds (`'performance.now()'`) that the audio stimuli stopped playing.|
 |buttonClickTime|numeric| The high resolution timestamp in milliseconds (`'performance.now()'`) that the participant selected the button.|
 
-## Install
+<!-- ## Install
 
 Using the CDN-hosted JavaScript file:
 
 ```js
-<script src="https://unpkg.com/@jspsych-contrib/plugin-audio-visual-button-response"></script>
+<script src="https://unpkg.com/@AVOKE/plugin-audio-visual-button-response"></script>
 ```
 
 Using the JavaScript file downloaded from a GitHub release dist archive:
 
 ```js
-<script src="jspsych/plugin-audio-visual-button-response.js"></script>
+<script src="AVOKE/plugin-audio-visual-button-response.js"></script>
 ```
 
 Using NPM:
 
 ```
-npm install @jspsych-contrib/plugin-audio-visual-button-response
+npm install @AVOKE/plugin-audio-visual-button-response
 ```
 
 ```js
-import {jsPsychAudioVisualButtonResponse} from '@jspsych-contrib/plugin-audio-visual-button-response';
-```
+import {jsPsychAudioVisualButtonResponse} from '@AVOKE/plugin-audio-visual-button-response';
+``` -->
 
 ## Examples
 

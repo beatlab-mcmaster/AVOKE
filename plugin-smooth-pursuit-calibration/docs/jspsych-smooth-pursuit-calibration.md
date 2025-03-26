@@ -37,7 +37,7 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |target_presentation_time:loc|array of numbers|The coordinates of the target on its path based on the ratio value.|
 |start_time|numeric|A high resolution timestamp of the when the animation begins in milliseconds, obtained via `'performance.now()'`.| 
 
-## Install
+<!-- ## Install
 
 Using the CDN-hosted JavaScript file:
 
@@ -59,7 +59,7 @@ npm install @jspsych-contrib/plugin-smooth-pursuit-calibration
 
 ```js
 import {jsPsychSmoothPursuitCalibration} from '@jspsych-contrib/plugin-smooth-pursuit-calibration';
-```
+``` -->
 
 ## Examples
 

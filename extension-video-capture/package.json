@@ -1,5 +1,5 @@
 {
-  "name": "@jspsych-contrib/extension-video-capture",
+  "name": "@avoke/extension-video-capture",
   "version": "0.0.1",
   "description": "This extension allows for video recording in jsPsych experiments, particularly designed for webcam eye-tracking.",
   "unpkg": "dist/index.browser.min.js",
@@ -13,8 +13,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jspsych/jspsych-contrib.git",
-    "directory": "packages/extension-video-capture"
+    "url": "git+https://github.com/beatlab-mcmaster/AVOKE.git",
+    "directory": "extension-video-capture"
   },
   "author": "Shreshth Saxena (https://github.com/ShreshthSaxena)",
   "contributors": [
@@ -25,9 +25,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jspsych/jspsych-contrib/issues"
+    "url": "https://github.com/beatlab-mcmaster/AVOKE/issues"
   },
-  "homepage": "https://github.com/jspsych/jspsych-contrib/tree/main/packages/extension-video-capture",
+  "homepage": "https://github.com/beatlab-mcmaster/AVOKE/tree/main/extension-video-capture",
   "devDependencies": {
     "@jspsych/config": "^3.1.0",
     "jspsych": "^8.0.0"

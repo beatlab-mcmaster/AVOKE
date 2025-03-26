@@ -57,7 +57,7 @@ var jsPsychFixPointCalibration = (function (jspsych) {
      * Use the "fixation_target" to change displayed target, default target is the letter 'E'.
      *
      * @author  Shreshth Saxena, Jackson Shi (modified from Josh de Leeuw and Chris Jungerius)
-     * @see {@link {https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-video-capture-setup/docs/jspsych-fix-point-calibration.md}}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-fix-point-calibration/docs/jspsych-fix-point-calibration.md}}
      */
     class FixPointCalibrationPlugin {
         constructor(jsPsych) {
