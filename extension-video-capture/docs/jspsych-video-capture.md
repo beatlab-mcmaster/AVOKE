@@ -1,6 +1,31 @@
 # video-capture extension
 
-This extension allows for video recording in jsPsych experiments, particularly designed for webcam eye-tracking. Video files are output in .mp4 format. **In cases where the video input list is not populating correctly, please make sure this trial does not come first in the experiment timeline.** 
+This extension allows for video recording in jsPsych experiments, particularly designed for webcam eye-tracking. Video files are output in .mp4 format.
+
+## Using an Extension
+To use this extension, you'll load the [index.js](https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/src/index.js) file via a `<script>` tag (just like adding a plugin) and then initialize the extension in the parameters of initJsPsych().
+
+```
+<head>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="index.js"></script>
+</head>
+```
+```
+initJsPsych({
+  extensions: [
+    { type: jsPsychVideoCapture, params: {...} }
+  ]
+})
+```
+Then, to enable the extension for a trial, add the `extensions` list for the trial, as well as any parameters.
+```
+    const trial = {
+      extensions: [{ type: jsPsychVideoCapture, params:{'filename': 'demo'} }, // extension with the filename parameter
+      ],
+    };
+```
+Read through [this code] (https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/examples/index.html) for a better understanding of how to set up your experiment.
 
 ## Parameters
 
@@ -60,3 +85,5 @@ If using a JATOS instance, handles the upload of the video file.
 ### init_mediaRecorder()
 Initializes the MediaRecorder object, handles the data collection during recording, and processes the recorded video once the recording is complete.
 
+## Known Issues
+**In cases where the video input list is not populating correctly, please make sure this trial does not come first in the experiment timeline.** The media device list will not be able to update early enough to note down all connected capture devices and populate the drop-down menu.
