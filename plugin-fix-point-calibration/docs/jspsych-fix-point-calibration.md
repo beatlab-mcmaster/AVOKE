@@ -1,6 +1,6 @@
 # fix-point-calibration plugin
 
-This plugin implements a fix-point calibration trial used for eyetracking experiments. A target ('E' by default) appears in random locations on a blank canvas based on whether the canvas is split into a 3x3 or 4x4 grid. The target will appear in a random orientations of 0, 90, 180, and 270 degrees. The participant must look at the target and respond with an arrow key by default, with the correct direction corresponding to where to lines of the 'E' are headed. After a correct response, a new target will appear. If using a 3x3 grid, 9 targets will be presented. If using a 4x4 grid, 16 targets will be presented.
+This plugin implements a fix-point calibration trial used for eyetracking experiments. A target ('E' by default) appears in random locations on a blank canvas based on whether the canvas is split into a 3x3 or 4x4 grid. The target will appear in random orientations of 0, 90, 180, and 270 degrees. The participant must look at the target and respond with an arrow key by default, with the correct direction corresponding to where to lines of the 'E' are headed. After a correct response, a new target will appear. If using a 3x3 grid, 9 targets will be presented. If using a 4x4 grid, 16 targets will be presented.
 
 ## Parameters
 

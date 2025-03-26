@@ -1,6 +1,6 @@
 # audio-visual-button-response plugin
 
-This plugin allows for displaying an image and playing an audio file simultaneously, and records responses generated with a button click. The included parameters allow for adjustment of trial duration, visual stimuli size, time delay before the button can be interacted with and more. The trial can be set to end when a button response is received or after the audio stimuli is finished playing. **In cases where audio and image are not working as intended, please try to use the [jsPsych Preload](https://www.jspsych.org/latest/plugins/preload/) trial and make sure the audio-visual-button-response trial is not the first trial in the experiment timeline.**
+This plugin allows for displaying an image and playing an audio file simultaneously, and records responses generated with a button click. The included parameters allow for adjustment of trial duration, visual stimuli size, time delay before the button can be interacted with and more. The trial can be set to end when a button response is received or after the audio stimulus is finished playing. **In cases where audio and image are not working as intended, please try to use the [jsPsych Preload](https://www.jspsych.org/latest/plugins/preload/) trial and make sure the audio-visual-button-response trial is not the first trial in the experiment timeline.**
 
 ## Parameters
 

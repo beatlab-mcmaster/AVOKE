@@ -21,7 +21,7 @@
 
   var trial1 = {
     type: jsPsychHtmlButtonResponse,
-    stimulus: '<p style="font-size:48px;">Hello! Press the button to initiate the trial demo.</p>',
+    stimulus: '<p style="font-size:48px;">Hello! Press the button to initiate the smooth-pursuit trial demo.</p> <p>On the next page, push the spacebar to begin, then follow the moving target with your gaze. </p> <p>When the target pauses, push the space bar again. </p>',
     choices: ['Continue'],
     };
   timeline.push(trial1);
@@ -34,7 +34,7 @@
     stimulus_height: 40, // The height of the target image in pixels
     path_height: window.innerHeight - 40, // The height of the path in pixels, with a 40px margin accounting for target size
     path_width: window.innerWidth - 40,  // The width of the path in pixels, with a 40px margin accounting for target size
-    repetitions: 2, // The number of times the target will move along the path
+    repetitions: 1, // The number of times the target will move along the path
     starting_location:[0,0] // The starting location of the target
   };
   timeline.push(trial_rect)
@@ -46,7 +46,7 @@
     path_shape: "line", // The shape of the path
     path_height: 0, // The height of the path in pixels
     path_width: 1400, // The width of the path in pixels
-    repetitions: 5, // The number of times the target will move along the path
+    repetitions: 1, // The number of times the target will move along the path
     starting_location:[window.innerWidth/2, window.innerHeight/2],  // The starting location of the target
   };
 
