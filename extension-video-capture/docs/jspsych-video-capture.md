@@ -66,6 +66,13 @@ var trial = {
 Parameter | Type | Default Value | Description
 ----------|------|---------------|------------
 filename|string|""|The name of the output video file.
+using_setup_plugin|boolean|false|Whether or not the setup plugin is being used alongside this extension.
+default_camera_options|boolean|false|Whether or not the default camera options should be used, or if it should detect the options of the video input device.
+jatos|boolean|null|Whether or not JATOS is being used with this extension.
+download_local_only|boolean|true|Whether or not the video file should be downloaded locally afterwards.
+video_width|numeric|640|The default frame width of the camera.
+video_height|numeric|480|The default frame height of the camera.
+framerate|numeric|26|The frames per second of the video input device.
 
 ## Data Generated
 
@@ -79,11 +86,20 @@ webcamRecordStop|numeric|The timestamp (`performance.now()`) in milliseconds of 
 
 If the extension adds any static functions, list them here.
 
+### downloadLocalVideo(fname, blob)
+Downloads the video locally after the experiment is completed.
+
 ### handleRecording(fname, blob)
 If using a JATOS instance, handles the upload of the video file.
 
+### processVideoChunks(data, filename, timestamp)
+Process the video chunks for local download, if needed.
+
 ### init_mediaRecorder()
 Initializes the MediaRecorder object, handles the data collection during recording, and processes the recorded video once the recording is complete.
+
+### search_webcam_devices
+Checks through all the media devices connected to the device, and adds it to the drop-down menu if it is a video input device.
 
 ## Known Issues
 **In cases where the video input list is not populating correctly, please make sure this trial does not come first in the experiment timeline.** The media device list will not be able to update early enough to note down all connected capture devices and populate the drop-down menu.
