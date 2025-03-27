@@ -34,7 +34,7 @@ var jspsychVideoCaptureSetupPlugin = (function (jspsych) {
      * Use this plugin to setup video recording parameters for the jsPsychVideoCapture extension
      *
      * @author Shreshth Saxena, Jackson Shi
-     * @see {@link {https://github.com/jspsych/jspsych-contrib/blob/main/packages/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md}}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md}}
      */
 
     class VideoCaptureSetupPlugin {
@@ -82,6 +82,7 @@ var jspsychVideoCaptureSetupPlugin = (function (jspsych) {
                     for (let i = 0; i < webcam_devices.length; i++) {
                         const option = document.createElement('option');
                         option.value = webcam_devices[i];
+                        // option.text = webcam_devices.deviceNames[i];
                         option.text = "device_" + i; //// in case the deviceNames are weird
                         sel.appendChild(option, null)  
                         

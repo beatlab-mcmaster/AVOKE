@@ -4,10 +4,10 @@
 <head>
   <title>Video Capture Extension Example</title>
   <script src="https://unpkg.com/jspsych@8.0.0"></script>
-  <script src="video-capture-extension.js"></script>
+  <script src="../src/index.js"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
   <!-- Setup plugin designed with this extension in mind -->
-  <script src="video-capture-setup.js"></script>
+  <script src="../../plugin-video-capture-setup/src/index.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
 </head>
 
@@ -46,7 +46,7 @@
       instructions: `Below you'll see the output of recorded video. Move your camera to obtain the desired view and press Continue.`, // plugin parameter
       error_message: `The camera capture cannot be retrieved. Please try another device.`, // plugin parameter
       button_text: "Continue", // plugin parameter
-      extensions: [{ type: jsPsychVideoCapture, params:{'setup': true} }, // extension with the filename parameter
+      extensions: [{ type: jsPsychVideoCapture, params:{'setup': true} }, 
       ],
     };
     timeline.push(trial);
@@ -58,7 +58,7 @@
                   <p>By default, the recorded video will be downloaded at the end of the study.</p>
                   <p>Thank you for your participation!</p>`,
       choices: ['Finish'],
-      extensions: [{ type: jsPsychVideoCapture, params:{'filename': "demo"} }]
+      extensions: [{ type: jsPsychVideoCapture, params:{'filename': "demo"} }] // extension with the filename parameter
     }
 
     timeline.push(trial2);
