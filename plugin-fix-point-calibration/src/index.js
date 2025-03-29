@@ -208,9 +208,12 @@ var jsPsychFixPointCalibration = (function (jspsych) {
             }
         }
         create_simulation_data(trial, simulation_options) {
+            const responses = this.generate_responses(trial);
+
             const default_data = {
-                responses: this.generate_responses(trial),
-                presentation: this.generate_presentation(trial)
+                responses: responses,
+                presentation: this.generate_presentation(trial),
+                total_wrong_keypresses: responses.reduce((sum, response) => sum + (response.wrong_keypresses || 0), 0),
             };
             const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
             this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
@@ -284,8 +287,7 @@ var jsPsychFixPointCalibration = (function (jspsych) {
             for (let i = 0; i < max; i++) {
                 responses.push({
                     rt: Math.floor(this.jsPsych.randomization.sampleExGaussian(500, 100, 0.01, true)),
-                    keypress: this.jsPsych.pluginAPI.getValidKey(trial.choices),
-                    keypress_time: Math.floor(this.jsPsych.randomization.sampleExGaussian(500, 100, 0.01, true)),
+                    key_press: this.jsPsych.pluginAPI.getValidKey(trial.choices),
                     wrong_keypresses: Math.floor(Math.random() * 4)
                 });
 

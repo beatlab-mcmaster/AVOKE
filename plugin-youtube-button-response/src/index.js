@@ -258,6 +258,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         clearInterval(log_playerInfo_interval)
         // gather the data to store for the trial
         const trial_data = {
+          stimulus: trial.stimulus,
           rt: rt,
           buttonResponse: response,
           playerTimestamps: playerTime,
@@ -296,11 +297,11 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       }
 
       // CASE 1: display Next button after desired time interval
-      else if (trial.button_disable !== null) {
-        response.condition = "button_disable"
+      else if (trial.button_disable_time !== null) {
+        response.condition = "button_disable_time"
         jsPsych.pluginAPI.setTimeout(function () {
           display_element.querySelector('.form-btn').style.visibility = 'visible';
-        }, trial.button_disable)
+        }, trial.button_disable_time)
       }
       // CASE 2: end trial if time limit is set
       else if (trial.trial_duration !== null) {
@@ -329,7 +330,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         stimulus: trial.stimulus,
         rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
         buttonResponse:{
-          condition: trial.button_disable !== null ? "button_disable" :
+          condition: trial.button_disable_time !== null ? "button_disable_time" :
               trial.trial_duration !== null ? "trial_duration" :
                 "next_button_default",
         button: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),

@@ -262,7 +262,8 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
                 rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true)
               },
               target_presentation_time: this.generate_target_presentation_time(trial),
-              start_time: performance.now()
+              start_time: performance.now(),
+              end_time: performance.now() + trial.animation_duration,
             };
             const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
             this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
@@ -300,10 +301,11 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
               const location = location_coordinates(progress);
           
               target_presentation_time.push({
-                // TODO: ADD REPETITION INFO
+                repetition: Math.floor(Math.random() * trial.repetitions) + 1,
+                repetition_start_time: performance.now(),
+                repetition_elapsed_time: elapsed_time,
                 ratio: ratio,
                 loc: location,
-                time: elapsed_time
               });
             }
           
