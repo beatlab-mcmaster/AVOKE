@@ -35,8 +35,8 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |response:rt|numeric|The time between the beginning of the trial and the response in milliseconds. '|
 |target_presentation_time|dictionary|Contains a variety of information about the presentation of the target. Specific details on each key-value pair is provided below.|
 |target_presentation_time:repetition|numeric|The number of repetitions of the path that have been done so far.
-|target_presentation_time:repetition_start_time|The timestamp in milliseconds when the repetition has been started.|
-|target_presentation_time:repetition_elapsed_time|The time in milliseconds from since the repetition has begun.|
+|target_presentation_time:repetition_start_time|numeric|The timestamp in milliseconds when the repetition has been started.|
+|target_presentation_time:repetition_elapsed_time|numeric|The time in milliseconds from since the repetition has begun.|
 |target_presentation_time:ratio|numeric|This ratio represents how much of the path the target has progressed through so far.|
 |target_presentation_time:loc|array of numbers|The coordinates of the target on its path based on the ratio value.|
 |start_time|numeric|A high resolution timestamp of the when the animation begins in milliseconds, obtained via `'performance.now()'`.| 
