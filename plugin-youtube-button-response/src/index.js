@@ -25,7 +25,8 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         // array: true,
         type: jspsych.ParameterType.FUNCTION,
         default: function (choice, choice_index) {
-          return '<button class="form-btn" id="button-' + choice_index + '" style="visibility: hidden;">' + choice + '</button>';        },
+          return '<button class="form-btn" id="button-' + choice_index + '" style="visibility: hidden;">' + choice + '</button>';
+        },
       },
       /** Any content here will be displayed at the end of the page. */
       prompt: {

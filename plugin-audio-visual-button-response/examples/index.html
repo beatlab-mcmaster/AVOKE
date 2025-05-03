@@ -35,9 +35,13 @@
   
   const trial = {
     type: jsPsychAudioVisualButtonResponse,
-    choices: ['Next'], // Button text
+    choices: ['Next', 'Continue', 'Blue'], // Button text
     audio_stimulus: 'example.wav', // Audio file path goes here
     image_stimulus: 'example.jpg', // Image file path goes here
+    button_activate_time: 5000, // Time before buttons are activated (in ms)
+    response_ends_trial: false, // End trial on response
+    trial_ends_after_audio: true, // End trial after audio ends
+    response_allowed_while_playing: true, // Allow response while audio is playing
   };
 
   timeline.push(trial);
