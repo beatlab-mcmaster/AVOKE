@@ -19,10 +19,13 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       },
       /** The HTML for creating button. Can create own style. Use the "%choice%" string to indicate where the label from the choices parameter should be inserted. */
       button_html: {
-        type: jspsych.ParameterType.HTML_STRING,
-        pretty_name: "Button HTML",
-        default: ['<button class="form-btn">%choice%</button>'],
-        array: true,
+        // type: jspsych.ParameterType.HTML_STRING,
+        // pretty_name: "Button HTML",
+        // default: ['<button class="form-btn">%choice%</button>'],
+        // array: true,
+        type: jspsych.ParameterType.FUNCTION,
+        default: function (choice, choice_index) {
+          return '<button class="form-btn" id="button-' + choice_index + '" style="visibility: hidden;">' + choice + '</button>';        },
       },
       /** Any content here will be displayed at the end of the page. */
       prompt: {
@@ -122,35 +125,76 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       html += "</div>";
 
       // display buttons
-      let buttons = [];
-      if (Array.isArray(trial.button_html)) {
-        if (trial.button_html.length == trial.choices.length) {
-          buttons = trial.button_html;
-        } else {
-          console.error("Error in html-stream-response plugin. The length of the button_html array does not equal the length of the choices array");
-        }
-      } else {
-        for (let i = 0; i < trial.choices.length; i++) {
-          buttons.push(trial.button_html);
-        }
-      }
-      for (let i = 0; i < trial.choices.length; i++) {
-        let str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-        html +=
-          '<div class="form-btn" style="border: none; visibility:hidden; right: 0; bottom: 0; position: absolute;" id="jspsych-html-stream-response-button-' +
-          i +
-          '" data-choice="' +
-          i +
-          '">' +
-          str +
-          "</div>";
-      }
-      
+      // let buttons = [];
+      // if (Array.isArray(trial.button_html)) {
+      //   if (trial.button_html.length == trial.choices.length) {
+      //     buttons = trial.button_html;
+      //   } else {
+      //     console.error("Error in html-stream-response plugin. The length of the button_html array does not equal the length of the choices array");
+      //   }
+      // } else {
+      //   for (let i = 0; i < trial.choices.length; i++) {
+      //     buttons.push(trial.button_html);
+      //   }
+      // }
+      // for (let i = 0; i < trial.choices.length; i++) {
+      //   let str = buttons[i].replace(/%choice%/g, trial.choices[i]);
+      //   html +=
+      //     '<div class="form-btn" style="border: none; visibility:hidden; right: 0; bottom: 0; position: absolute;" id="jspsych-html-stream-response-button-' +
+      //     i +
+      //     '" data-choice="' +
+      //     i +
+      //     '">' +
+      //     str +
+      //     "</div>";
+      // }
+
       // show prompt if there is one
       if (trial.prompt !== null) {
         html += `<div style="left:0; bottom: 0; position: absolute;">` + trial.prompt + `</div>`;
       }
       display_element.innerHTML = html;
+
+      // display buttons
+      const buttonGroupElement = document.createElement("div");
+      buttonGroupElement.id = "jspsych-html-stream-response-btngroup";
+
+      buttonGroupElement.style.position = "absolute"; // Use "fixed" if you want it to stay in place during scrolling
+      buttonGroupElement.style.bottom = "10px"; // Distance from the bottom of the page
+      buttonGroupElement.style.right = "10px"; // Distance from the right of the page
+
+      if (trial.button_layout === "grid") {
+        buttonGroupElement.classList.add("jspsych-btn-group-grid");
+        if (trial.grid_rows === null && trial.grid_columns === null) {
+          throw new Error(
+            "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
+          );
+        }
+        const n_cols =
+          trial.grid_columns === null
+            ? Math.ceil(trial.choices.length / trial.grid_rows)
+            : trial.grid_columns;
+        const n_rows =
+          trial.grid_rows === null
+            ? Math.ceil(trial.choices.length / trial.grid_columns)
+            : trial.grid_rows;
+        buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
+        buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
+      } else if (trial.button_layout === "flex") {
+        buttonGroupElement.classList.add("jspsych-btn-group-flex");
+      }
+
+      for (let choiceIndex = 0; choiceIndex < trial.choices.length; choiceIndex++) {
+        const choice = trial.choices[choiceIndex];
+        buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
+        const buttonElement = buttonGroupElement.lastChild;
+        buttonElement.setAttribute("data-choice", choiceIndex.toString());
+        buttonElement.addEventListener("click", function () {
+          after_response(choiceIndex);
+        });
+      }
+
+      display_element.appendChild(buttonGroupElement);
 
       // Check if YT API is loaded correctly
       var player;
@@ -229,15 +273,15 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       // start time
       const start_time = performance.now();
       // add event listeners to buttons
-      for (let i = 0; i < trial.choices.length; i++) {
-        display_element
-          .querySelector("#jspsych-html-stream-response-button-" + i)
-          .addEventListener("click", (e) => {
-            let btn_el = e.currentTarget;
-            let choice = btn_el.getAttribute("data-choice"); // don't use dataset for jsdom compatibility
-            after_response(choice);
-          });
-      }
+      // for (let i = 0; i < trial.choices.length; i++) {
+      //   display_element
+      //     .querySelector("#jspsych-html-stream-response-button-" + i)
+      //     .addEventListener("click", (e) => {
+      //       let btn_el = e.currentTarget;
+      //       let choice = btn_el.getAttribute("data-choice"); // don't use dataset for jsdom compatibility
+      //       after_response(choiceIndex);
+      //     });
+      // }
 
       // store button response data
       var response = {
@@ -279,42 +323,75 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         display_element.querySelector("#jspsych-html-stream-response-stimulus").className +=
           " responded";
         // disable all the buttons after a response
-        let btns = document.querySelectorAll(".jspsych-html-stream-response-button");
-        for (let i = 0; i < btns.length; i++) {
-          //btns[i].removeEventListener('click');
-          btns[i].setAttribute("disabled", "disabled");
+        // let btns = document.querySelectorAll(".jspsych-html-stream-response-button");
+        // for (let i = 0; i < btns.length; i++) {
+        //   //btns[i].removeEventListener('click');
+        //   btns[i].setAttribute("disabled", "disabled");
+        // }
+        for (const button of buttonGroupElement.children) {
+          button.setAttribute("disabled", "disabled");
         }
         if (trial.response_ends_trial) {
           end_trial();
         }
       }
 
-      // hide stimulus if timing is set
-      if (trial.stimulus_duration !== null) {
+    // Hide stimulus if timing is set
+    if (trial.stimulus_duration !== null) {
+      const stimulusElement = display_element.querySelector("#jspsych-html-stream-response-stimulus");
+      if (stimulusElement) {
         this.jsPsych.pluginAPI.setTimeout(() => {
-          display_element.querySelector("#jspsych-html-stream-response-stimulus").style.visibility = "hidden";
+          // Stop the YouTube video
+          if (player && typeof player.stopVideo === "function") {
+            player.stopVideo();
+            console.log("YouTube video stopped.");
+          } else {
+            console.error("YouTube player is not initialized or stopVideo is not available.");
+          }
+    
+          // Hide the video player
+          stimulusElement.style.visibility = "hidden";
+          console.log("Video player hidden.");
         }, trial.stimulus_duration);
+      } else {
+        console.error("Element #jspsych-html-stream-response-stimulus not found.");
       }
 
-      // CASE 1: display Next button after desired time interval
-      else if (trial.button_disable_time !== null) {
-        response.condition = "button_disable_time"
-        jsPsych.pluginAPI.setTimeout(function () {
-          display_element.querySelector('.form-btn').style.visibility = 'visible';
-        }, trial.button_disable_time)
-      }
-      // CASE 2: end trial if time limit is set
-      else if (trial.trial_duration !== null) {
-        response.condition = "trial_duration"
-        this.jsPsych.pluginAPI.setTimeout(end_trial, trial.trial_duration);
-      }
-      // CASE 3: user ends trial by clicking button
-      else {
-        response.condition = "next_button_default"
-        display_element.querySelector('.form-btn').style.visibility = 'visible';
-      }
+      const buttons = buttonGroupElement.querySelectorAll("button");
+      buttons.forEach((button) => {
+        button.style.visibility = "visible"; // Ensure buttons are visible by default
+      });
     }
 
+    // CASE 1: Display Next button after desired time interval
+    else if (trial.button_disable_time !== null) {
+      response.condition = "button_disable_time";
+      const buttons = buttonGroupElement.querySelectorAll(".form-btn");
+      buttons.forEach((button) => {
+        button.style.visibility = "hidden"; // Ensure buttons are hidden initially
+      });
+      jsPsych.pluginAPI.setTimeout(() => {
+        buttons.forEach((button) => {
+          button.style.visibility = "visible"; // Make buttons visible after the timeout
+        });
+      }, trial.button_disable_time);
+    }
+
+    // CASE 2: End trial if time limit is set
+    else if (trial.trial_duration !== null) {
+      response.condition = "trial_duration";
+      this.jsPsych.pluginAPI.setTimeout(end_trial, trial.trial_duration);
+    }
+
+    // CASE 3: User ends trial by clicking button
+    else {
+      response.condition = "next_button_default";
+      const buttons = buttonGroupElement.querySelectorAll("button");
+      buttons.forEach((button) => {
+        button.style.visibility = "visible"; // Ensure buttons are visible by default
+      });
+    }
+  }
     simulate(trial, simulation_mode, simulation_options, load_callback) {
       if (simulation_mode == "data-only") {
         load_callback();

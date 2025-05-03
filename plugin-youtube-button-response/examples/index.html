@@ -31,13 +31,13 @@
   const trial = {
     type: jsPsychYouTubeButtonResponse,
     stimulus: 'https://www.youtube.com/embed/jfKfPfyJRdk', // Example YouTube video URL
-    choices: ['Next'], // Button text
+    choices: ['Next', 'Continue'], // Button text
     prompt: '<p>Click next to proceed</p>', // Prompt text
     controls: true, // Enable YouTube player controls
     autoplay: true, // Enable autoplay
     mute: false, // Play sound
     pointer_events: true, // Enable pointer events
-    background_colour: '#808080' // Set the background colour to black
+    background_colour: '#808080', // Set the background colour to black
   };
 
   timeline.push(trial);
