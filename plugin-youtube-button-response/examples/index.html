@@ -23,7 +23,7 @@
 
   var trial1 = {
   type: jsPsychHtmlButtonResponse,
-  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the youtube-button-response trial demo.</p>',
+  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the youtube-button-response trial demo. <br> Watch the video for as long as you like and press the Next button to end the trial.</p>',
   choices: ['Continue'],
   };
   timeline.push(trial1);
@@ -31,7 +31,7 @@
   const trial = {
     type: jsPsychYouTubeButtonResponse,
     stimulus: 'https://www.youtube.com/embed/jfKfPfyJRdk', // Example YouTube video URL
-    choices: ['Next', 'Continue'], // Button text
+    choices: ['Next'], // Button text
     prompt: '<p>Click next to proceed</p>', // Prompt text
     controls: true, // Enable YouTube player controls
     autoplay: true, // Enable autoplay
