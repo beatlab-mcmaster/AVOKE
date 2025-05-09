@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta charset="UTF-8">
   <script src="https://unpkg.com/jspsych@8.0.0"></script>
   <script src="../src/index.js"></script>
   <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
@@ -14,8 +15,7 @@
 <script>
   const jsPsych = initJsPsych({
     on_finish: function () {
-      // Output the data on the screen
-      jsPsych.data.displayData('json');
+      test();
     }
   });
 
@@ -38,11 +38,78 @@
     choices: ['Next'], // Button text
     audio_stimulus: 'example.wav', // Audio file path goes here
     image_stimulus: 'example.jpg', // Image file path goes here
+    maintain_aspect_ratio: true, // Maintain aspect ratio of the image
+    stimulus_width: 500, // Width of the image
+    trial_duration: 1000, // Duration of the trial in milliseconds
   };
-
   timeline.push(trial);
+
   jsPsych.run(timeline);
 
-</script>
+  function test() {
+    const data = jsPsych.data.get().values(); // Convert jsPsych data to an array
+    let test_results = "";
 
-</html>
+    // Loop through all trials in the data
+    data.forEach(trial => {
+      console.log("Trial data:", trial); // Log each trial's data to verify values
+
+      if (trial.stimulus_image) {
+        const img = new Image();
+        img.src = trial.stimulus_image;
+
+        img.onload = function () {
+          const original_width = img.naturalWidth;
+          const original_height = img.naturalHeight;
+
+          console.log(`Image loaded: ${trial.stimulus_image}`);
+          console.log(`Original dimensions: ${original_width}x${original_height}`);
+          console.log(`Provided dimensions: ${trial.stimulus_width}x${trial.stimulus_height}`);
+
+          if (trial.stimulus_height && trial.stimulus_width) {
+            const expected_width = trial.stimulus_height * (original_width / original_height);
+            const expected_height = trial.stimulus_width * (original_height / original_width);
+
+            console.log(`Expected dimensions: ${expected_width}x${expected_height}`);
+
+            const isValid =
+              Math.abs(trial.stimulus_width - expected_width) < 1 || // Allow small floating-point differences
+              Math.abs(trial.stimulus_height - expected_height) < 1;
+
+            if (isValid) {
+              test_results += `<p>✔️ Aspect ratio maintained for trial with image: ${trial.stimulus_image}</p>`;
+            } else {
+              test_results += `<p>❌ Aspect ratio NOT maintained for trial with image: ${trial.stimulus_image}</p>`;
+            }
+          } else {
+            test_results += `<p>❌ Missing stimulus dimensions for trial with image: ${trial.stimulus_image}</p>`;
+          }
+
+          // Update the display with the test results
+          jsPsych.getDisplayElement().innerHTML = test_results;
+        };
+
+      // Check if audioEndTime - audioStartTime equals trial_duration
+      if (trial.audioEndTime && trial.audioStartTime && trial.trial_duration) {
+        const audioDuration = trial.audioEndTime - trial.audioStartTime;
+        console.log(`Audio duration: ${audioDuration}, Trial duration: ${trial.trial_duration}`);
+
+        if (Math.abs(audioDuration - trial.trial_duration) < 16) { // Allow small floating-point differences
+          test_results += `<p>✔️ Audio duration matches trial duration for trial with audio: ${trial.stimulus_audio}</p>`;
+        } else {
+          test_results += `<p>❌ Audio duration does NOT match trial duration for trial with audio: ${trial.stimulus_audio}</p>`;
+        }
+      } else {
+        test_results += `<p>❌ Missing audio timing data for trial with audio: ${trial.stimulus_audio}</p>`;
+      }
+
+        img.onerror = function () {
+          test_results += `<p>❌ Failed to load image: ${trial.stimulus_image}</p>`;
+          console.log("Image failed to load:", trial.stimulus_image);
+          // Update the display with the test results
+          jsPsych.getDisplayElement().innerHTML = test_results;
+        };
+      }
+    });
+  }
+</script>

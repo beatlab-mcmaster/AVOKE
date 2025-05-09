@@ -186,8 +186,6 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         };
         getHeightWidth(); // call now, in case image loads immediately (is cached)
 
-        console.log(img.naturalHeight, img.naturalWidth, trial.stimulus_height, trial.stimulus_width, height, width)
-
         // //create buttons
         // let buttons = [];
         // if (Array.isArray(trial.button_html)) {
@@ -356,6 +354,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         }
         this.audio.removeEventListener("ended", end_trial);
         this.audio.removeEventListener("ended", enable_buttons);
+        
         // gather the data to store for the trial
         const trial_data = {
           rt: response.rt,
@@ -366,6 +365,10 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
           audioStartTime: response.audioStartTime,
           audioEndTime: response.audioEndTime,
           buttonClickTime: response.buttonClickTime,
+          maintain_aspect_ratio: trial.maintain_aspect_ratio,
+          stimulus_width: width,
+          stimulus_height: height,
+          trial_duration: trial.trial_duration,
         };
         console.log("trial_data", JSON.stringify(trial_data));
         // clear the display
@@ -501,6 +504,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
       });
 
     }
+
     simulate(trial, simulation_mode, simulation_options, load_callback) {
       if (simulation_mode == "data-only") {
         load_callback();
@@ -510,7 +514,12 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         this.simulate_visual(trial, simulation_options, load_callback);
       }
     }
-    create_simulation_data(trial, simulation_options) {
+    async create_simulation_data(trial, simulation_options) {
+      const dimensions = await this.generate_image_dimensions(trial);
+      const width = dimensions.width;
+      const height = dimensions.height;
+      console.log("width", width);
+      console.log("height", height);
       const default_data = {
         rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
         stimulus_audio: trial.audio_stimulus,
@@ -520,6 +529,10 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         audioStartTime: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
         audioEndTime: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
         buttonClickTime: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
+        maintain_aspect_ratio: trial.maintain_aspect_ratio,
+        stimulus_width: width,
+        stimulus_height: height,
+        trial_duration: trial.trial_duration,
       };
       const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
       this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
@@ -546,6 +559,34 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         }
       });
     }
+    generate_image_dimensions(trial) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = trial.image_stimulus;
+        img.onload = () => {
+          let height, width;
+
+          if (trial.maintain_aspect_ratio) {
+            const widthRatio = trial.stimulus_width / img.naturalWidth;
+            const heightRatio = trial.stimulus_height / img.naturalHeight;
+            const scale_factor = Math.min(widthRatio, heightRatio);            
+
+            width = img.naturalWidth * scale_factor;
+            height = img.naturalHeight * scale_factor;
+          } else {
+            height = trial.stimulus_height || img.naturalHeight;
+            width = trial.stimulus_width || img.naturalWidth;
+          }
+
+          console.log(img.naturalWidth, img.naturalHeight);
+          resolve({ width, height });
+        };
+
+        img.onerror = () => {
+          reject(new Error(`Failed to load image: ${trial.image_stimulus}`));
+        };
+      });
+}
   }
   AudioVisualButtonResponsePlugin.info = info;
 
