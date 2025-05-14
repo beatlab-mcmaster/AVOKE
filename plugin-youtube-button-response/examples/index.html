@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta charset="UTF-8">
   <!-- The YouTube API is loaded here -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script src="https://unpkg.com/jspsych@8.0.0"></script>
@@ -14,8 +15,7 @@
 <script>
   const jsPsych = initJsPsych({
     on_finish: function() {
-      // Output the data on the screen
-      jsPsych.data.displayData('json');
+      test();
     }
   });
 
@@ -38,10 +38,97 @@
     mute: false, // Play sound
     pointer_events: true, // Enable pointer events
     background_colour: '#808080', // Set the background colour to black
+    trial_duration: 10000, // Set the trial duration to 10 seconds
+    log_after_every: 1000, // Log player info every second
   };
 
   timeline.push(trial);
-  jsPsych.run(timeline);
+  jsPsych.simulate(timeline);
+
+  function test() {
+    const data = jsPsych.data.get().values(); // Convert jsPsych data to an array
+    console.log("All trial data:", data); // Log all trial data to inspect structure
+
+    let test_results = "";
+
+    // Filter out trials that are of type "youtube-button-response"
+    const youtubeTrials = data.filter(trial => trial.trial_type === "youtube-button-response");
+
+    console.log("Filtered YouTube trials:", youtubeTrials); // Log filtered trials
+
+    // Loop through all YouTube trials in the data
+    youtubeTrials.forEach((trial, trialIndex) => {
+
+      if (trial.stimulus) {
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+        if (youtubeRegex.test(trial.stimulus)) {
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Stimulus link is a valid YouTube URL (${trial.stimulus}).</p>`;
+        } else {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Stimulus link is NOT a valid YouTube URL (${trial.stimulus}).</p>`;
+        }
+      } else {
+        test_results += `<p>❌ Trial ${trialIndex + 1}: Missing stimulus link.</p>`;
+      }
+
+      // Test: Validate Trial Duration
+      if (trial.start_time && trial.end_time && trial.trial_duration) {
+        const actualDuration = trial.end_time - trial.start_time;
+
+        console.log(`Trial ${trialIndex + 1}: Actual duration: ${actualDuration}, Expected duration: ${trial.trial_duration}`);
+
+        // Compare the actual duration with the expected trial duration
+        if (Math.abs(actualDuration - trial.trial_duration) < 15) { // Allow a small tolerance for floating-point differences
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Actual duration matches expected duration (${trial.trial_duration} ms).</p>`;
+        } else {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Actual duration (${actualDuration} ms) does NOT match expected duration (${trial.trial_duration} ms).</p>`;
+        }
+      } else {
+        // Provide feedback if required data is missing for duration check
+        if (!trial.start_time) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing start_time.</p>`;
+        }
+        if (!trial.end_time) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing end_time.</p>`;
+        }
+        if (!trial.trial_duration) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing trial_duration.</p>`;
+        }
+      }
+
+      if (trial.playerInfo && trial.log_after_every) {
+        const logInterval = trial.log_after_every; // Convert seconds to milliseconds
+        const playerInfo = trial.playerInfo;
+
+        let consistentLogging = true;
+
+        // Check intervals between consecutive log entries
+        for (let i = 1; i < playerInfo.length; i++) {
+          const interval = playerInfo[i].time_on_client - playerInfo[i - 1].time_on_client;
+          if (Math.abs(interval - logInterval) > 50) { // Allow a small tolerance of 50ms
+            consistentLogging = false;
+            test_results += `<p>❌ Trial ${trialIndex + 1}: Inconsistent logging interval at entry ${i}. Interval: ${interval} ms (Expected: ${logInterval} ms).</p>`;
+          }
+        }
+
+        if (consistentLogging) {
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Logging intervals are consistent (${logInterval} ms).</p>`;
+        }
+      } else {
+        // Provide feedback if required data is missing for logging intervals check
+        if (!trial.playerInfo) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing playerInfo.</p>`;
+        }
+        if (!trial.log_after_every) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing log_after_every parameter.</p>`;
+        }
+      }
+
+      // Update the display with the test results
+      jsPsych.getDisplayElement().innerHTML = test_results;
+    });
+
+    jsPsych.getDisplayElement().innerHTML = test_results;
+  }
 </script>
 
 </html>

@@ -163,6 +163,10 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
                 const trial_data = {
                     response: response,
                     target_presentation_time: target_presentation_time,
+                    path_shape: trial.path_shape,
+                    path_width: trial.path_width,
+                    path_height: trial.path_height,
+                    animation_duration: trial.animation_duration,
                     start_time: start_time,
                     end_time: end_time
                 };
@@ -262,6 +266,10 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
                 rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true)
               },
               target_presentation_time: this.generate_target_presentation_time(trial),
+              path_shape: trial.path_shape,
+              path_width: trial.path_width,
+              path_height: trial.path_height,
+              animation_duration: trial.animation_duration,
               start_time: performance.now(),
               end_time: performance.now() + trial.animation_duration,
             };

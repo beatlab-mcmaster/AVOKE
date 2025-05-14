@@ -62,7 +62,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       log_after_every: {
         type: jspsych.ParameterType.INT,
         pretty_name: "Log after every",
-        default: 5,
+        default: 5000,
       },
       /** If true, the YouTube player controls will be enabled. */
       controls: {
@@ -268,7 +268,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
           } catch (error) {
             console.log("Error on playerInfoStates", error)
           }
-        }, trial.log_after_every*1000)
+        }, trial.log_after_every)
       }
 
       // start time
@@ -306,6 +306,10 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
           stimulus: trial.stimulus,
           rt: rt,
           buttonResponse: response,
+          trial_duration: trial.trial_duration,
+          start_time: start_time,
+          end_time: end_time,
+          log_after_every: trial.log_after_every,
           playerTimestamps: playerTime,
           playerInfo: playerInfoStates,
         };
@@ -414,6 +418,10 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         button: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
         button_press_time: Date.now() + (trial.trial_duration || 1000) // Simulated button press time
         },
+        trial_duration: trial.trial_duration,
+        start_time: Date.now(),
+        end_time: Date.now() + (trial.trial_duration || 1000), // Simulated end time
+        log_after_every: trial.log_after_every,
         playerTimestamps: this.generate_player_timestamps(trial),
         playerInfo: this.generate_player_info(trial)
       };
@@ -449,10 +457,10 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
     
     generate_player_info(trial) {
       const duration = trial.trial_duration || 1000; // Example duration    
-      return this.generate_player_info_states(duration);
+      return this.generate_player_info_states(duration, trial.log_after_every);
     }
     
-    generate_player_info_states(duration) {
+    generate_player_info_states(duration, log_after_every) {
       // Generate simulated player info states
       const playerInfoStates = [];
       let currentTime = Date.now();
@@ -465,7 +473,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
           isAtLiveHead: Math.random() > 0.5, // Random boolean
           duration: duration
         });
-        currentTime += 33; // Log state every 33ms
+        currentTime += log_after_every;
       }
       return playerInfoStates;
     }

@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta charset="UTF-8">
   <script src="https://unpkg.com/jspsych@8.0.0"></script>
   <script src="../src/index.js"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
@@ -13,8 +14,7 @@
 
   const jsPsych = initJsPsych({
     on_finish: function () {
-      // Output the data on the screen
-      jsPsych.data.displayData('json');
+      test();
     }
   });
 
@@ -50,7 +50,52 @@
   };
 
   timeline.push(trial);
-  jsPsych.run(timeline);
+  jsPsych.simulate(timeline);
+
+  function test() {
+    const data = jsPsych.data.get().values(); // Convert jsPsych data to an array
+
+    let test_results = "";
+
+    // Filter out trials that are not of type "fix-point-calibration"
+    const calibrationTrials = data.filter(trial => {
+      return trial.trial_type === "fix-point-calibration";
+    });
+
+    // Loop through all calibration trials in the data
+    calibrationTrials.forEach((trial, trialIndex) => {
+
+      // Check if the trial contains response and presentation data
+      if (trial.response && trial.presentation) {
+        trial.response.forEach((response, index) => {
+          const expectedDirection = trial.presentation[index]?.dir; // Get the expected direction
+          const actualDirection = response.key_press.replace("Arrow", ""); // Remove "Arrow" prefix from key press
+
+          console.log(`Expected direction: ${expectedDirection}, Actual direction: ${actualDirection}`);
+
+          if (expectedDirection && actualDirection.toLowerCase() === expectedDirection.toLowerCase()) {
+            test_results += `<p>✔️ Correct response for target ${index + 1}: Expected ${expectedDirection}, Got ${actualDirection}</p>`;
+          } else {
+            test_results += `<p>❌ Incorrect response for target ${index + 1}: Expected ${expectedDirection}, Got ${actualDirection}</p>`;
+          }
+        });
+      } else {
+        // Provide more specific feedback for missing data
+        if (!trial.response && !trial.presentation) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing both response and presentation data.</p>`;
+        } else if (!trial.response) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing response data.</p>`;
+        } else if (!trial.presentation) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing presentation data.</p>`;
+        }
+      }
+
+      // Update the display with the test results
+      jsPsych.getDisplayElement().innerHTML = test_results;
+    });
+
+    jsPsych.getDisplayElement().innerHTML = test_results;
+  }
 </script>
 
 </html>

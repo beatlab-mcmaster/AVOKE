@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta charset="UTF-8">
   <script src="https://unpkg.com/jspsych@8.0.0"></script>
   <script src="../src/index.js"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
@@ -13,7 +14,7 @@
   const jsPsych = initJsPsych({
     on_finish: function() {
       // Output the data to the screen
-      jsPsych.data.displayData('json');
+      test();
     }
   });
 
@@ -51,7 +52,88 @@
   };
 
   timeline.push(trial_line);
-  jsPsych.run(timeline);
+  jsPsych.simulate(timeline);
+
+  function test() {
+    const data = jsPsych.data.get().values(); // Convert jsPsych data to an array
+
+    let test_results = "";
+
+    // Filter out trials that are of type "smooth-pursuit-calibration"
+    const calibrationTrials = data.filter(trial => {
+      return trial.trial_type === "smooth-pursuit-calibration";
+    });
+
+    // Loop through all calibration trials in the data
+    calibrationTrials.forEach((trial, trialIndex) => {
+
+      // Test 1: Check if the target stays within bounds
+      if (trial.path_width !== undefined && trial.path_height !== undefined && trial.target_presentation_time) {
+        const pathWidth = trial.path_width;
+        const pathHeight = trial.path_height;
+        const targetLocations = trial.target_presentation_time;
+
+        let outOfBounds = false;
+
+        // Check each location in the target presentation time
+        targetLocations.forEach((entry, index) => {
+          const [x, y] = entry.loc; // Extract x and y coordinates
+
+          // Validate x and y coordinates based on path dimensions
+          if (x < 0 || x > pathWidth || (pathHeight > 0 && (y < 0 || y > pathHeight))) {
+            outOfBounds = true;
+            console.log(`Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).`);
+            test_results += `<p>❌ Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).</p>`;
+          }
+        });
+
+        if (!outOfBounds) {
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: All target locations are within bounds.</p>`;
+        }
+      } else {
+        // Provide feedback if required data is missing for bounds check
+        if (trial.path_width === undefined) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing path_width.</p>`;
+        }
+        if (trial.path_height === undefined) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing path_height.</p>`;
+        }
+        if (!trial.target_presentation_time) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing target_presentation_time.</p>`;
+        }
+      }
+
+      // Test 2: Validate animation duration
+      if (trial.start_time && trial.end_time && trial.animation_duration) {
+        const actualDuration = trial.end_time - trial.start_time;
+
+        console.log(`Trial ${trialIndex + 1}: Actual duration: ${actualDuration}, Expected duration: ${trial.animation_duration}`);
+
+        // Compare the actual duration with the expected animation duration
+        if (Math.abs(actualDuration - trial.animation_duration) < 1) { // Allow a small tolerance for floating-point differences
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Actual duration matches expected duration (${trial.animation_duration} ms).</p>`;
+        } else {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Actual duration (${actualDuration} ms) does NOT match expected duration (${trial.animation_duration} ms).</p>`;
+        }
+      } else {
+        // Provide feedback if required data is missing for duration check
+        if (!trial.start_time) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing start_time.</p>`;
+        }
+        if (!trial.end_time) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing end_time.</p>`;
+        }
+        if (!trial.animation_duration) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing animation_duration.</p>`;
+        }
+      }
+
+      // Update the display with the test results
+      jsPsych.getDisplayElement().innerHTML = test_results;
+    });
+
+    jsPsych.getDisplayElement().innerHTML = test_results;
+  }
 </script>
 
 </html>

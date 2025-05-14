@@ -211,7 +211,7 @@ var jsPsychFixPointCalibration = (function (jspsych) {
             const responses = this.generate_responses(trial);
 
             const default_data = {
-                responses: responses,
+                response: responses,
                 presentation: this.generate_presentation(trial),
                 total_wrong_keypresses: responses.reduce((sum, response) => sum + (response.wrong_keypresses || 0), 0),
             };
