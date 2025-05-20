@@ -49,7 +49,11 @@ Parameter | Type | Default Value | Description
 ----------|------|---------------|------------
 using_setup_plugin|boolean|false|If using this extension with the [video-capture-setup plugin](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md), then true.
 default_camera_options|boolean|false|If using default camera parameters, then true.
-jatos|boolean|null|If used in a JATOS experiment, then true. 
+jatos|boolean|null|If used in a JATOS experiment, then true.
+download_local_only|boolean|true|Whether or not the resulting video should be locally downloaded.
+video_width|numeric|640|The width of the video capture in pixels.
+video_height|numeric|480|The height of the video capture in pixels.
+framerate|numeric|26|The frames per second of the video capture.
 
 ### Trial Parameters
 

@@ -160,11 +160,41 @@ var jspsychVideoCaptureSetupPlugin = (function (jspsych) {
                 const end_experiment = () => {
                     alert(`We are not able to fetch your camera stream. Please retry the experiment link after closing all background processes or use a different laptop.`)
                     virtual_window_container.remove();
-                    this.jsPsych.endExperiment("unable to get camera stream", {error_data: "unable to get camera stream"});
+                    this.jsPsych.abortExperiment("unable to get camera stream", {error_data: "unable to get camera stream"});
                 }
             } else {
                 alert("Webcam Extension was not initialized before starting the plugin. Please retry the study or report this error to the researchers.")
             }
+        }
+        simulate(trial, simulation_mode, simulation_options, load_callback) {
+            if (simulation_mode == "data-only") {
+                load_callback();
+                this.simulate_data_only(trial, simulation_options);
+            }
+            if (simulation_mode == "visual") {
+                this.simulate_visual(trial, simulation_options, load_callback);
+            }
+        }
+        simulate_data_only(trial, simulation_options) {
+            const data = this.create_simulation_data(trial, simulation_options);
+            this.jsPsych.finishTrial(data);
+        }
+        simulate_visual(trial, simulation_options, load_callback) {
+            const data = this.create_simulation_data(trial, simulation_options);
+            const display_element = this.jsPsych.getDisplayElement();
+            this.trial(display_element, trial);
+            load_callback();
+            if (data.rt !== null) {
+                this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
+            }
+        }
+        create_simulation_data(trial, simulation_options) {
+            const default_data = {
+                
+            };
+            const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
+            this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
+            return data;
         }
     }
     VideoCaptureSetupPlugin.info = info;

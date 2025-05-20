@@ -41,6 +41,10 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |audioStartTime|numeric|The high resolution timestamp in milliseconds (`'performance.now()'`) that the audio stimuli started playing.|
 |audioEndTime|numeric|The high resolution timestamp in milliseconds (`'performance.now()'`) that the audio stimuli stopped playing.|
 |buttonClickTime|numeric| The high resolution timestamp in milliseconds (`'performance.now()'`) that the participant selected the button.|
+|maintain_aspect_ratio|boolean|Whether or not the aspect ratio for the image is maintained.|
+|stimulus_width|numeric|The width of the image stimulus.|
+|stimulus_height|numeric|The height of the image stimulus.|
+|trial_duration|numeric|The duration of the trial.|
 
 <!-- ## Install
 

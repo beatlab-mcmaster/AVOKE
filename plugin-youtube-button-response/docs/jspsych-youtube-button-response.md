@@ -37,13 +37,18 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 
 | Name      | Type    | Value                                    |
 | --------- | ------- | ---------------------------------------- |
+|stimulus|string|The stimulus link used in the trial.|
 |rt|numeric|The time in milliseconds, between when the trial began and when the participant clicked the button.|
-|playerTimestamps|array of dictionaries|Records every change in the state (playing, paused, buffering, etc.) of the YouTube player, with a timestamp created via `'Date.now()'`.|
-|playerInfo|array of dictionaries|Records YouTube player state every interval of seconds set by `'log_after_every'` with video timestamps, the current time on the client machine using `'Date.now()'`, the current playback time of the video stream, whether the player is at the live head of the stream, and the total duration of the video stream.|
 |buttonResponse|array of button data| Records data about the button described in all following entries.|
 |buttonResponse:condition|string|Depending on the values of the `'user_server_signal'`, `'button_disable_time'`, `'trial_duration'`, and `'response_ends_trial'` parameters, this string will contain which of the aforementioned parameters were used during the trial.|
 |buttonResponse:button|numeric|The array index corresponding to which value in the `'choices'` parameter the participant selected.|
 |buttonResponse:button_press_time|numeric|The time that the button was pressed, determined via `'Date.now()'`.|
+|trial_duration|numeric|The maximum duration set for the trial in milliseconds.|
+|start_time|numeric|A timestamp depicting the start of the trial in milliseconds, obtained using `'performance.now()'`.|
+|end_time|numeric|A timestamp depicting the end of the trial in milliseconds, obtained using `'performance.now()'`.|
+|log_after_every|numeric|The time gap between logged data in the playerInfo dictionary.|
+|playerTimestamps|array of dictionaries|Records every change in the state (playing, paused, buffering, etc.) of the YouTube player, with a timestamp created via `'Date.now()'`.|
+|playerInfo|array of dictionaries|Records YouTube player state every interval of seconds set by `'log_after_every'` with video timestamps, the current time on the client machine using `'Date.now()'`, the current playback time of the video stream, whether the player is at the live head of the stream, and the total duration of the video stream.|
 
 <!-- ## Install
 

@@ -54,6 +54,12 @@
     data.forEach(trial => {
       console.log("Trial data:", trial); // Log each trial's data to verify values
 
+      // Label the trial data using the trial_type field
+      const trialLabel = trial.trial_type ? `Trial Data (${trial.trial_type})` : "Trial Data";
+      test_results += `<details><summary>${trialLabel}</summary>
+        <pre style="text-align:left; font-family:monospace; background:#f8f8f8; padding:8px; border-radius:4px;">${JSON.stringify(trial, null, 2)}</pre>
+      </details>`;
+
       if (trial.stimulus_image) {
         const img = new Image();
         img.src = trial.stimulus_image;
@@ -89,19 +95,19 @@
           jsPsych.getDisplayElement().innerHTML = test_results;
         };
 
-      // Check if audioEndTime - audioStartTime equals trial_duration
-      if (trial.audioEndTime && trial.audioStartTime && trial.trial_duration) {
-        const audioDuration = trial.audioEndTime - trial.audioStartTime;
-        console.log(`Audio duration: ${audioDuration}, Trial duration: ${trial.trial_duration}`);
+        // Check if audioEndTime - audioStartTime equals trial_duration
+        if (trial.audioEndTime && trial.audioStartTime && trial.trial_duration) {
+          const audioDuration = trial.audioEndTime - trial.audioStartTime;
+          console.log(`Audio duration: ${audioDuration}, Trial duration: ${trial.trial_duration}`);
 
-        if (Math.abs(audioDuration - trial.trial_duration) < 16) { // Allow small floating-point differences
-          test_results += `<p>✔️ Audio duration matches trial duration for trial with audio: ${trial.stimulus_audio}</p>`;
+          if (Math.abs(audioDuration - trial.trial_duration) < 16) { // Allow small floating-point differences
+            test_results += `<p>✔️ Audio duration matches trial duration for trial with audio: ${trial.stimulus_audio}</p>`;
+          } else {
+            test_results += `<p>❌ Audio duration does NOT match trial duration for trial with audio: ${trial.stimulus_audio}</p>`;
+          }
         } else {
-          test_results += `<p>❌ Audio duration does NOT match trial duration for trial with audio: ${trial.stimulus_audio}</p>`;
+          test_results += `<p>❌ Missing audio timing data for trial with audio: ${trial.stimulus_audio}</p>`;
         }
-      } else {
-        test_results += `<p>❌ Missing audio timing data for trial with audio: ${trial.stimulus_audio}</p>`;
-      }
 
         img.onerror = function () {
           test_results += `<p>❌ Failed to load image: ${trial.stimulus_image}</p>`;
@@ -111,5 +117,7 @@
         };
       }
     });
+
+    jsPsych.getDisplayElement().innerHTML = test_results;
   }
 </script>

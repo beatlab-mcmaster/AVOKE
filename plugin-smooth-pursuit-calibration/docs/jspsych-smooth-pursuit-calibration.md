@@ -39,7 +39,12 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |target_presentation_time:repetition_elapsed_time|numeric|The time in milliseconds from since the repetition has begun.|
 |target_presentation_time:ratio|numeric|This ratio represents how much of the path the target has progressed through so far.|
 |target_presentation_time:loc|array of numbers|The coordinates of the target on its path based on the ratio value.|
-|start_time|numeric|A high resolution timestamp of the when the animation begins in milliseconds, obtained via `'performance.now()'`.| 
+|path_shape|string|The path shape that the target takes.|
+|path_width|numeric|The width of the target's path in pixels.|
+|path_height|numeric|The height of the target's path in pixels.|
+|animation_duration|numeric|The time length that the target takes to complete its path.|
+|start_time|numeric|A high resolution timestamp of the when the animation begins in milliseconds, obtained via `'performance.now()'`.|
+|end_time|numeric|A high resolution timestamp of the when the animation ends in milliseconds, obtained via `'performance.now()'`.
 
 <!-- ## Install
 
