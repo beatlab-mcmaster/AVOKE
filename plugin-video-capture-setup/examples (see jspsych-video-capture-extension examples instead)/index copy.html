@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Video Capture Setup Example</title>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <!-- Example extension the plugin was designed to work with -->
+  <script src="../../extension-video-capture/src/index.js"></script> 
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <script src="../src/index.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body>
+  <script>
+    const jsPsych = initJsPsych({
+      on_finish: function () {
+        //test();
+      },
+      // set up extension
+      extensions: [{ type: jsPsychVideoCapture,
+         params:{
+          "using_setup_plugin": true,
+          "default_camera_options": true,
+          "timeslice": null,
+          "download_local_only": true,
+          "video_width": 640, 
+          "video_height": 480, 
+          "framerate": 26 //min framerate to allow
+         }
+       }],
+    });
+
+    let timeline = [];
+
+    var trial1 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the video-capture trial demo.</p>',
+      choices: ['Continue'],
+      };
+    timeline.push(trial1);
+
+    const trial = {
+      type: jspsychVideoCaptureSetupPlugin, // plugin designed with this extension in mind
+      instructions: `Below you'll see the output of recorded video. Move your camera to obtain the desired view and press Continue.`, // plugin parameter
+      error_message: `The camera capture cannot be retrieved. Please try another device.`, // plugin parameter
+      button_text: "Continue", // plugin parameter
+      extensions: [{ type: jsPsychVideoCapture, params:{'setup': true} }, 
+      ],
+    };
+    timeline.push(trial);
+
+    const trial2 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p>Your webcam video is currently being recorded using the settings from the previous trial.</p>
+                  <p>Press the <strong>Finish</strong> button to stop the recording and complete the demo.</p>
+                  <p>By default, the recorded video will be downloaded at the end of the study.</p>
+                  <p>Thank you for your participation!</p>`,
+      choices: ['Finish'],
+      extensions: [{ type: jsPsychVideoCapture, params:{'filename': "demo"} }] // extension with the filename parameter
+    }
+
+    timeline.push(trial2);
+    jsPsych.run(timeline);
+
+    function test() {
+      const data = jsPsych.data.get().values();
+      let test_results = "";
+
+      // Find the first trial that contains webcam device info
+      const webcamTrial = data.find(trial => trial.webcam_device_ids);
+
+      // Display trial data for reference
+      if (webcamTrial) {
+        test_results += `<details><summary>Trial Data (video-capture-setup)</summary>
+          <pre style="text-align:left; font-family:monospace; background:#f8f8f8; padding:8px; border-radius:4px;">${JSON.stringify(webcamTrial, null, 2)}</pre>
+        </details>`;
+      }
+
+      // Get the plugin-enumerated device count
+      let pluginDeviceCount = 0;
+      let pluginDeviceList = [];
+      if (webcamTrial && webcamTrial.webcam_device_ids) {
+        pluginDeviceList = webcamTrial.webcam_device_ids;
+        pluginDeviceCount = Array.isArray(pluginDeviceList) ? pluginDeviceList.length : 0;
+      } else {
+        test_results += `<p>❌ No webcam_device_ids found in plugin data.</p>`;
+      }
+
+      // Now enumerate actual video devices using the browser API
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        const videoDevices = devices.filter(device => device.kind === "videoinput");
+        const actualDeviceCount = videoDevices.length;
+
+        test_results += `<p>Plugin enumerated video devices: <b>${pluginDeviceCount}</b> (${pluginDeviceList.join(", ")})</p>`;
+        test_results += `<p>Browser detected video devices: <b>${actualDeviceCount}</b> (${videoDevices.map(d => d.label || d.deviceId).join(", ")})</p>`;
+
+        if (pluginDeviceCount === actualDeviceCount) {
+          test_results += `<p>✔️ The plugin enumerated the same number of video devices as the browser detected.</p>`;
+        } else {
+          test_results += `<p>❌ Mismatch: Plugin enumerated <b>${pluginDeviceCount}</b> devices, but browser detected <b>${actualDeviceCount}</b> devices.</p>`;
+        }
+
+        jsPsych.getDisplayElement().innerHTML = test_results;
+      }).catch(err => {
+        test_results += `<p>❌ Could not enumerate media devices: ${err.message}</p>`;
+        jsPsych.getDisplayElement().innerHTML = test_results;
+      });
+    }
+  </script>
+</body>
+
+</html>

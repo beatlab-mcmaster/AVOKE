@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="../src/index.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body></body>
+<script>
+
+  const jsPsych = initJsPsych({
+    on_finish: function () {
+      //test();
+    }
+  });
+
+  let timeline = [];
+
+  var trial1 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the fix-point-calibration trial demo. <br> Your task is to click the arrow key corresponding to the direction of the letter E. </p> <img src="./fixedFigureALT.svg" alt="Example Image" style="max-width:100%; height:auto;">',
+  choices: ['Continue'],
+  };
+  timeline.push(trial1);
+
+  // drawing function to be used in the calibration trial, draws the target 'E' on the canvas
+  function drawE(c, target, location, text_size, degree = 0) {
+    let ctx = c.getContext("2d");
+    ctx.clearRect(0, 0, c.width, c.height)
+    ctx.save()
+    ctx.translate(location[0], location[1]);
+    ctx.rotate((degree * Math.PI) / 180)
+    ctx.translate(-location[0], -location[1]);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = text_size + "px Arial";
+    ctx.fillText(target, location[0], location[1]);
+    ctx.restore()
+  };
+
+  const trial = {
+    type: jsPsychFixPointCalibration,
+    stimulus: drawE, // reference to the drawing function
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120], // size of the canvas with 120px margin
+    grid_4x4: false, // whether to use the 4x4 grid
+  };
+
+  timeline.push(trial);
+  jsPsych.run(timeline);
+
+  function test() {
+    const data = jsPsych.data.get().values(); // Convert jsPsych data to an array
+
+    let test_results = "";
+
+    // Filter out trials that are of type "fix-point-calibration"
+    const calibrationTrials = data.filter(trial => trial.trial_type === "fix-point-calibration");
+
+    // Loop through all calibration trials in the data
+    calibrationTrials.forEach((trial, trialIndex) => {
+      // Add trial data as a collapsible section with left-aligned, indented JSON
+      const trialLabel = trial.trial_type ? `Trial Data (${trial.trial_type})` : "Trial Data";
+      test_results += `<details><summary>${trialLabel} #${trialIndex + 1}</summary>
+        <pre style="text-align:left; font-family:monospace; background:#f8f8f8; padding:8px; border-radius:4px;">${JSON.stringify(trial, null, 2)}</pre>
+      </details>`;
+
+      // Check if the trial contains response and presentation data
+      if (trial.response && trial.presentation) {
+        trial.response.forEach((response, index) => {
+          const expectedDirection = trial.presentation[index]?.dir; // Get the expected direction
+          const actualDirection = response.key_press.replace("Arrow", ""); // Remove "Arrow" prefix from key press
+
+          console.log(`Expected direction: ${expectedDirection}, Actual direction: ${actualDirection}`);
+
+          if (expectedDirection && actualDirection.toLowerCase() === expectedDirection.toLowerCase()) {
+            test_results += `<p>✔️ Correct response for target ${index + 1}: Expected ${expectedDirection}, Got ${actualDirection}</p>`;
+          } else {
+            test_results += `<p>❌ Incorrect response for target ${index + 1}: Expected ${expectedDirection}, Got ${actualDirection}</p>`;
+          }
+        });
+      } else {
+        // Provide more specific feedback for missing data
+        if (!trial.response && !trial.presentation) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing both response and presentation data.</p>`;
+        } else if (!trial.response) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing response data.</p>`;
+        } else if (!trial.presentation) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing presentation data.</p>`;
+        }
+      }
+    });
+
+    // Update the display with the test results
+    jsPsych.getDisplayElement().innerHTML = test_results;
+  }
+</script>
+
+</html>
