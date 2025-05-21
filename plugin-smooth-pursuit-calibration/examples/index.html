@@ -52,7 +52,7 @@
   };
 
   timeline.push(trial_line);
-  jsPsych.run(timeline);
+  jsPsych.simulate(timeline);
 
   function test() {
     const data = jsPsych.data.get().values(); // Convert jsPsych data to an array
