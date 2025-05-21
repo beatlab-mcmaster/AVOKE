@@ -150,11 +150,28 @@ var jspsychVideoCaptureSetupPlugin = (function (jspsych) {
                 const end_trial = () => {
                     this.jsPsych.pluginAPI.clearAllTimeouts();
 
-                    const trial_data = { webcam_params: JSON.stringify(this.webcamRecord.streamObj.getVideoTracks()[0].getSettings()) };
-                    // clear the display
-                    display_element.innerHTML = "";
-                    // move on to the next trial
-                    this.jsPsych.finishTrial(trial_data);
+                    // Get current webcam settings
+                    const webcam_params = JSON.stringify(this.webcamRecord.streamObj.getVideoTracks()[0].getSettings());
+
+                    // Get all connected video devices
+                    navigator.mediaDevices.enumerateDevices().then(devices => {
+                        const video_devices = devices
+                            .filter(device => device.kind === "videoinput")
+                            .map(device => ({
+                                deviceId: device.deviceId,
+                                label: device.label
+                            }));
+
+                        const trial_data = {
+                            webcam_params: webcam_params,
+                            all_video_devices: JSON.stringify(video_devices)
+                        };
+
+                        // clear the display
+                        display_element.innerHTML = "";
+                        // move on to the next trial
+                        this.jsPsych.finishTrial(trial_data);
+                    });
                 };
 
                 const end_experiment = () => {
@@ -167,13 +184,60 @@ var jspsychVideoCaptureSetupPlugin = (function (jspsych) {
             }
         }
         simulate(trial, simulation_mode, simulation_options, load_callback) {
-            if (simulation_mode == "data-only") {
-                load_callback();
-                this.simulate_data_only(trial, simulation_options);
+            // Mock the mediaRecorder on both the plugin and the extension to prevent errors
+            this.mediaRecorder = {
+                stop: function() {
+                    console.log("Simulated mediaRecorder.stop() called (plugin).");
+                }
+            };
+            if (this.webcamRecord) {
+                this.webcamRecord.mediaRecorder = {
+                    stop: function() {
+                        console.log("Simulated mediaRecorder.stop() called (extension).");
+                    }
+                };
             }
-            if (simulation_mode == "visual") {
-                this.simulate_visual(trial, simulation_options, load_callback);
-            }
+
+            // Get real video devices (if available)
+            navigator.mediaDevices.enumerateDevices().then(devices => {
+                const video_devices = devices
+                    .filter(device => device.kind === "videoinput")
+                    .map(device => ({
+                        deviceId: device.deviceId,
+                        label: device.label
+                    }));
+
+                // Patch create_simulation_data to include real all_video_devices
+                const originalCreateSimulationData = this.create_simulation_data;
+                this.create_simulation_data = function(trial, simulation_options) {
+                    const mockWebcamSettings = {
+                        deviceId: "simulated-device-id",
+                        width: 640,
+                        height: 480,
+                        frameRate: 30,
+                        facingMode: "user"
+                    };
+                    const default_data = {
+                        choice: trial.button_text,
+                        webcam_params: JSON.stringify(mockWebcamSettings),
+                        all_video_devices: JSON.stringify(video_devices)
+                    };
+                    const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
+                    this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
+                    return data;
+                };
+
+                if (simulation_mode == "data-only") {
+                    load_callback();
+                    this.simulate_data_only(trial, simulation_options);
+                }
+                if (simulation_mode == "visual") {
+                    this.simulate_visual(trial, simulation_options, load_callback);
+                }
+
+                // Restore original create_simulation_data if needed elsewhere
+                this.create_simulation_data = originalCreateSimulationData;
+            });
         }
         simulate_data_only(trial, simulation_options) {
             const data = this.create_simulation_data(trial, simulation_options);
@@ -189,8 +253,18 @@ var jspsychVideoCaptureSetupPlugin = (function (jspsych) {
             }
         }
         create_simulation_data(trial, simulation_options) {
+            // Mock webcam settings as would be returned by getSettings()
+            const mockWebcamSettings = {
+                deviceId: "simulated-device-id",
+                width: 640,
+                height: 480,
+                frameRate: 30,
+                facingMode: "user"
+            };
+
             const default_data = {
-                
+                choice: trial.button_text,
+                webcam_params: JSON.stringify(mockWebcamSettings)
             };
             const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
             this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
