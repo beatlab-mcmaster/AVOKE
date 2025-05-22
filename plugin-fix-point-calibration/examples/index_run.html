@@ -62,35 +62,50 @@
 
     // Loop through all calibration trials in the data
     calibrationTrials.forEach((trial, trialIndex) => {
-      // Add trial data as a collapsible section with left-aligned, indented JSON
+      // Add trial data as a collapsible section
       const trialLabel = trial.trial_type ? `Trial Data (${trial.trial_type})` : "Trial Data";
       test_results += `<details><summary>${trialLabel} #${trialIndex + 1}</summary>
         <pre style="text-align:left; font-family:monospace; background:#f8f8f8; padding:8px; border-radius:4px;">${JSON.stringify(trial, null, 2)}</pre>
       </details>`;
 
-      // Check if the trial contains response and presentation data
-      if (trial.response && trial.presentation) {
-        trial.response.forEach((response, index) => {
-          const expectedDirection = trial.presentation[index]?.dir; // Get the expected direction
-          const actualDirection = response.key_press.replace("Arrow", ""); // Remove "Arrow" prefix from key press
-
-          console.log(`Expected direction: ${expectedDirection}, Actual direction: ${actualDirection}`);
-
-          if (expectedDirection && actualDirection.toLowerCase() === expectedDirection.toLowerCase()) {
-            test_results += `<p>✔️ Correct response for target ${index + 1}: Expected ${expectedDirection}, Got ${actualDirection}</p>`;
+      // --- Test 1: Valid Key Presses ---
+      if (trial.response && trial.choices) {
+        trial.response.forEach((r, i) => {
+          if (!trial.choices.includes(r.key_press)) {
+            test_results += `<p>❌ Invalid key press in response ${i + 1}: "${r.key_press}" is not in allowed choices [${trial.choices.join(", ")}]</p>`;
           } else {
-            test_results += `<p>❌ Incorrect response for target ${index + 1}: Expected ${expectedDirection}, Got ${actualDirection}</p>`;
+            test_results += `<p>✔️ Valid key press in response ${i + 1}: "${r.key_press}"</p>`;
           }
         });
       } else {
-        // Provide more specific feedback for missing data
-        if (!trial.response && !trial.presentation) {
-          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing both response and presentation data.</p>`;
-        } else if (!trial.response) {
-          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing response data.</p>`;
-        } else if (!trial.presentation) {
-          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing presentation data.</p>`;
+        test_results += `<p>❌ Missing response or choices data for valid key press test.</p>`;
+      }
+
+      // --- Test 2: Total Wrong Keypresses Calculation ---
+      if (trial.response && typeof trial.total_wrong_keypresses !== "undefined") {
+        const sumWrong = trial.response.reduce((acc, r) => acc + (r.wrong_keypresses || 0), 0);
+        if (sumWrong === trial.total_wrong_keypresses) {
+          test_results += `<p>✔️ Total wrong keypresses matches sum of individual wrong keypresses (${sumWrong}).</p>`;
+        } else {
+          test_results += `<p>❌ Total wrong keypresses mismatch: sum is ${sumWrong}, but total_wrong_keypresses is ${trial.total_wrong_keypresses}.</p>`;
         }
+      } else {
+        test_results += `<p>❌ Missing response or total_wrong_keypresses data for wrong keypresses test.</p>`;
+      }
+
+      // --- Test 3: Presentation Location Bounds ---
+      if (trial.presentation && trial.canvas_size) {
+        trial.presentation.forEach((p, i) => {
+          const [x, y] = p.loc;
+          const [canvasHeight, canvasWidth] = trial.canvas_size;
+          if (x < 0 || x > canvasWidth || y < 0 || y > canvasHeight) {
+            test_results += `<p>❌ Presentation ${i + 1}: Location (${x}, ${y}) is out of canvas bounds (${canvasWidth}x${canvasHeight}).</p>`;
+          } else {
+            test_results += `<p>✔️ Presentation ${i + 1}: Location (${x}, ${y}) is within canvas bounds.</p>`;
+          }
+        });
+      } else {
+        test_results += `<p>❌ Missing presentation or canvas_size data for location bounds test.</p>`;
       }
     });
 

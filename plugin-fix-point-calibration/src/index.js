@@ -125,7 +125,9 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 const trial_data = {
                     response: responses,
                     presentation: target_presentation_time,
-                    total_wrong_keypresses: this.total_wrong_keypresses
+                    total_wrong_keypresses: this.total_wrong_keypresses,
+                    choices: trial.choices,
+                    canvas_size: trial.canvas_size,
                 };
                 // clear the display
                 display_element.innerHTML = "";
@@ -214,6 +216,8 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 response: responses,
                 presentation: this.generate_presentation(trial),
                 total_wrong_keypresses: responses.reduce((sum, response) => sum + (response.wrong_keypresses || 0), 0),
+                choices: trial.choices,
+                canvas_size: trial.canvas_size,
             };
             const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
             this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);

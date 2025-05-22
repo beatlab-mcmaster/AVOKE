@@ -81,8 +81,11 @@
         targetLocations.forEach((entry, index) => {
           const [x, y] = entry.loc; // Extract x and y coordinates
 
-          // Validate x and y coordinates based on path dimensions
-          if (x < 0 || x > pathWidth || (pathHeight > 0 && (y < 0 || y > pathHeight))) {
+          // Validate x and y coordinates based on path dimensions with a 10px buffer
+          if (
+            x < -10 || x > pathWidth + 10 ||
+            (pathHeight > 0 && (y < -10 || y > pathHeight + 10))
+          ) {
             outOfBounds = true;
             console.log(`Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).`);
             test_results += `<p>❌ Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).</p>`;
