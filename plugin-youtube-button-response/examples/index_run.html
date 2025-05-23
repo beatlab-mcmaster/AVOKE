@@ -75,9 +75,9 @@
       if (trial.start_time && trial.end_time && trial.trial_duration) {
         const actualDuration = trial.end_time - trial.start_time;
         if (Math.abs(actualDuration - trial.trial_duration) < 15) { // Allow a small tolerance
-          test_results += `<p>✔️ Trial ${trialIndex + 1}: Actual duration matches expected duration (${trial.trial_duration} ms).</p>`;
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Actual duration matches expected duration (${trial.trial_duration} ms) (Try this while running the experiment instead of simulating).</p>`;
         } else {
-          test_results += `<p>❌ Trial ${trialIndex + 1}: Actual duration (${actualDuration} ms) does NOT match expected duration (${trial.trial_duration} ms).</p>`;
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Actual duration (${actualDuration} ms) does NOT match expected duration (${trial.trial_duration} ms) (Try this while running the experiment instead of simulating).</p>`;
         }
       } else {
         if (!trial.start_time) {
@@ -99,11 +99,11 @@
           const interval = playerInfo[i].time_on_client - playerInfo[i - 1].time_on_client;
           if (Math.abs(interval - logInterval) > 50) { // Allow a small tolerance of 50ms
             consistentLogging = false;
-            test_results += `<p>❌ Trial ${trialIndex + 1}: Inconsistent logging interval at entry ${i}. Interval: ${interval} ms (Expected: ${logInterval} ms).</p>`;
+            test_results += `<p>❌ Trial ${trialIndex + 1}: Inconsistent logging interval at entry ${i}. Interval: ${interval} ms (Expected: ${logInterval} ms) (Try this while running the experiment instead of simulating).</p>`;
           }
         }
         if (consistentLogging) {
-          test_results += `<p>✔️ Trial ${trialIndex + 1}: Logging intervals are consistent (${logInterval} ms).</p>`;
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Logging intervals are consistent (${logInterval} ms) (Try this while running the experiment instead of simulating).</p>`;
         }
       } else {
         if (!trial.playerInfo) {
@@ -113,10 +113,25 @@
           test_results += `<p>❌ Trial ${trialIndex + 1}: Missing log_after_every parameter.</p>`;
         }
       }
+
+      // Player Timestamps Sequence Test
+      if (trial.playerTimestamps && Array.isArray(trial.playerTimestamps) && trial.playerTimestamps.length > 1) {
+        let timestampsInOrder = true;
+        for (let i = 1; i < trial.playerTimestamps.length; i++) {
+          if (trial.playerTimestamps[i].time < trial.playerTimestamps[i - 1].time) {
+            timestampsInOrder = false;
+            test_results += `<p>❌ Trial ${trialIndex + 1}: playerTimestamps not in order at entry ${i} (${trial.playerTimestamps[i].time} < ${trial.playerTimestamps[i - 1].time}).</p>`;
+          }
+        }
+        if (timestampsInOrder) {
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: playerTimestamps are in ascending order.</p>`;
+        }
+      } else {
+        test_results += `<p>❌ Trial ${trialIndex + 1}: Missing or insufficient playerTimestamps data for sequence test.</p>`;
+      }
     });
 
     jsPsych.getDisplayElement().innerHTML = test_results;
   }
 </script>
-
 </html>

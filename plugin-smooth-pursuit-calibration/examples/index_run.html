@@ -71,6 +71,7 @@
         <pre style="text-align:left; font-family:monospace; background:#f8f8f8; padding:8px; border-radius:4px;">${JSON.stringify(trial, null, 2)}</pre>
       </details>`;
 
+      // --- Bounds Test ---
       if (trial.path_width !== undefined && trial.path_height !== undefined && trial.target_presentation_time) {
         const pathWidth = trial.path_width;
         const pathHeight = trial.path_height;
@@ -82,11 +83,8 @@
         targetLocations.forEach((entry, index) => {
           const [x, y] = entry.loc; // Extract x and y coordinates
 
-          // Validate x and y coordinates based on path dimensions with a 10px buffer
-          if (
-            x < -10 || x > pathWidth + 10 ||
-            (pathHeight > 0 && (y < -10 || y > pathHeight + 10))
-          ) {
+          // Validate x and y coordinates based on path dimensions
+          if (x < 0 || x > pathWidth || (pathHeight > 0 && (y < 0 || y > pathHeight))) {
             outOfBounds = true;
             console.log(`Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).`);
             test_results += `<p>❌ Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).</p>`;
@@ -109,6 +107,7 @@
         }
       }
 
+      // --- Animation Duration Test ---
       if (trial.start_time && trial.end_time && trial.animation_duration) {
         const actualDuration = trial.end_time - trial.start_time;
 
@@ -116,9 +115,9 @@
 
         // Compare the actual duration with the expected animation duration
         if (Math.abs(actualDuration - trial.animation_duration) < 3) { // Allow a small tolerance for floating-point differences
-          test_results += `<p>✔️ Trial ${trialIndex + 1}: Actual duration matches expected duration (${trial.animation_duration} ms).</p>`;
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Actual duration matches expected duration (${trial.animation_duration} ms) (Try this while running the experiment instead of simulating).</p>`;
         } else {
-          test_results += `<p>❌ Trial ${trialIndex + 1}: Actual duration (${actualDuration} ms) does NOT match expected duration (${trial.animation_duration} ms).</p>`;
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Actual duration (${actualDuration} ms) does NOT match expected duration (${trial.animation_duration} ms) (Try this while running the experiment instead of simulating).</p>`;
         }
       } else {
         // Provide feedback if required data is missing for duration check
@@ -132,11 +131,64 @@
           test_results += `<p>❌ Trial ${trialIndex + 1}: Missing animation_duration.</p>`;
         }
       }
+
+      // --- Response Key Validity Test ---
+      if (
+        trial.response &&
+        trial.response.key !== undefined &&
+        trial.choices &&
+        trial.choices !== "ALL_KEYS" &&
+        trial.choices !== "NO_KEYS"
+      ) {
+        if (!trial.choices.includes(trial.response.key)) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Response key "${trial.response.key}" is not in allowed choices [${trial.choices.join(", ")}].</p>`;
+        } else {
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: Response key "${trial.response.key}" is valid.</p>`;
+        }
+      }
+
+      // --- Repetition Number Range Test ---
+      if (trial.target_presentation_time && typeof trial.repetitions_set !== "undefined") {
+        let allRepsValid = true;
+        trial.target_presentation_time.forEach((entry, i) => {
+          if (entry.repetition < 1 || entry.repetition > trial.repetitions_set) {
+            allRepsValid = false;
+            test_results += `<p>❌ Trial ${trialIndex + 1}, Target ${i + 1}: Repetition number ${entry.repetition} is out of range (1 to ${trial.repetitions_set}).</p>`;
+          }
+        });
+        if (allRepsValid && trial.target_presentation_time.length > 0) {
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: All repetition numbers are within the valid range (1 to ${trial.repetitions_set}).</p>`;
+        }
+        if (trial.target_presentation_time.length === 0) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: target_presentation_time is empty.</p>`;
+        }
+      } else {
+        if (!trial.target_presentation_time) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing target_presentation_time for repetition range test.</p>`;
+        }
+        if (typeof trial.repetitions_set === "undefined") {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing repetitions_set parameter for repetition range test.</p>`;
+        }
+      }
+
+      // --- Ratio Range Test ---
+      if (trial.target_presentation_time) {
+        let allRatiosValid = true;
+        trial.target_presentation_time.forEach((entry, i) => {
+          if (entry.ratio < 0 || entry.ratio > 1) {
+            allRatiosValid = false;
+            test_results += `<p>❌ Trial ${trialIndex + 1}, Target ${i + 1}: Ratio ${entry.ratio} is out of bounds (should be between 0 and 1).</p>`;
+          }
+        });
+        if (allRatiosValid) {
+          test_results += `<p>✔️ Trial ${trialIndex + 1}: All ratios are within the valid range [0, 1].</p>`;
+        }
+      }
+
     });
 
     // Update the display with the test results
     jsPsych.getDisplayElement().innerHTML = test_results;
   }
 </script>
-
 </html>
