@@ -14,9 +14,29 @@
 
 <body>
   <script>
+    function runTestAfterPermissions() {
+      if (!sessionStorage.getItem('video_permission_refreshed')) {
+        // Request camera permissions
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(stream => {
+            // Permissions granted, stop the stream immediately
+            stream.getTracks().forEach(track => track.stop());
+            sessionStorage.setItem('video_permission_refreshed', 'true');
+            location.reload();
+          })
+          .catch(err => {
+            // Permissions denied or error
+            document.body.innerHTML = `<p>❌ Could not access camera: ${err.message}</p>`;
+          });
+      } else {
+        // Permissions already handled, run your test or continue as normal
+        test();
+      }
+    }
+
     const jsPsych = initJsPsych({
       on_finish: function () {
-        test();
+        runTestAfterPermissions();
       },
       // set up extension
       extensions: [{ type: jsPsychVideoCapture,
@@ -108,6 +128,10 @@
         jsPsych.getDisplayElement().innerHTML = test_results;
       });
     }
+
+    if (!performance.getEntriesByType("navigation")[0].type.startsWith("reload")) {
+  sessionStorage.removeItem('video_permission_refreshed');
+}
   </script>
 </body>
 
