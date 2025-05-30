@@ -43,10 +43,6 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
       },
       /** The HTML for creating button. Can create own style. Use the "%choice%" string to indicate where the label from the choices parameter should be inserted. */
       button_html: {
-        // type: jspsych.ParameterType.HTML_STRING,
-        // pretty_name: "Button HTML",
-        // default: ['<button class="form-btn">%choice%</button>'],
-        // array: true,
         type: jspsych.ParameterType.FUNCTION,
         default: function (choice, choice_index) {
           return '<button class="form-btn" id="button-' + choice_index + '" style="visibility: hidden;">' + choice + '</button>';
@@ -185,35 +181,6 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
           canvas.width = width;
         };
         getHeightWidth(); // call now, in case image loads immediately (is cached)
-
-        // //create buttons
-        // let buttons = [];
-        // if (Array.isArray(trial.button_html)) {
-        //   if (trial.button_html.length == trial.choices.length) {
-        //     buttons = trial.button_html;
-        //   } else {
-        //     console.error("Error in audiovisual-button-response plugin. The length of the button_html array does not equal the length of the choices array");
-        //   }
-        // } else {
-        //   for (let i = 0; i < trial.choices.length; i++) {
-        //     buttons.push(trial.button_html);
-        //   }
-        // }
-        // let btngroup_div = document.createElement("div");
-        // btngroup_div.id = "jspsych-av-button-response-btngroup";
-        // html = "";
-        // for (let i = 0; i < trial.choices.length; i++) {
-        //   let str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-        //   html +=
-        //     '<div class="jspsych-av-button-response-button" style="border: none;" id="jspsych-av-button-response-button-' +
-        //     i +
-        //     '" data-choice="' +
-        //     i +
-        //     '">' +
-        //     str +
-        //     "</div>";
-        // }
-        // btngroup_div.innerHTML = html;
 
       // display buttons
       const buttonGroupElement = document.createElement("div");
@@ -433,36 +400,6 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
           end_trial();
         }
       }
-      // function to end trial when it is time
-      // const end_trial = () => {
-      //   // kill any remaining setTimeout handlers
-      //   this.jsPsych.pluginAPI.clearAllTimeouts();
-      //   // stop the audio file if it is playing
-      //   // remove end event listeners if they exist
-      //   response.audioEndTime = performance.now()
-      //   if (context !== null) {
-      //     this.audio.stop();
-      //   }
-      //   this.audio.removeEventListener("ended", end_trial);
-      //   this.audio.removeEventListener("ended", enable_buttons);
-      //   // gather the data to store for the trial
-      //   const trial_data = {
-      //     rt: response.rt,
-      //     stimulus_audio: trial.audio_stimulus,
-      //     stimulus_image: trial.image_stimulus,
-      //     response: response.button,
-      //     imageDisplayTime: response.imageDisplayTime,
-      //     audioStartTime: response.audioStartTime,
-      //     audioEndTime: response.audioEndTime,
-      //     buttonClickTime: response.buttonClickTime,
-      //   };
-      //   console.log("trial_data", JSON.stringify(trial_data))
-      //   // clear the display
-      //   display_element.innerHTML = "";
-      //   // move on to the next trial
-      //   this.jsPsych.finishTrial(trial_data);
-      //   trial_complete();
-      // };
 
       function button_response(e) {
         let choice = e.currentTarget.getAttribute("data-choice"); // don't use dataset for jsdom compatibility

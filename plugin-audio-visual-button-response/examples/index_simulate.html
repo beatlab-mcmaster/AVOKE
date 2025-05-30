@@ -129,18 +129,18 @@
       img.src = imgSrc;
     }
 
-    // --- Audio Duration Test ---
-    // Check if audioEndTime - audioStartTime equals trial_duration
-    if (trial.audioEndTime && trial.audioStartTime && trial.trial_duration) {
-      const audioDuration = trial.audioEndTime - trial.audioStartTime;
-      if (Math.abs(audioDuration - trial.trial_duration) < 16) {
-        test_results += `<p>✔️ Audio duration matches trial duration for trial with audio: ${audioSrc} (Try this while running the experiment instead of simulating)</p>`;
-      } else {
-        test_results += `<p>❌ Audio duration does NOT match trial duration for trial with audio: ${audioSrc} (Try this while running the experiment instead of simulating)</p>`;
-      }
-    } else {
-      test_results += `<p>❌ Missing audio timing data for trial with audio: ${audioSrc}</p>`;
-    }
+    // // --- Audio Duration Test ---
+    // // Check if audioEndTime - audioStartTime equals trial_duration
+    // if (trial.audioEndTime && trial.audioStartTime && trial.trial_duration) {
+    //   const audioDuration = trial.audioEndTime - trial.audioStartTime;
+    //   if (Math.abs(audioDuration - trial.trial_duration) < 16) {
+    //     test_results += `<p>✔️ Audio duration matches trial duration for trial with audio: ${audioSrc} (Try this while running the experiment instead of simulating)</p>`;
+    //   } else {
+    //     test_results += `<p>❌ Audio duration does NOT match trial duration for trial with audio: ${audioSrc} (Try this while running the experiment instead of simulating)</p>`;
+    //   }
+    // } else {
+    //   test_results += `<p>❌ Missing audio timing data for trial with audio: ${audioSrc}</p>`;
+    // }
   });
 
   jsPsych.getDisplayElement().innerHTML = test_results;
