@@ -27,16 +27,31 @@
       margin-top: 40px;
       margin-bottom: 10px;
       font-weight: bold;
-      color: #2e8b57;
       letter-spacing: 1px;
       font-size: 2rem; /* Increase section title size */
     }
     .avoke-about {
       font-size: 18px;
       line-height: 1.6;
+      margin-right: 5vw;
     }
     .w3-xxxlarge {
       font-size: 3.5rem !important; /* Increase main title size */
+    }
+    .w3-top .w3-bar {
+      background-color: #7b023e !important;
+    }
+    .w3-bar-item.w3-button.w3-theme-l1 {
+      background-color: #4d565d !important;
+      color: #fff !important;
+    }
+    .w3-container.w3-theme-l1 {
+      background-color: #7b023e !important;
+      color: #fff !important;
+    }
+    .w3-container.w3-theme-l2 {
+      background-color: #4d565d !important;
+      color: #fff !important;
     }
   </style>
 </head>
@@ -65,11 +80,13 @@
 <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
 <!-- Main content -->
-<div class="w3-main" style="margin-left:250px">
+<div class="w3-main" style="margin-left:calc(250px + 50px); margin-right:50px;">
 
   <div class="w3-container w3-padding-32">
     <header class="w3-center w3-padding-32">
-      <h1 class="w3-xxxlarge" style="color:#2e8b57;">AVOKE</h1>
+<h1 class="w3-xxxlarge" style="color:#2e8b57;">
+  <img src="assets/AVOKE.png" alt="AVOKE Logo" style="max-width: 100%; height: 160px;">
+</h1>
       
     </header>
 
@@ -89,136 +106,120 @@
 
     <!-- Plugin Demos Section -->
     <div id="plugin-demos">
-      <div class="avoke-section-title">Plugin Demos</div>
-      
+
       <!-- Audio-visual-button-response Demo -->
-      <div class="w3-row-padding" style="display: flex; align-items: stretch; margin-bottom:48px;">
-        <div style="flex:1; min-width:250px; display: flex; flex-direction: column; justify-content: center;">
-          <a class="avoke-link" href="plugin-audio-visual-button-response/examples/index_run.html" target="_blank">
-            Audio-visual-button-response Demo
-          </a>
-          <p class="avoke-about" style="margin-left:10px; margin-bottom:0;">
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+        <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+          <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+            Audio-visual-button-response
+          </h2>
+          <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
             This plugin allows for displaying an image and playing an audio file simultaneously, and records responses generated with a button click. The included parameters allow for adjustment of trial duration, visual stimuli size, time delay before the button can be interacted with and more. The trial can be set to end when a button response is received or after the audio stimulus is finished playing.
           </p>
+          <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+            <a href="plugin-audio-visual-button-response/examples/index_run.html" target="_blank" class="w3-button w3-green w3-large" style="min-width:100px;">Demo</a>
+            <a href="plugin-audio-visual-button-response/examples/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
+          </div>
         </div>
-        <div style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center;">
-          <img src="assets/audiovisualFigureALT.svg" alt="Audio-visual-button-response Demo"
-     style="width:175%; max-width:clamp(0px, 90vw, 427px); margin-left:24px; height:auto;">
+        <!-- Audio-visual-button-response Demo image -->
+        <div style="flex:0 0 320px; max-width:320px; min-width:0; display:flex; align-items:center; justify-content:center; padding-left:48px;">
+          <img src="assets/audiovisualFigureALT.svg" alt="Audio-visual-button-response Demo" style="width:100%; max-width:320px; height:auto;">
         </div>
       </div>
 
       <!-- Fixed-point-calibration Demo -->
-      <div class="w3-row-padding" style="display: flex; align-items: stretch; margin-bottom:48px;">
-        <div style="flex:1; min-width:250px; display: flex; flex-direction: column; justify-content: center;">
-          <a class="avoke-link" href="plugin-fix-point-calibration/examples/index_run.html" target="_blank">
-            Fixed-point-calibration Demo
-          </a>
-          <p class="avoke-about" style="margin-left:10px; margin-bottom:0;">
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+        <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+          <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+            Fixed-point-calibration
+          </h2>
+          <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
             This plugin implements a fix-point calibration trial used for eyetracking experiments. A target ('E' by default) appears in random locations on a blank canvas based on whether the canvas is split into a 3x3 or 4x4 grid. The target will appear in random orientations of 0, 90, 180, and 270 degrees. The participant must look at the target and respond with an arrow key by default, with the correct direction corresponding to where to lines of the 'E' are headed. After a correct response, a new target will appear. If using a 3x3 grid, 9 targets will be presented. If using a 4x4 grid, 16 targets will be presented.
           </p>
+          <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+            <a href="plugin-fix-point-calibration/examples/index_run.html" target="_blank" class="w3-button w3-green w3-large" style="min-width:100px;">Demo</a>
+            <a href="plugin-fix-point-calibration/examples/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
+          </div>
         </div>
-        <div style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center;">
-          <img src="assets/fixedFigureALT.svg" alt="Fixed-point-calibration Demo" style="width:175%; max-width:min(427px, 90vw); margin-left:24px; height:auto;">
+        <div style="flex:0 0 427px; max-width:427px; min-width:0; display:flex; align-items:center; justify-content:center; padding-left:48px;">
+          <img src="assets/fixedFigureALT.svg" alt="Fixed-point-calibration Demo" style="width:175%; max-width:clamp(0px, 90vw, 427px); height:auto;">
         </div>
       </div>
 
       <!-- Smooth-pursuit-calibration Demo -->
-      <div class="w3-row-padding" style="display: flex; align-items: stretch; margin-bottom:48px;">
-        <div style="flex:1; min-width:250px; display: flex; flex-direction: column; justify-content: center;">
-          <a class="avoke-link" href="plugin-smooth-pursuit-calibration/examples/index_run.html" target="_blank">
-            Smooth-pursuit-calibration Demo
-          </a>
-          <p class="avoke-about" style="margin-left:10px; margin-bottom:0;">
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+        <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+          <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+            Smooth-pursuit-calibration
+          </h2>
+          <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
             This plugin presents an image target that moves along a path with a shape and pace determined by the experimenter. The target will begin moving after a keypress and the trial will end when the target finishes travelling along the path.
           </p>
+          <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+            <a href="plugin-smooth-pursuit-calibration/examples/index_run.html" target="_blank" class="w3-button w3-green w3-large" style="min-width:100px;">Demo</a>
+            <a href="plugin-smooth-pursuit-calibration/examples/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
+          </div>
         </div>
-        <div style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center;">
-          <img src="assets/smoothFigure.svg" alt="Smooth-pursuit-calibration Demo" style="width:175%; max-width:min(427px, 90vw); margin-left:24px; height:auto;">
+        <div style="flex:0 0 427px; max-width:427px; min-width:0; display:flex; align-items:center; justify-content:center; padding-left:48px;">
+          <img src="assets/smoothFigure.svg" alt="Smooth-pursuit-calibration Demo" style="width:175%; max-width:clamp(0px, 90vw, 427px); height:auto;">
         </div>
       </div>
 
       <!-- Youtube-button-response Demo -->
-      <div class="w3-row-padding" style="display: flex; align-items: stretch; margin-bottom:48px;">
-        <div style="flex:1; min-width:250px; display: flex; flex-direction: column; justify-content: center;">
-          <a class="avoke-link" href="plugin-youtube-button-response/examples/index_run.html" target="_blank">
-            Youtube-button-response Demo
-          </a>
-          <p class="avoke-about" style="margin-left:10px; margin-bottom:0;">
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+        <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+          <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+            Youtube-button-response
+          </h2>
+          <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
             This plugin is for displaying a YouTube stream or video and records responses generated with a button click.
           </p>
+          <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+            <a href="plugin-youtube-button-response/examples/index_run.html" target="_blank" class="w3-button w3-green w3-large" style="min-width:100px;">Demo</a>
+            <a href="plugin-youtube-button-response/examples/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
+          </div>
         </div>
-        <div style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center;">
-          <img src="assets/youtubeFigure.svg" alt="Youtube-button-response Demo" style="width:175%; max-width:min(427px, 90vw); margin-left:24px; height:auto;">
+        <div style="flex:0 0 427px; max-width:427px; min-width:0; display:flex; align-items:center; justify-content:center; padding-left:48px;">
+          <img src="assets/youtubeFigure.svg" alt="Youtube-button-response Demo" style="width:175%; max-width:clamp(0px, 90vw, 427px); height:auto;">
         </div>
       </div>
     </div>
 
     <!-- Extension Demo Section -->
     <div id="extension-demo" style="margin-top:48px;">
-      <div class="avoke-section-title">Extension Demo</div>
-      <div class="w3-row-padding" style="display: flex; flex-wrap: wrap; align-items: stretch;">
-        <div style="flex:1; min-width:250px; display: flex; flex-direction: column; justify-content: center;">
-          <a class="avoke-link" href="extension-video-capture/examples/index.html" target="_blank">
-            Video-capture-extension/Video-capture-setup Demo
-          </a>
-          <p class="avoke-about" style="margin-left:10px;">
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+        <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+          <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+            Video-capture-extension/Video-capture-setup
+          </h2>
+          <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
             This extension allows for video recording in jsPsych experiments, particularly designed for webcam eye-tracking. Video files are output in .mp4 format.
           </p>
-        </div>
-        <div style="flex:1; min-width:200px; display:flex; align-items:center; justify-content:center;">
-          <img src="assets/webcamFigure.svg" alt="Video-capture-extension Demo" style="width:175%; max-width:min(427px, 90vw); margin-left:24px; height:auto;">
-        </div>
-      </div>
-    </div>
-
-    <!-- Plugin Tests Section -->
-    <div id="plugin-tests" style="margin-top:48px;">
-      <div class="avoke-section-title">Plugin Tests</div>
-      <p class="avoke-about" style="margin-left:10px; margin-bottom:16px;">
-        The links below will simulate each plugin's trial and automatically compare the generated data against expected test cases. This helps verify that the plugins are functioning correctly.
-      </p>
-      <div class="w3-row-padding" style="display: flex; flex-wrap: wrap; align-items: flex-start;">
-        <div style="flex:1; min-width:250px;">
-          <div style="font-size: 18px; padding-left: 24px;">
-            <div>
-              <a class="avoke-link" href="plugin-audio-visual-button-response/examples/index_simulate.html" target="_blank">
-                Audio-visual-button-response Simulation
-              </a>
-            </div>
-            <div>
-              <a class="avoke-link" href="plugin-fix-point-calibration/examples/index_simulate.html" target="_blank">
-                Fixed-point-calibration Simulation
-              </a>
-            </div>
-            <div>
-              <a class="avoke-link" href="plugin-smooth-pursuit-calibration/examples/index_simulate.html" target="_blank">
-                Smooth-pursuit-calibration Simulation
-              </a>
-            </div>
-            <div>
-              <a class="avoke-link" href="plugin-youtube-button-response/examples/index_simulate.html" target="_blank">
-                Youtube-button-response Simulation
-              </a>
-            </div>
-            <div>
-              <a class="avoke-link" href="plugin-video-capture-setup/examples (see jspsych-video-capture-extension examples instead)/index_simulate.html" target="_blank">
-                Video-capture-setup Simulation
-              </a>
-            </div>
+          <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+            <a href="extension-video-capture/examples/index.html" target="_blank" class="w3-button w3-green w3-large" style="min-width:100px;">Demo</a>
+            <a href="plugin-video-capture-setup/examples (see jspsych-video-capture-extension examples instead)/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
           </div>
         </div>
+        <!-- Video-capture-extension Demo image -->
+        <div style="flex:0 0 320px; max-width:320px; min-width:0; display:flex; align-items:center; justify-content:center; padding-left:48px;">
+          <img src="assets/webcamFigure.svg" alt="Video-capture-extension Demo" style="width:100%; max-width:320px; height:auto;">
+        </div>
       </div>
     </div>
+
   </div>
 
-  <footer id="myFooter">
-    <div class="w3-container w3-theme-l2 w3-padding-32">
-      <h4>AVOKE</h4>
-    </div>
-    <div class="w3-container w3-theme-l1">
-      <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
-    </div>
-  </footer>
+</div>
+
+<!-- Add this style to your <footer> to prevent it from being covered by the sidebar -->
+<footer id="myFooter" style="margin-left:250px;">
+  <div class="w3-container w3-theme-l2 w3-padding-32">
+    <h4>AVOKE</h4>
+  </div>
+  <div class="w3-container w3-theme-l1">
+    <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+  </div>
+</footer>
 
 </div>
 
