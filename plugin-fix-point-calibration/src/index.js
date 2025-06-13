@@ -45,6 +45,14 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 pretty_name: "Canvas size",
                 default: [166, 296],
             },
+            /**
+             * If true, targets are clickable instead of responding to keyboard.
+             */
+            clickable_targets: {
+                type: jspsych.ParameterType.BOOL,
+                pretty_name: "Clickable targets",
+                default: false,
+            },
         },
     };
     /**
@@ -67,6 +75,12 @@ var jsPsychFixPointCalibration = (function (jspsych) {
         }
 
         trial(display_element, trial) {
+            // Set choices for clickable or keyboard targets
+            if (trial.clickable_targets) {
+                trial.choices = ["Click-Up", "Click-Down", "Click-Left", "Click-Right"];
+            } else {
+                trial.choices = ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"];
+            }
 
             let target_presentation_time = [];
             var responses = [];
@@ -103,9 +117,6 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 trial_directions = jsPsych.randomization.sampleWithReplacement(Object.keys(directions), 9);
             }
 
-            //disable cursor
-            document.documentElement.style.cursor = "none";
-
             let new_html = '<div id="fix-point-calibration-stimulus">' +
             '<canvas id="fix-point-target" height="' + h + '" width="' + w + '"></canvas>' +
             "</div>";
@@ -139,14 +150,9 @@ var jsPsychFixPointCalibration = (function (jspsych) {
 
             // function to handle responses by the subject
             var after_response = (info) => {
-
                 if ((info.key).toLowerCase() === ("Arrow" + trial_directions[i]).toLowerCase()) {
                     this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
-                    // after a valid response, the stimulus will have the CSS class 'responded'
-                    // which can be used to provide visual feedback that a response was recorded
-                    display_element.querySelector("#fix-point-calibration-stimulus").className +=
-                        " responded";
-                    // only record the first response
+                    display_element.querySelector("#fix-point-calibration-stimulus").className += " responded";
                     responses.push({
                         key_press: info.key,
                         rt: info.rt,
@@ -162,13 +168,35 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 }
             };
 
+            // function to handle click responses
+            var after_click = (event, expected_direction) => {
+                responses.push({
+                    key_press: "Click-" + expected_direction,
+                    rt: performance.now() - target_presentation_time[target_presentation_time.length - 1].time,
+                    keypress_time: performance.now(),
+                    wrong_keypresses: this.wrong_keypresses,
+                });
+                i += 1;
+                this.wrong_keypresses = 0;
+                show_next_target();
+            };
+
             var show_next_target = () => {
                 if (i == trial_locations.length) {
                     end_trial();
                 } else {
-                    const location = location_cords(trial_locations[i])
+                    // Always reset handlers for each target
+                    c.onclick = null;
+                    c.onmousemove = null;
+
+                    if (trial.clickable_targets) {
+                        document.documentElement.style.cursor = "default";
+                    } else {
+                        document.documentElement.style.cursor = "none";
+                    }
+
+                    const location = location_cords(trial_locations[i]);
                     trial.stimulus(c, trial.fixation_target, location, trial.target_size, directions[trial_directions[i]]);
-                    // record when target was shown
                     target_presentation_time.push({
                         index: i,
                         loc: location,
@@ -176,13 +204,38 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                         time: performance.now(),
                     });
 
-                    // start the response listener
-                    let keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
-                        callback_function: after_response,
-                        rt_method: "performance",
-                        persist: true,
-                        allow_held_key: false,
-                    });
+                    if (trial.clickable_targets) {
+                        c.onmousemove = (event) => {
+                            const rect = c.getBoundingClientRect();
+                            const x = event.clientX - rect.left;
+                            const y = event.clientY - rect.top;
+                            const [targetX, targetY] = location;
+                            const r = trial.target_size / 2;
+                            const dist = Math.sqrt((x - targetX) ** 2 + (y - targetY) ** 2);
+                            c.style.cursor = (dist <= r) ? "pointer" : "default";
+                        };
+                        c.onclick = (event) => {
+                            const rect = c.getBoundingClientRect();
+                            const x = event.clientX - rect.left;
+                            const y = event.clientY - rect.top;
+                            const [targetX, targetY] = location;
+                            const r = trial.target_size / 2;
+                            const dist = Math.sqrt((x - targetX) ** 2 + (y - targetY) ** 2);
+                            if (dist <= r) {
+                                after_click(event, trial_directions[i]);
+                            } else {
+                                this.wrong_keypresses += 1;
+                                this.total_wrong_keypresses += 1;
+                            }
+                        };
+                    } else {
+                        let keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
+                            callback_function: after_response,
+                            rt_method: "performance",
+                            persist: true,
+                            allow_held_key: false,
+                        });
+                    }
                 }
             }
             show_next_target();

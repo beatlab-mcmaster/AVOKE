@@ -18,6 +18,7 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |target_size|numeric|41|The size of the fixation target, in pixels.|
 |grid_4x4|boolean|true|Choose between 3x3 and 4x4 grid size. If using a 3x3 grid, 9 targets will be presented. If using a 4x4 grid, 16 targets will be presented.|
 |canvas_size|array of numbers|[166, 296]|Array containing the height (first value) and width (second value) of the canvas element, in pixels.|
+|clickable_targets|boolean|false|If true, the targets can be interacted with using a left-click of the mouse.
 
 ## Data Generated
 
