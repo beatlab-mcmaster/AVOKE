@@ -30,6 +30,7 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |mute|boolean|true|If true, the YouTube video will be muted.|
 |pointer_events|boolean|true|If true, pointer events will be enabled for the iframe.|
 |background_colour|string|"#111"|Hexcode for trial background colour.|
+|use_date_now|boolean|false|If true, use Date.now() for timestamps; otherwise use performance.now(). Note that this does not affect the default `'rt'` and `'time_elapsed'` fields recorded by jsPsych.|
 
 ## Data Generated
 

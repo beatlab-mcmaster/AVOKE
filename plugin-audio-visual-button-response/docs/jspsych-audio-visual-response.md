@@ -26,6 +26,7 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |trial_ends_after_audio|boolean|false|If true, the trial will end after the audio file finishes playing.|
 |response_allowed_while_playing|boolean|true|If true, then responses are allowed while the audio stimulus is playing. If false, then the audio must finish playing before a response is accepted.|
 |render_on_canvas|boolean|true|If true, the image stimulus will be drawn onto a canvas element (prevents blank screen between consecutive images in some browsers). If false, the image will be shown via an img element.|
+|use_date_now|boolean|false|If true, use Date.now() for timestamps; otherwise use performance.now(). Note that this does not affect the default `'rt'` and `'time_elapsed'` fields recorded by jsPsych.|
 
 ## Data Generated
 

@@ -96,6 +96,15 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         pretty_name: "Render on canvas",
         default: true, //need to check scaling logic for img render
       },
+      /**
+      /**
+       * If true, use Date.now() for timestamps; otherwise use performance.now().
+       */
+      use_date_now: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Use Date.now() for timestamps",
+        default: false,
+      },
     },
   };
 
@@ -113,6 +122,12 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
+
+    // Helper function to get timestamp based on user preference
+    getTimestamp(use_date_now) {
+      return use_date_now ? Date.now() : performance.now();
+    }
+
     async trial(display_element, trial, on_load) {
       // hold the .resolve() function from the Promise that ends the trial
       let trial_complete;
@@ -128,6 +143,9 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         buttonClickTime: null,
       };
       let buttonsEnabled = false;
+
+      // Helper for timestamp
+      const getTimestamp = () => this.getTimestamp(trial.use_date_now);
 
       //setup image display
       let height, width;
@@ -159,7 +177,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
           if (!image_drawn) {
             console.log("image loaded")
             getHeightWidth(); // only possible to get width/height after image loads
-            response.imageDisplayTime = performance.now();
+            response.imageDisplayTime = getTimestamp();
             ctx.drawImage(img, 0, 0, width, height);
           }
         };
@@ -227,7 +245,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         if (img.complete && Number.isFinite(width) && Number.isFinite(height)) {
           // if image has loaded and width/height have been set, then draw it now
           // (don't rely on img onload function to draw image when image is in the cache, because that causes a delay in the image presentation)
-          response.imageDisplayTime = performance.now();
+          response.imageDisplayTime = getTimestamp();
           ctx.drawImage(img, 0, 0, width, height);
           image_drawn = true;
         }
@@ -301,7 +319,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         }
         img.style.height = height.toString() + "px";
         img.style.width = width.toString() + "px";
-        response.imageDisplayTime = performance.now();
+        response.imageDisplayTime = getTimestamp();
       }
 
       // record webaudio context start time
@@ -315,7 +333,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         this.jsPsych.pluginAPI.clearAllTimeouts();
         // stop the audio file if it is playing
         // remove end event listeners if they exist
-        response.audioEndTime = performance.now();
+        response.audioEndTime = getTimestamp();
         if (context !== null) {
           this.audio.stop();
         }
@@ -362,7 +380,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
       }
       
       // start time
-      startTime = performance.now();
+      startTime = getTimestamp();
       response.audioStartTime = startTime;
       // start audio
       if (context !== null) {
@@ -384,7 +402,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
       // function to handle responses by the subject
       function after_response(choice, buttonGroupElement) {
         // measure rt
-        let endTime = performance.now();
+        let endTime = getTimestamp();
         response.buttonClickTime = endTime;
         let rt = Math.round(endTime - startTime);
         if (context !== null) {

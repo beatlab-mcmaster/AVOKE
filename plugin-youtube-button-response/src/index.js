@@ -94,6 +94,14 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
           pretty_name: "Background colour",
           default: "#111",
         },
+      /**
+       * If true, use Date.now() for timestamps; otherwise use performance.now().
+       */
+      use_date_now: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Use Date.now() for timestamps",
+        default: false,
+      },
     },
   };
 
@@ -110,6 +118,11 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
   class YouTubeButtonResponsePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
+    }
+
+    // Helper function to get timestamp based on user preference
+    getTimestamp(use_date_now) {
+      return use_date_now ? Date.now() : performance.now();
     }
 
     trial(display_element, trial) {
@@ -272,7 +285,9 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       }
 
       // start time
-      const start_time = performance.now();
+      const getTimestamp = () => this.getTimestamp(trial.use_date_now);
+      const start_time = getTimestamp();
+
       // add event listeners to buttons
       // for (let i = 0; i < trial.choices.length; i++) {
       //   display_element
@@ -296,7 +311,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         // Reset body background 
         document.body.style.backgroundColor = ""
         // measure rt
-        const end_time = performance.now();
+        const end_time = getTimestamp();
         const rt = Math.round(end_time - start_time);
         // kill any remaining setTimeout handlers
         this.jsPsych.pluginAPI.clearAllTimeouts();
@@ -322,7 +337,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       // function to handle responses by the subject
       function after_response(choice) {
         response.button = parseInt(choice);
-        response.button_press_time = Date.now();
+        response.button_press_time = getTimestamp();
         // after a valid response, the stimulus will have the CSS class 'responded'
         // which can be used to provide visual feedback that a response was recorded
         display_element.querySelector("#jspsych-html-stream-response-stimulus").className +=
@@ -408,6 +423,8 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
     }
 
     create_simulation_data(trial, simulation_options) {
+      // Use Date.now() or performance.now() based on parameter
+      const getTimestamp = () => trial.use_date_now ? Date.now() : performance.now();
       const default_data = {
         stimulus: trial.stimulus,
         rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
@@ -416,11 +433,11 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
               trial.trial_duration !== null ? "trial_duration" :
                 "next_button_default",
         button: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
-        button_press_time: Date.now() + (trial.trial_duration || 1000) // Simulated button press time
+        button_press_time: getTimestamp() + (trial.trial_duration || 1000) // Simulated button press time
         },
         trial_duration: trial.trial_duration,
-        start_time: Date.now(),
-        end_time: Date.now() + (trial.trial_duration || 1000), // Simulated end time
+        start_time: getTimestamp(),
+        end_time: getTimestamp() + (trial.trial_duration || 1000), // Simulated end time
         log_after_every: trial.log_after_every,
         playerTimestamps: this.generate_player_timestamps(trial),
         playerInfo: this.generate_player_info(trial)
@@ -432,7 +449,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
 
     generate_player_timestamps(trial) {
       const states = [];
-      let currentTime = Date.now();
+      let currentTime = trial.use_date_now ? Date.now() : performance.now();
       const stateTypes = ['unstarted', 'ended', 'playing', 'paused', 'buffering', 'cued'];
       const qualityTypes = ['small', 'medium', 'large', 'hd720', 'hd1080', 'highres'];
       const stateCount = Math.floor(Math.random() * 10) + 5; // Random number of events between 5 and 15
@@ -457,13 +474,13 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
     
     generate_player_info(trial) {
       const duration = trial.trial_duration || 1000; // Example duration    
-      return this.generate_player_info_states(duration, trial.log_after_every);
+      return this.generate_player_info_states(duration, trial.log_after_every, trial.use_date_now);
     }
     
-    generate_player_info_states(duration, log_after_every) {
+    generate_player_info_states(duration, log_after_every, use_date_now) {
       // Generate simulated player info states
       const playerInfoStates = [];
-      let currentTime = Date.now();
+      let currentTime = use_date_now ? Date.now() : performance.now();
       const startTime = currentTime;
     
       while (currentTime - startTime < duration) {
