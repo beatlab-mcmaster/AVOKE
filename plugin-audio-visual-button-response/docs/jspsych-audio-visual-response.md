@@ -27,6 +27,13 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |response_allowed_while_playing|boolean|true|If true, then responses are allowed while the audio stimulus is playing. If false, then the audio must finish playing before a response is accepted.|
 |render_on_canvas|boolean|true|If true, the image stimulus will be drawn onto a canvas element (prevents blank screen between consecutive images in some browsers). If false, the image will be shown via an img element.|
 |use_date_now|boolean|false|If true, use Date.now() for timestamps; otherwise use performance.now(). Note that this does not affect the default `'rt'` and `'time_elapsed'` fields recorded by jsPsych.|
+|show_slider|boolean|false|If true, show a continuous response slider above the buttons.|
+|slider_prompt|string|"How confident are you?"|Text to display above the slider.|
+|slider_min|numeric|0|Minimum value of the slider.|
+|slider_max|numeric|100|Maximum value of the slider.|
+|slider_start|numeric|50|Starting value of the slider.|
+|slider_step|numeric|1|Step size of the slider.|
+|slider_labels|array of strings|[]|Array of labels to display under the slider (e.g., ["Not at all", "Very much"]).|
 
 ## Data Generated
 
@@ -41,7 +48,8 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |imageDisplayTime|numeric|The high resolution timestamp in milliseconds (`'performance.now()'`) that the image stimuli was presented.|
 |audioStartTime|numeric|The high resolution timestamp in milliseconds (`'performance.now()'`) that the audio stimuli started playing.|
 |audioEndTime|numeric|The high resolution timestamp in milliseconds (`'performance.now()'`) that the audio stimuli stopped playing.|
-|buttonClickTime|numeric| The high resolution timestamp in milliseconds (`'performance.now()'`) that the participant selected the button.|
+|buttonClickTime|numeric|The high resolution timestamp in milliseconds (`'performance.now()'`) that the participant selected the button.|
+|slider_value|numeric|The value of the slider input by the participant.|
 |maintain_aspect_ratio|boolean|Whether or not the aspect ratio for the image is maintained.|
 |stimulus_width|numeric|The width of the image stimulus.|
 |stimulus_height|numeric|The height of the image stimulus.|

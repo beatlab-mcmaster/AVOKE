@@ -19,10 +19,6 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       },
       /** The HTML for creating button. Can create own style. Use the "%choice%" string to indicate where the label from the choices parameter should be inserted. */
       button_html: {
-        // type: jspsych.ParameterType.HTML_STRING,
-        // pretty_name: "Button HTML",
-        // default: ['<button class="form-btn">%choice%</button>'],
-        // array: true,
         type: jspsych.ParameterType.FUNCTION,
         default: function (choice, choice_index) {
           return '<button class="form-btn" id="button-' + choice_index + '" style="visibility: hidden;">' + choice + '</button>';
@@ -102,6 +98,63 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         pretty_name: "Use Date.now() for timestamps",
         default: false,
       },
+      /**
+       * If true, show a continuous response slider below the buttons.
+       */
+      show_slider: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Show slider",
+        default: false,
+      },
+      /**
+       * Text to display above the slider.
+       */
+      slider_prompt: {
+        type: jspsych.ParameterType.HTML_STRING,
+        pretty_name: "Slider prompt",
+        default: "How confident are you?",
+      },
+      /**
+       * Minimum value of the slider.
+       */
+      slider_min: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider minimum",
+        default: 0,
+      },
+      /**
+       * Maximum value of the slider.
+       */
+      slider_max: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider maximum",
+        default: 100,
+      },
+      /**
+       * Starting value of the slider.
+       */
+      slider_start: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider start",
+        default: 50,
+      },
+      /**
+       * Step size of the slider.
+       */
+      slider_step: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider step",
+        default: 1,
+      },
+      /**
+       * Array of labels to display under the slider (e.g., ["Not at all", "Very much"]).
+       */
+      slider_labels: {
+        type: jspsych.ParameterType.STRING,
+        pretty_name: "Slider labels",
+        default: [],
+        array: true,
+      },
     },
   };
 
@@ -120,52 +173,67 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       this.jsPsych = jsPsych;
     }
 
-    // Helper function to get timestamp based on user preference
+    // function to get timestamp based on user preference
     getTimestamp(use_date_now) {
       return use_date_now ? Date.now() : performance.now();
     }
 
     trial(display_element, trial) {
-      // Define HTML 
       document.body.style.backgroundColor = trial.background_color;
       const controls_param = trial.controls ? '1' : '0';
       const autoplay_param = trial.autoplay ? '1' : '0';
       const mute_param = trial.mute ? '1' : '0';
       const pointer_events = trial.pointer_events ? 'auto' : 'none';
 
-      let html = `<div id="jspsych-html-stream-response-stimulus" style="background-color: #FFF"> 
-      <iframe id="ytplayer" src="${trial.stimulus}?enablejsapi=1&controls=${controls_param}&autoplay=${autoplay_param}&mute=${mute_param}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;" style="pointer-events: ${pointer_events}; position: absolute; width:100%; height:93%; top:0; left:0;">
-      </iframe>`;
-      html += "</div>";
+      let html = `
+<div id="jspsych-html-stream-response-stimulus"
+     style="background-color: #FFF; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: stretch; margin: 0; padding: 0; box-sizing: border-box;">
+  <div style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start;">
+    <div style="width: 100%; height: 100%; max-height: 85vh; aspect-ratio: 16/9; background: #000;">
+      <iframe id="ytplayer"
+        src="${trial.stimulus}?enablejsapi=1&controls=${controls_param}&autoplay=${autoplay_param}&mute=${mute_param}"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media;"
+        style="pointer-events: ${pointer_events}; width: 100%; height: 100%; border: none; display: block;">
+      </iframe>
+    </div>
+  </div>
+`;
 
-      // display buttons
-      // let buttons = [];
-      // if (Array.isArray(trial.button_html)) {
-      //   if (trial.button_html.length == trial.choices.length) {
-      //     buttons = trial.button_html;
-      //   } else {
-      //     console.error("Error in html-stream-response plugin. The length of the button_html array does not equal the length of the choices array");
-      //   }
-      // } else {
-      //   for (let i = 0; i < trial.choices.length; i++) {
-      //     buttons.push(trial.button_html);
-      //   }
-      // }
-      // for (let i = 0; i < trial.choices.length; i++) {
-      //   let str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-      //   html +=
-      //     '<div class="form-btn" style="border: none; visibility:hidden; right: 0; bottom: 0; position: absolute;" id="jspsych-html-stream-response-button-' +
-      //     i +
-      //     '" data-choice="' +
-      //     i +
-      //     '">' +
-      //     str +
-      //     "</div>";
-      // }
+if (trial.show_slider) {
+  html += `<div style="width: 100%; display: flex; justify-content: center; margin-top: 1em;">${getSliderHTML()}</div>`;
+}
 
       // show prompt if there is one
       if (trial.prompt !== null) {
         html += `<div style="left:0; bottom: 0; position: absolute;">` + trial.prompt + `</div>`;
+      }
+
+      function getSliderHTML() {
+        if (!trial.show_slider) return "";
+        let slider_html = `<div id="jspsych-yt-slider-container" style="text-align: center;">`;
+        if (trial.slider_prompt) {
+          slider_html += `<div id="jspsych-yt-slider-prompt" style="margin-bottom: 0.5em;">${trial.slider_prompt}</div>`;
+        }
+        slider_html += `
+          <input type="range" id="jspsych-yt-slider" 
+            min="${trial.slider_min}" 
+            max="${trial.slider_max}" 
+            value="${trial.slider_start}" 
+            step="${trial.slider_step}" 
+            style="width: 60%;">
+          <div id="jspsych-yt-slider-value" style="margin-top: 0.5em; font-size: 1.1em;">${trial.slider_start}</div>
+        `;
+        // labels if provided
+        if (trial.slider_labels && trial.slider_labels.length > 0) {
+          slider_html += `<div style="display: flex; justify-content: space-between; width: 60%; margin: 0 auto; font-size: 0.9em;">`;
+          for (let i = 0; i < trial.slider_labels.length; i++) {
+            slider_html += `<span>${trial.slider_labels[i]}</span>`;
+          }
+          slider_html += `</div>`;
+        }
+        slider_html += `</div>`;
+        return slider_html;
       }
       display_element.innerHTML = html;
 
@@ -210,6 +278,19 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
 
       display_element.appendChild(buttonGroupElement);
 
+      // slider value update event listener
+      if (trial.show_slider) {
+        setTimeout(() => {
+          const slider = document.getElementById("jspsych-yt-slider");
+          const sliderValue = document.getElementById("jspsych-yt-slider-value");
+          if (slider && sliderValue) {
+            slider.addEventListener("input", function() {
+              sliderValue.textContent = slider.value;
+            });
+          }
+        }, 0);
+      }
+
       // Check if YT API is loaded correctly
       var player;
       var playerTime = [];
@@ -218,16 +299,14 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       } else {
         console.log("YT API loaded", YT)
 
-        // Define player event listeners
-
-        // Return the current playback quality of the video on every change
+        // return the current playback quality of the video on every change
         function onPlaybackQualityChange(event) {
           var playbackQuality = event.target.getPlaybackQuality();
           console.log("Playback quality changed to:", playbackQuality);
           playerTime.push({ time: Date.now(), quality: playbackQuality })
         }
 
-        // Return the current state of the player on every change
+        // current state of the player on every change
         function onPlayerStateChange(event) {
           const playerStatus = event.data
           if (playerStatus == -1) {
@@ -246,7 +325,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
           console.log("Event triggered: ", playerTime[playerTime.length - 1]["state"]);
         }
 
-        // Return the initial playback quality of the video
+        // initial playback quality of the video
         function onPlayerReady(event) {
           document.getElementById('ytplayer').style.border = '';
           console.log("Initial playback quality:", player.getPlaybackQuality());
@@ -288,22 +367,12 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       const getTimestamp = () => this.getTimestamp(trial.use_date_now);
       const start_time = getTimestamp();
 
-      // add event listeners to buttons
-      // for (let i = 0; i < trial.choices.length; i++) {
-      //   display_element
-      //     .querySelector("#jspsych-html-stream-response-button-" + i)
-      //     .addEventListener("click", (e) => {
-      //       let btn_el = e.currentTarget;
-      //       let choice = btn_el.getAttribute("data-choice"); // don't use dataset for jsdom compatibility
-      //       after_response(choiceIndex);
-      //     });
-      // }
-
       // store button response data
       var response = {
         condition: null,
         button: null,
         button_press_time: null,
+        slider_value: null,
       };
 
       // function to end trial and store trial_data
@@ -327,6 +396,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
           log_after_every: trial.log_after_every,
           playerTimestamps: playerTime,
           playerInfo: playerInfoStates,
+          slider_value: response.slider_value,
         };
         // clear the display
         display_element.innerHTML = "";
@@ -338,16 +408,17 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
       function after_response(choice) {
         response.button = parseInt(choice);
         response.button_press_time = getTimestamp();
+        // capture slider value if present
+        if (trial.show_slider) {
+          const slider = document.getElementById("jspsych-yt-slider");
+          if (slider) {
+            response.slider_value = slider.value;
+          }
+        }
         // after a valid response, the stimulus will have the CSS class 'responded'
         // which can be used to provide visual feedback that a response was recorded
         display_element.querySelector("#jspsych-html-stream-response-stimulus").className +=
           " responded";
-        // disable all the buttons after a response
-        // let btns = document.querySelectorAll(".jspsych-html-stream-response-button");
-        // for (let i = 0; i < btns.length; i++) {
-        //   //btns[i].removeEventListener('click');
-        //   btns[i].setAttribute("disabled", "disabled");
-        // }
         for (const button of buttonGroupElement.children) {
           button.setAttribute("disabled", "disabled");
         }
@@ -356,12 +427,12 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         }
       }
 
-    // Hide stimulus if timing is set
+    // hide stimulus if timing is set
     if (trial.stimulus_duration !== null) {
       const stimulusElement = display_element.querySelector("#jspsych-html-stream-response-stimulus");
       if (stimulusElement) {
         this.jsPsych.pluginAPI.setTimeout(() => {
-          // Stop the YouTube video
+          // stop the YouTube video
           if (player && typeof player.stopVideo === "function") {
             player.stopVideo();
             console.log("YouTube video stopped.");
@@ -369,7 +440,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
             console.error("YouTube player is not initialized or stopVideo is not available.");
           }
     
-          // Hide the video player
+          // hide the video player
           stimulusElement.style.visibility = "hidden";
           console.log("Video player hidden.");
         }, trial.stimulus_duration);
@@ -423,7 +494,7 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
     }
 
     create_simulation_data(trial, simulation_options) {
-      // Use Date.now() or performance.now() based on parameter
+      // use Date.now() or performance.now() based on parameter
       const getTimestamp = () => trial.use_date_now ? Date.now() : performance.now();
       const default_data = {
         stimulus: trial.stimulus,

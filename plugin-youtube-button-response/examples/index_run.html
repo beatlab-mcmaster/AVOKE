@@ -40,6 +40,7 @@
     pointer_events: true, // Enable pointer events
     background_colour: '#808080', // Set the background colour to black
     log_after_every: 1000, // Log player info every second
+    show_slider: true,
   };
 
   timeline.push(trial);
@@ -71,7 +72,7 @@
         test_results += `<p>❌ Trial ${trialIndex + 1}: Missing stimulus link.</p>`;
       }
 
-      // Test: Validate Trial Duration
+      // Trial Duration Test
       if (trial.start_time && trial.end_time && trial.trial_duration) {
         const actualDuration = trial.end_time - trial.start_time;
         if (Math.abs(actualDuration - trial.trial_duration) < 15) { // Allow a small tolerance

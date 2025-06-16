@@ -97,13 +97,69 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         default: true, //need to check scaling logic for img render
       },
       /**
-      /**
        * If true, use Date.now() for timestamps; otherwise use performance.now().
        */
       use_date_now: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Use Date.now() for timestamps",
         default: false,
+      },
+      /**
+       * If true, show a continuous response slider above the buttons.
+       */
+      show_slider: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Show slider",
+        default: false,
+      },
+      /**
+       * Text to display above the slider.
+       */
+      slider_prompt: {
+        type: jspsych.ParameterType.HTML_STRING,
+        pretty_name: "Slider prompt",
+        default: "How confident are you?",
+      },
+      /**
+       * Minimum value of the slider.
+       */
+      slider_min: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider minimum",
+        default: 0,
+      },
+      /**
+       * Maximum value of the slider.
+       */
+      slider_max: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider maximum",
+        default: 100,
+      },
+      /**
+       * Starting value of the slider.
+       */
+      slider_start: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider start",
+        default: 50,
+      },
+      /**
+       * Step size of the slider.
+       */
+      slider_step: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Slider step",
+        default: 1,
+      },
+      /**
+       * Array of labels to display under the slider (e.g., ["Not at all", "Very much"]).
+       */
+      slider_labels: {
+        type: jspsych.ParameterType.STRING,
+        pretty_name: "Slider labels",
+        default: [],
+        array: true,
       },
     },
   };
@@ -123,12 +179,40 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
       this.jsPsych = jsPsych;
     }
 
-    // Helper function to get timestamp based on user preference
+    // helper function to get timestamp based on user preference
     getTimestamp(use_date_now) {
       return use_date_now ? Date.now() : performance.now();
     }
 
     async trial(display_element, trial, on_load) {
+
+      function getSliderHTML() {
+        if (!trial.show_slider) return "";
+        let slider_html = `<div id="jspsych-av-slider-container" style="text-align: center;">`;
+        if (trial.slider_prompt) {
+          slider_html += `<div id="jspsych-av-slider-prompt" style="margin-bottom: 0.5em;">${trial.slider_prompt}</div>`;
+        }
+        slider_html += `
+          <input type="range" id="jspsych-av-slider" 
+            min="${trial.slider_min}" 
+            max="${trial.slider_max}" 
+            value="${trial.slider_start}" 
+            step="${trial.slider_step}" 
+            style="width: 60%;">
+          <div id="jspsych-av-slider-value" style="font-size: 1.1em;">${trial.slider_start}</div>
+        `;
+        // Add labels if provided
+        if (trial.slider_labels && trial.slider_labels.length > 0) {
+          slider_html += `<div style="display: flex; justify-content: space-between; width: 60%; margin: 0 auto; font-size: 0.9em;">`;
+          for (let i = 0; i < trial.slider_labels.length; i++) {
+            slider_html += `<span>${trial.slider_labels[i]}</span>`;
+          }
+          slider_html += `</div>`;
+        }
+        slider_html += `</div>`;
+        return slider_html;
+      }
+
       // hold the .resolve() function from the Promise that ends the trial
       let trial_complete;
       // setup stimulus
@@ -141,6 +225,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         audioStartTime: null,
         audioEndTime: null,
         buttonClickTime: null,
+        slider_value: null,
       };
       let buttonsEnabled = false;
 
@@ -204,9 +289,9 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
       const buttonGroupElement = document.createElement("div");
       buttonGroupElement.id = "jspsych-av-response-btngroup";
 
-      buttonGroupElement.style.position = "absolute"; // Use "fixed" if you want it to stay in place during scrolling
-      buttonGroupElement.style.bottom = "10px"; // Distance from the bottom of the page
-      buttonGroupElement.style.right = "10px"; // Distance from the right of the page
+      buttonGroupElement.style.position = "absolute";
+      buttonGroupElement.style.bottom = "10px";
+      buttonGroupElement.style.right = "10px";
 
       if (trial.button_layout === "grid") {
         buttonGroupElement.classList.add("jspsych-btn-group-grid");
@@ -252,6 +337,11 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         // add buttons to screen
         const parentDiv = document.getElementById('virtual-window-content');
         parentDiv.insertBefore(buttonGroupElement, canvas.nextElementSibling);
+
+        // insert slider below buttons if enabled
+        if (trial.show_slider) {
+          parentDiv.insertAdjacentHTML("beforeend", getSliderHTML());
+        }
         // add prompt if there is one
         if (trial.prompt !== null) {
           display_element.insertAdjacentHTML("beforeend", trial.prompt);
@@ -289,14 +379,15 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
             "</div>";
         }
         html += "</div></div>";
-        //show prompt if there is one
+        // show prompt if there is one
         if (trial.prompt !== null) {
           html += trial.prompt;
         }
-
-        // update the page content
+        // insert slider below buttons if enabled
+        if (trial.show_slider) {
+          html += getSliderHTML();
+        }
         display_element.innerHTML = html;
-
         // set image dimensions after image has loaded (so that we have access to naturalHeight/naturalWidth)
         let img = display_element.querySelector("#jspsych-av-button-response-stimulus");
         if (trial.stimulus_height !== null) {
@@ -322,12 +413,25 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         response.imageDisplayTime = getTimestamp();
       }
 
+      // add slider value update event listener
+      if (trial.show_slider) {
+        // Use setTimeout to ensure the slider is in the DOM
+        setTimeout(() => {
+          const slider = document.getElementById("jspsych-av-slider");
+          const sliderValue = document.getElementById("jspsych-av-slider-value");
+          if (slider && sliderValue) {
+            slider.addEventListener("input", function() {
+              sliderValue.textContent = slider.value;
+            });
+          }
+        }, 0);
+      }
+
       // record webaudio context start time
       let startTime;
       // load audio file
       this.audio = await this.jsPsych.pluginAPI.getAudioPlayer(trial.audio_stimulus)
 
-      // Define the end_trial function before it is used
       const end_trial = () => {
         // kill any remaining setTimeout handlers
         this.jsPsych.pluginAPI.clearAllTimeouts();
@@ -350,6 +454,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
           audioStartTime: response.audioStartTime,
           audioEndTime: response.audioEndTime,
           buttonClickTime: response.buttonClickTime,
+          slider_value: response.slider_value,
           maintain_aspect_ratio: trial.maintain_aspect_ratio,
           stimulus_width: width,
           stimulus_height: height,
@@ -407,11 +512,17 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         let rt = Math.round(endTime - startTime);
         if (context !== null) {
           endTime = context.currentTime;
-          console.log(endTime)
           rt = Math.round((endTime - startTime) * 1000);
         }
         response.button = parseInt(choice);
         response.rt = rt;
+        // capture slider value
+        if (trial.show_slider) {
+          const slider = document.getElementById("jspsych-av-slider");
+          if (slider) {
+            response.slider_value = slider.value;
+          }
+        }
         // disable all the buttons after a response
         disable_buttons();
         if (trial.response_ends_trial) {
