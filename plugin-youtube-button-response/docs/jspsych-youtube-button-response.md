@@ -31,6 +31,13 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |pointer_events|boolean|true|If true, pointer events will be enabled for the iframe.|
 |background_colour|string|"#111"|Hexcode for trial background colour.|
 |use_date_now|boolean|false|If true, use Date.now() for timestamps; otherwise use performance.now(). Note that this does not affect the default `'rt'` and `'time_elapsed'` fields recorded by jsPsych.|
+|show_slider|boolean|false|If true, show a continuous response slider above the buttons.|
+|slider_prompt|string|"How confident are you?"|Text to display above the slider.|
+|slider_min|numeric|0|Minimum value of the slider.|
+|slider_max|numeric|100|Maximum value of the slider.|
+|slider_start|numeric|50|Starting value of the slider.|
+|slider_step|numeric|1|Step size of the slider.|
+|slider_labels|array of strings|[]|Array of labels to display under the slider (e.g., ["Not at all", "Very much"]).|
 
 ## Data Generated
 
@@ -44,6 +51,7 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |buttonResponse:condition|string|Depending on the values of the `'user_server_signal'`, `'button_disable_time'`, `'trial_duration'`, and `'response_ends_trial'` parameters, this string will contain which of the aforementioned parameters were used during the trial.|
 |buttonResponse:button|numeric|The array index corresponding to which value in the `'choices'` parameter the participant selected.|
 |buttonResponse:button_press_time|numeric|The time that the button was pressed, determined via `'Date.now()'`.|
+|slider_value|numeric|The value of the slider input by the participant.|
 |trial_duration|numeric|The maximum duration set for the trial in milliseconds.|
 |start_time|numeric|A timestamp depicting the start of the trial in milliseconds, obtained using `'performance.now()'`.|
 |end_time|numeric|A timestamp depicting the end of the trial in milliseconds, obtained using `'performance.now()'`.|
