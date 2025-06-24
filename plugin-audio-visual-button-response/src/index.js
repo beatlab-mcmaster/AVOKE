@@ -161,6 +161,12 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         default: [],
         array: true,
       },
+      /** Enable multi-button response logging (does not end trial on click). */
+      multi_button_response: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Multi-button response",
+        default: false,
+      },
     },
   };
 
@@ -228,6 +234,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         slider_value: null,
       };
       let buttonsEnabled = false;
+      let multiButtonResponses = []; // Store all button responses if enabled
 
       // Helper for timestamp
       const getTimestamp = () => this.getTimestamp(trial.use_date_now);
@@ -443,7 +450,12 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
         }
         this.audio.removeEventListener("ended", end_trial);
         this.audio.removeEventListener("ended", enable_buttons);
-        
+        if (trial.show_slider) {
+          const slider = document.getElementById("jspsych-av-slider");
+          if (slider) {
+            response.slider_value = slider.value;
+          }
+        }
         // gather the data to store for the trial
         const trial_data = {
           rt: response.rt,
@@ -459,6 +471,7 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
           stimulus_width: width,
           stimulus_height: height,
           trial_duration: trial.trial_duration,
+          multi_button_responses: trial.multi_button_response ? multiButtonResponses : undefined
         };
         console.log("trial_data", JSON.stringify(trial_data));
         // clear the display
@@ -506,27 +519,35 @@ var jsPsychAudioVisualButtonResponse = (function (jspsych) {
     
       // function to handle responses by the subject
       function after_response(choice, buttonGroupElement) {
-        // measure rt
         let endTime = getTimestamp();
-        response.buttonClickTime = endTime;
         let rt = Math.round(endTime - startTime);
         if (context !== null) {
           endTime = context.currentTime;
           rt = Math.round((endTime - startTime) * 1000);
         }
-        response.button = parseInt(choice);
-        response.rt = rt;
-        // capture slider value
-        if (trial.show_slider) {
-          const slider = document.getElementById("jspsych-av-slider");
-          if (slider) {
-            response.slider_value = slider.value;
+        // Multi-button response logic
+        if (trial.multi_button_response) {
+          multiButtonResponses.push({
+            button_index: parseInt(choice),
+            button_text: trial.choices[choice],
+            timestamp: getTimestamp(),
+          });
+        } else {
+          response.button = parseInt(choice);
+          response.rt = rt;
+          response.buttonClickTime = endTime;
+          // capture slider value
+          if (trial.show_slider) {
+            const slider = document.getElementById("jspsych-av-slider");
+            if (slider) {
+              response.slider_value = slider.value;
+            }
           }
-        }
-        // disable all the buttons after a response
-        disable_buttons();
-        if (trial.response_ends_trial) {
-          end_trial();
+          // disable all the buttons after a response
+          disable_buttons();
+          if (trial.response_ends_trial) {
+            end_trial();
+          }
         }
       }
 

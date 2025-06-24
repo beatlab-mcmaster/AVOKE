@@ -155,6 +155,12 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         default: [],
         array: true,
       },
+      /** Enable multi-button response logging (does not end trial on click). */
+      multi_button_response: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Multi-button response",
+        default: false,
+      },
     },
   };
 
@@ -278,6 +284,13 @@ if (trial.show_slider) {
 
       display_element.appendChild(buttonGroupElement);
 
+      if (trial.button_disable_time == null) {
+        const buttons = buttonGroupElement.querySelectorAll("button");
+        buttons.forEach((button) => {
+          button.style.visibility = "visible";
+        });
+      }
+
       // slider value update event listener
       if (trial.show_slider) {
         setTimeout(() => {
@@ -372,8 +385,10 @@ if (trial.show_slider) {
         condition: null,
         button: null,
         button_press_time: null,
+        button_text: null,
         slider_value: null,
       };
+      let multiButtonResponses = []; // Store all button responses if enabled
 
       // function to end trial and store trial_data
       const end_trial = () => {
@@ -384,7 +399,15 @@ if (trial.show_slider) {
         const rt = Math.round(end_time - start_time);
         // kill any remaining setTimeout handlers
         this.jsPsych.pluginAPI.clearAllTimeouts();
-        clearInterval(log_playerInfo_interval)
+        clearInterval(log_playerInfo_interval);
+
+        if (trial.show_slider) {
+          const slider = document.getElementById("jspsych-yt-slider");
+          if (slider) {
+            response.slider_value = slider.value;
+          }
+        }
+
         // gather the data to store for the trial
         const trial_data = {
           stimulus: trial.stimulus,
@@ -397,6 +420,7 @@ if (trial.show_slider) {
           playerTimestamps: playerTime,
           playerInfo: playerInfoStates,
           slider_value: response.slider_value,
+          multi_button_responses: trial.multi_button_response ? multiButtonResponses : undefined
         };
         // clear the display
         display_element.innerHTML = "";
@@ -406,24 +430,34 @@ if (trial.show_slider) {
 
       // function to handle responses by the subject
       function after_response(choice) {
-        response.button = parseInt(choice);
-        response.button_press_time = getTimestamp();
-        // capture slider value if present
-        if (trial.show_slider) {
-          const slider = document.getElementById("jspsych-yt-slider");
-          if (slider) {
-            response.slider_value = slider.value;
+        const buttonText = trial.choices[choice];
+        if (trial.multi_button_response) {
+          multiButtonResponses.push({
+            button_index: parseInt(choice),
+            button_text: buttonText,
+            timestamp: getTimestamp()
+          });
+        } else {
+          response.button = parseInt(choice);
+          response.button_text = buttonText;
+          response.button_press_time = getTimestamp();
+          // capture slider value if present
+          if (trial.show_slider) {
+            const slider = document.getElementById("jspsych-yt-slider");
+            if (slider) {
+              response.slider_value = slider.value;
+            }
           }
-        }
-        // after a valid response, the stimulus will have the CSS class 'responded'
-        // which can be used to provide visual feedback that a response was recorded
-        display_element.querySelector("#jspsych-html-stream-response-stimulus").className +=
-          " responded";
-        for (const button of buttonGroupElement.children) {
-          button.setAttribute("disabled", "disabled");
-        }
-        if (trial.response_ends_trial) {
-          end_trial();
+          // after a valid response, the stimulus will have the CSS class 'responded'
+          // which can be used to provide visual feedback that a response was recorded
+          display_element.querySelector("#jspsych-html-stream-response-stimulus").className +=
+            " responded";
+          for (const button of buttonGroupElement.children) {
+            button.setAttribute("disabled", "disabled");
+          }
+          if (trial.response_ends_trial) {
+            end_trial();
+          }
         }
       }
 

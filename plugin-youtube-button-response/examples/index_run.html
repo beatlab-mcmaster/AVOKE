@@ -31,8 +31,8 @@
 
   const trial = {
     type: jsPsychYouTubeButtonResponse,
-    stimulus: 'https://www.youtube.com/embed/jfKfPfyJRdk', // Example YouTube video URL
-    choices: ['Next'], // Button text
+    stimulus: 'https://www.youtube.com/embed/jfKfPfyJRdk',
+    choices: ['Button 1', 'Button 2', 'Button 3'],
     prompt: '<p>Click next to proceed</p>', // Prompt text
     controls: true, // Enable YouTube player controls
     autoplay: true, // Enable autoplay
@@ -41,6 +41,9 @@
     background_colour: '#808080', // Set the background colour to black
     log_after_every: 1000, // Log player info every second
     show_slider: true,
+    multi_button_response: true,
+    response_ends_trial: false,
+    trial_duration: 5000,
   };
 
   timeline.push(trial);

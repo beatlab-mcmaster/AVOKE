@@ -34,6 +34,7 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |slider_start|numeric|50|Starting value of the slider.|
 |slider_step|numeric|1|Step size of the slider.|
 |slider_labels|array of strings|[]|Array of labels to display under the slider (e.g., ["Not at all", "Very much"]).|
+|multi_button_response|boolean|false|Allows participants to respond with multiple buttons and responses will not end the trial.|
 
 ## Data Generated
 
@@ -54,6 +55,10 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |stimulus_width|numeric|The width of the image stimulus.|
 |stimulus_height|numeric|The height of the image stimulus.|
 |trial_duration|numeric|The duration of the trial.|
+|multi_button_responses|array of dictionaries|Records data respective to multiple button responses.|
+|multi_button_responses:button_index|numeric|The array index of the corresponding button used to respond.|
+|multi_button_responses:button_text|string|The text of the corresponding button used to respond.|
+|multi_button_responses:timestamp|numeric|The timestamp of when the corresponding button was pressed.|
 
 <!-- ## Install
 

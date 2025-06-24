@@ -38,6 +38,7 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |slider_start|numeric|50|Starting value of the slider.|
 |slider_step|numeric|1|Step size of the slider.|
 |slider_labels|array of strings|[]|Array of labels to display under the slider (e.g., ["Not at all", "Very much"]).|
+|multi_button_response|boolean|false|Allows participants to respond with multiple buttons and responses will not end the trial.|
 
 ## Data Generated
 
@@ -58,6 +59,10 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |log_after_every|numeric|The time gap between logged data in the playerInfo dictionary.|
 |playerTimestamps|array of dictionaries|Records every change in the state (playing, paused, buffering, etc.) of the YouTube player, with a timestamp created via `'Date.now()'`.|
 |playerInfo|array of dictionaries|Records YouTube player state every interval of seconds set by `'log_after_every'` with video timestamps, the current time on the client machine using `'Date.now()'`, the current playback time of the video stream, whether the player is at the live head of the stream, and the total duration of the video stream.|
+|multi_button_responses|array of dictionaries|Records data respective to multiple button responses.|
+|multi_button_responses:button_index|numeric|The array index of the corresponding button used to respond.|
+|multi_button_responses:button_text|string|The text of the corresponding button used to respond.|
+|multi_button_responses:timestamp|numeric|The timestamp of when the corresponding button was pressed.|
 
 <!-- ## Install
 

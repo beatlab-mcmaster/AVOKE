@@ -36,12 +36,15 @@
   
   const trial = {
     type: jsPsychAudioVisualButtonResponse,
-    choices: ['Next'], // Button text
-    audio_stimulus: 'example.wav', // Audio file path goes here
-    image_stimulus: 'example.jpg', // Image file path goes here
-    maintain_aspect_ratio: true, // Maintain aspect ratio of the image
-    stimulus_height: 1000, // Height of the image
+    choices: ['Button 1', 'Button 2', 'Button 3'], // Add more buttons to test multi-click
+    audio_stimulus: 'example.wav',
+    image_stimulus: 'example.jpg',
+    maintain_aspect_ratio: true,
+    stimulus_height: 1000,
     show_slider: true,
+    multi_button_response: true, // <-- Enable multi-button response logging
+    response_ends_trial: false,  // <-- Trial will not end on button click
+    trial_duration: 5000,        // <-- End trial after 5 seconds (for testing)
   };
   timeline.push(trial);
 
