@@ -41,12 +41,12 @@
     ctx.fillText(target, location[0], location[1]);
     ctx.restore()
   };
-
   const trial = {
     type: jsPsychFixPointCalibration,
     stimulus: drawE, // reference to the drawing function
     canvas_size: [window.innerHeight - 120, window.innerWidth - 120], // size of the canvas with 120px margin
-    grid_4x4: false, // whether to use the 4x4 grid
+    grid_rows: 3, // 3x3 grid (9 targets)
+    grid_cols: 3,
   };
 
   timeline.push(trial);

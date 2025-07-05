@@ -20,38 +20,42 @@
   });
 
   let timeline = [];
-
   var trial1 = {
   type: jsPsychHtmlButtonResponse,
   stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the fix-point-calibration trial demo. <br> Your task is to click the arrow key corresponding to the direction of the letter E. </p> <img src="./fixedFigureALT.svg" alt="Example Image" style="max-width:100%; height:auto;">',
   choices: ['Continue'],
   };
   timeline.push(trial1);
-
-  // drawing function to be used in the calibration trial, draws the target 'E' on the canvas
-  function drawE(c, target, location, text_size, degree = 0) {
-    let ctx = c.getContext("2d");
-    ctx.clearRect(0, 0, c.width, c.height)
-    ctx.save()
-    ctx.translate(location[0], location[1]);
-    ctx.rotate((degree * Math.PI) / 180)
-    ctx.translate(-location[0], -location[1]);
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.font = text_size + "px Arial";
-    ctx.fillText(target, location[0], location[1]);
-    ctx.restore()
-  };
-
-  const trial = {
+  const simpleTrial = {
     type: jsPsychFixPointCalibration,
-    stimulus: drawE, // reference to the drawing function
-    canvas_size: [window.innerHeight - 120, window.innerWidth - 120], // size of the canvas with 120px margin
-    grid_4x4: false, // whether to use the 4x4 grid
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+    target_duration: 2000,
     clickable_targets: false,
+    fixation_target: "E", // Letter E as target
+    target_size: 50,
+    grid_rows: 3, // 3x3 grid (9 targets)
+    grid_cols: 3,
+  };
+  timeline.push(simpleTrial);
+
+  var trial3 = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:36px; line-height:1.5;">Next: Image targets</p>',
+    choices: ['Continue'],
+  };
+  timeline.push(trial3);
+  const imageTrialExample = {
+    type: jsPsychFixPointCalibration,
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+    target_duration: 3000, // 3 seconds per target
+    clickable_targets: false,
+    target_image: './arrow.png',
+    target_size: 60, // Larger size for image visibility
+    grid_rows: 4, // 4x4 grid (16 targets)
+    grid_cols: 4,
   };
 
-  timeline.push(trial);
+  timeline.push(imageTrialExample);
   jsPsych.run(timeline);
 
   function test() {
