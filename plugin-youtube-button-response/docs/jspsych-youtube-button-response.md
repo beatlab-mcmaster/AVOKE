@@ -39,6 +39,7 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |slider_step|numeric|1|Step size of the slider.|
 |slider_labels|array of strings|[]|Array of labels to display under the slider (e.g., ["Not at all", "Very much"]).|
 |multi_button_response|boolean|false|Allows participants to respond with multiple buttons and responses will not end the trial.|
+|buffering_timeout|numeric|300000|Maximum duration in milliseconds to allow buffering or paused state before ending trial automatically. Set to null to disable timeout. Default is 5 minutes (300000ms).|
 
 ## Data Generated
 
@@ -63,6 +64,8 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |multi_button_responses:button_index|numeric|The array index of the corresponding button used to respond.|
 |multi_button_responses:button_text|string|The text of the corresponding button used to respond.|
 |multi_button_responses:timestamp|numeric|The timestamp of when the corresponding button was pressed.|
+|buffering_timeout|numeric|The timeout duration set for buffering/paused states in milliseconds.|
+|buffering_start_time|numeric|The timestamp when the last buffering/paused state began, or null if no such state occurred.|
 
 <!-- ## Install
 
@@ -101,7 +104,8 @@ import {jsPsychYouTubeButtonResponse} from '@jspsych-contrib/plugin-youtube-butt
     controls: true, // Enable YouTube player controls
     autoplay: true, // Enable autoplay
     pointer_events: true, // Enable pointer events
-    background_colour: '#808080' // Set the background colour to black
+    background_colour: '#808080', // Set the background colour to black
+    buffering_timeout: 300000 // End trial after 5 minutes of buffering/paused state
   };
 ```
 

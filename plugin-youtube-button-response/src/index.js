@@ -161,6 +161,12 @@ var jsPsychYouTubeButtonResponse = (function (jspsych) {
         pretty_name: "Multi-button response",
         default: false,
       },
+      /** Maximum duration (in ms) to allow buffering or paused state before ending trial. Set to null to disable. */
+      buffering_timeout: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Buffering/Paused timeout",
+        default: 300000, // 5 minutes in milliseconds
+      },
     },
   };
 
@@ -307,6 +313,10 @@ if (trial.show_slider) {
       // Check if YT API is loaded correctly
       var player;
       var playerTime = [];
+      // Timer variables for buffering/paused timeout
+      var bufferingTimer = null;
+      var bufferingStartTime = null;
+
       if (YT == null) {
         console.log("ERROR: YT API has not loaded properly.")
       } else {
@@ -322,20 +332,51 @@ if (trial.show_slider) {
         // current state of the player on every change
         function onPlayerStateChange(event) {
           const playerStatus = event.data
+          const currentTime = Date.now();
+          
           if (playerStatus == -1) {
-            playerTime.push({ time: Date.now(), state: "unstarted" })
+            playerTime.push({ time: currentTime, state: "unstarted" })
+            clearBufferingTimer();
           } else if (playerStatus == 0) {
-            playerTime.push({ time: Date.now(), state: "ended" })
+            playerTime.push({ time: currentTime, state: "ended" })
+            clearBufferingTimer();
           } else if (playerStatus == 1) {
-            playerTime.push({ time: Date.now(), state: "playing" })
+            playerTime.push({ time: currentTime, state: "playing" })
+            clearBufferingTimer();
           } else if (playerStatus == 2) {
-            playerTime.push({ time: Date.now(), state: "paused" })
+            playerTime.push({ time: currentTime, state: "paused" })
+            startBufferingTimer(currentTime);
           } else if (playerStatus == 3) {
-            playerTime.push({ time: Date.now(), state: "buffering" })
+            playerTime.push({ time: currentTime, state: "buffering" })
+            startBufferingTimer(currentTime);
           } else if (playerStatus == 5) {
-            playerTime.push({ time: Date.now(), state: "cued" })
+            playerTime.push({ time: currentTime, state: "cued" })
+            clearBufferingTimer();
           }
           console.log("Event triggered: ", playerTime[playerTime.length - 1]["state"]);
+        }
+
+        // Helper functions for buffering timeout
+        function startBufferingTimer(startTime) {
+          if (trial.buffering_timeout === null) return;
+          
+          // Clear any existing timer
+          clearBufferingTimer();
+          
+          bufferingStartTime = startTime;
+          bufferingTimer = setTimeout(() => {
+            console.log("Buffering/paused timeout reached. Ending trial.");
+            response.timeout_reason = "buffering_timeout";
+            end_trial();
+          }, trial.buffering_timeout);
+        }
+
+        function clearBufferingTimer() {
+          if (bufferingTimer) {
+            clearTimeout(bufferingTimer);
+            bufferingTimer = null;
+            bufferingStartTime = null;
+          }
         }
 
         // initial playback quality of the video
@@ -400,6 +441,10 @@ if (trial.show_slider) {
         // kill any remaining setTimeout handlers
         this.jsPsych.pluginAPI.clearAllTimeouts();
         clearInterval(log_playerInfo_interval);
+        // Clear buffering timer if it exists
+        if (typeof clearBufferingTimer !== 'undefined') {
+          clearBufferingTimer();
+        }
 
         if (trial.show_slider) {
           const slider = document.getElementById("jspsych-yt-slider");
@@ -420,7 +465,9 @@ if (trial.show_slider) {
           playerTimestamps: playerTime,
           playerInfo: playerInfoStates,
           slider_value: response.slider_value,
-          multi_button_responses: trial.multi_button_response ? multiButtonResponses : undefined
+          multi_button_responses: trial.multi_button_response ? multiButtonResponses : undefined,
+          buffering_timeout: trial.buffering_timeout,
+          buffering_start_time: bufferingStartTime
         };
         // clear the display
         display_element.innerHTML = "";
@@ -545,7 +592,9 @@ if (trial.show_slider) {
         end_time: getTimestamp() + (trial.trial_duration || 1000), // Simulated end time
         log_after_every: trial.log_after_every,
         playerTimestamps: this.generate_player_timestamps(trial),
-        playerInfo: this.generate_player_info(trial)
+        playerInfo: this.generate_player_info(trial),
+        buffering_timeout: trial.buffering_timeout,
+        buffering_start_time: null
       };
       const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
       this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
