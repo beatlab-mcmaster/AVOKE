@@ -1,7 +1,7 @@
 {
-  "name": "@avoke/plugin-fix-point-calibration",
+  "name": "@avoke/plugin-stimulus-matrix-display",
   "version": "0.0.1",
-  "description": "This plugin implements a fix-point calibration trial used for eyetracking experiments.",
+  "description": "This plugin implements a stimulus matrix display trial used for eyetracking experiments and other research studies.",
   "unpkg": "dist/index.browser.min.js",
   "files": [
     "index.js",
@@ -14,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/beatlab-mcmaster/AVOKE.git",
-    "directory": "plugin-fix-point-calibration"
+    "directory": "plugin-stimulus-matrix-display"
   },
   "author": "Shreshth Saxena (https://github.com/ShreshthSaxena)",
   "contributors": [
@@ -35,7 +35,7 @@
   "bugs": {
     "url": "https://github.com/beatlab-mcmaster/AVOKE/issues"
   },
-  "homepage": "https://github.com/beatlab-mcmaster/AVOKE/tree/main/plugin-fix-point-calibration",
+  "homepage": "https://github.com/beatlab-mcmaster/AVOKE/tree/main/plugin-stimulus-matrix-display",
   "devDependencies": {
     "@jspsych/config": "^3.1.0",
     "jspsych": "^8.0.0"
@@ -46,8 +46,12 @@
     "example": "examples"
   },
   "keywords": [
-    "fix-point",
+    "stimulus",
+    "matrix",
+    "display",
     "calibration",
-    "eye-tracking"
+    "eye-tracking",
+    "jspsych",
+    "experiments"
   ]
 }

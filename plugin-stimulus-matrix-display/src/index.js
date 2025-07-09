@@ -1,8 +1,8 @@
-var jsPsychFixPointCalibration = (function (jspsych) {
+var jsPsychStimulusMatrixDisplay = (function (jspsych) {
     'use strict';
 
     const info = {
-        name: "fix-point-calibration",
+        name: "stimulus-matrix-display",
         parameters: {            /** The drawing function to apply to the canvas. Should take the canvas object as argument. If not provided, a built-in function will be used. */
             stimulus: {
                 type: jspsych.ParameterType.FUNCTION,
@@ -71,25 +71,36 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 pretty_name: "Clickable targets",
                 default: false,
             },
+            /**
+             * Array of rotation angles (in degrees) to apply to targets. If empty array, no rotation is applied.
+             * If provided, should contain rotation angles to sample from. Use jsPsych.randomization 
+             * functions to randomize order externally if needed.
+             */
+            rotation_angles: {
+                type: jspsych.ParameterType.INT,
+                array: true,
+                pretty_name: "Rotation angles",
+                default: [],
+            },
         },
     };
     /**
-     * **fix-point-calibration**
+     * **stimulus-matrix-display**
      *
-     * Use this plugin for implementing a fix-point calibration in eyetracking studies.
-     * The calibration trial presents targets on a customizable grid (default 4x4).
-     * Targets are randomly presented in one of the four possible orientations (UP, DOWN, LEFT, RIGHT).
-     * User responds with the correct direction arrow key.
+     * Use this plugin for implementing matrix-based stimulus display in eyetracking and other studies.
+     * The trial presents stimuli on a customizable grid (default 3x3).
+     * Targets can optionally be rotated using the rotation_angles parameter.
+     * User responds with the correct direction arrow key or by clicking on targets.
      * Use the "fixation_target" to change displayed target, default target is the letter 'E'.
      *
      * @author  Shreshth Saxena, Jackson Shi (modified from Josh de Leeuw and Chris Jungerius)
-     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-fix-point-calibration/docs/jspsych-fix-point-calibration.md}}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-stimulus-matrix-display/docs/jspsych-stimulus-matrix-display.md}}
      */
-    class FixPointCalibrationPlugin {
+    class StimulusMatrixDisplayPlugin {
         constructor(jsPsych) {
             this.jsPsych = jsPsych;
-            this.wrong_keypresses = 0;
-            this.total_wrong_keypresses = 0;
+            this.wrong_inputs = 0;
+            this.total_wrong_inputs = 0;
         }
 
         // Built-in drawing function that handles both text and images
@@ -128,7 +139,7 @@ var jsPsychFixPointCalibration = (function (jspsych) {
         trial(display_element, trial) {
             // Set choices for clickable or keyboard targets
             if (trial.clickable_targets) {
-                trial.choices = ["Click-Up", "Click-Down", "Click-Left", "Click-Right"];
+                trial.choices = [];
             } else {
                 trial.choices = ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"];
             }
@@ -145,23 +156,29 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 let x = (col + 0.5) * (w / trial.grid_cols);
                 let y = (row + 0.5) * (h / trial.grid_rows);
                 
-                return [Math.round(x), Math.round(y)];            }
+                return [Math.round(x), Math.round(y)];
+            }
 
-            let directions = { 'Right': 0, 'Down': 90, 'Left': 180, 'Up': 270 };
             let trial_locations;
-            let trial_directions;
+            let trial_rotations;
             
             const total_targets = trial.grid_rows * trial.grid_cols;
             trial_locations = jsPsych.randomization.shuffle([...Array(total_targets).keys()]);
-            trial_directions = jsPsych.randomization.sampleWithReplacement(Object.keys(directions), total_targets);
+            
+            // Handle rotation angles - if empty array, use no rotation; otherwise sample from provided angles
+            if (!trial.rotation_angles || trial.rotation_angles.length === 0) {
+                trial_rotations = new Array(total_targets).fill(0);
+            } else {
+                trial_rotations = jsPsych.randomization.sampleWithReplacement(trial.rotation_angles, total_targets);
+            }
 
-            let new_html = '<div id="fix-point-calibration-stimulus">' +
-            '<canvas id="fix-point-target" height="' + h + '" width="' + w + '"></canvas>' +
+            let new_html = '<div id="stimulus-matrix-display-stimulus">' +
+            '<canvas id="stimulus-matrix-display-target" height="' + h + '" width="' + w + '"></canvas>' +
             "</div>";
 
             // draw and start trial
             display_element.innerHTML = new_html;
-            let c = document.getElementById("fix-point-target");
+            let c = document.getElementById("stimulus-matrix-display-target");
             let i = 0;
 
             // function to end trial when it is time
@@ -174,7 +191,7 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 const trial_data = {
                     response: responses,
                     presentation: target_presentation_time,
-                    total_wrong_keypresses: this.total_wrong_keypresses,
+                    total_wrong_inputs: this.total_wrong_inputs,
                     choices: trial.choices,
                     canvas_size: trial.canvas_size,
                     target_duration: trial.target_duration,
@@ -193,34 +210,44 @@ var jsPsychFixPointCalibration = (function (jspsych) {
 
             // function to handle responses by the subject
             var after_response = (info) => {
-                if ((info.key).toLowerCase() === ("Arrow" + trial_directions[i]).toLowerCase()) {
+                // Find the expected direction based on the rotation angle
+                const rotation_angle = trial_rotations[i];
+                let expected_direction = null;
+                
+                // Map rotation angles to direction names for keyboard responses
+                if (rotation_angle === 0) expected_direction = 'Right';
+                else if (rotation_angle === 90) expected_direction = 'Down';
+                else if (rotation_angle === 180) expected_direction = 'Left';
+                else if (rotation_angle === 270) expected_direction = 'Up';
+                
+                if (expected_direction && (info.key).toLowerCase() === ("Arrow" + expected_direction).toLowerCase()) {
                     this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
-                    display_element.querySelector("#fix-point-calibration-stimulus").className += " responded";
+                    display_element.querySelector("#stimulus-matrix-display-stimulus").className += " responded";
                     responses.push({
                         key_press: info.key,
                         rt: info.rt,
-                        keypress_time: info.keypress_time,
-                        wrong_keypresses: this.wrong_keypresses,
+                        input_time: info.keypress_time,
+                        wrong_inputs: this.wrong_inputs,
                     });
                     i += 1;
-                    this.wrong_keypresses = 0;
+                    this.wrong_inputs = 0;
                     show_next_target();
                 } else {
-                    this.wrong_keypresses += 1;
-                    this.total_wrong_keypresses += 1;
+                    this.wrong_inputs += 1;
+                    this.total_wrong_inputs += 1;
                 }
             };
 
             // function to handle click responses
-            var after_click = (event, expected_direction) => {
+            var after_click = (event) => {
                 responses.push({
-                    key_press: "Click-" + expected_direction,
+                    key_press: null,
                     rt: performance.now() - target_presentation_time[target_presentation_time.length - 1].time,
-                    keypress_time: performance.now(),
-                    wrong_keypresses: this.wrong_keypresses,
+                    input_time: performance.now(),
+                    wrong_inputs: this.wrong_inputs,
                 });
                 i += 1;
-                this.wrong_keypresses = 0;
+                this.wrong_inputs = 0;
                 show_next_target();
             };
             
@@ -244,15 +271,15 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                     
                     // Use custom stimulus function if provided, otherwise use built-in drawing
                     if (trial.stimulus) {
-                        trial.stimulus(c, target, location, trial.target_size, directions[trial_directions[i]], target_type);
+                        trial.stimulus(c, target, location, trial.target_size, trial_rotations[i], target_type);
                     } else {
-                        this.drawTarget(c, target, location, trial.target_size, directions[trial_directions[i]], target_type);
+                        this.drawTarget(c, target, location, trial.target_size, trial_rotations[i], target_type);
                     }
                     
                     target_presentation_time.push({
                         index: i,
                         loc: location,
-                        dir: trial_directions[i],
+                        rotation: trial_rotations[i],
                         time: performance.now(),
                     });
 
@@ -264,15 +291,9 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                         c.onmousemove = null;
                         
                         this.jsPsych.pluginAPI.setTimeout(() => {
-                            // Record no response for this target
-                            responses.push({
-                                key_press: null,
-                                rt: null,
-                                keypress_time: null,
-                                wrong_keypresses: this.wrong_keypresses,
-                            });
+                            // For fixed duration trials, don't record a response - just advance
                             i += 1;
-                            this.wrong_keypresses = 0;
+                            this.wrong_inputs = 0;
                             show_next_target();
                         }, trial.target_duration);
                     } else {
@@ -295,10 +316,10 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                                 const r = trial.target_size / 2;
                                 const dist = Math.sqrt((x - targetX) ** 2 + (y - targetY) ** 2);
                                 if (dist <= r) {
-                                    after_click(event, trial_directions[i]);
+                                    after_click(event);
                                 } else {
-                                    this.wrong_keypresses += 1;
-                                    this.total_wrong_keypresses += 1;
+                                    this.wrong_inputs += 1;
+                                    this.total_wrong_inputs += 1;
                                 }
                             };
                         } else {
@@ -341,7 +362,7 @@ var jsPsychFixPointCalibration = (function (jspsych) {
             const default_data = {
                 response: responses,
                 presentation: this.generate_presentation(trial),
-                total_wrong_keypresses: responses.reduce((sum, response) => sum + (response.wrong_keypresses || 0), 0),
+                total_wrong_inputs: responses.reduce((sum, response) => sum + (response.wrong_inputs || 0), 0),
                 choices: trial.choices,
                 canvas_size: trial.canvas_size,
                 target_duration: trial.target_duration,
@@ -369,13 +390,18 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 return [Math.round(x), Math.round(y)];
             }
 
-            let directions = { 'Right': 0, 'Down': 90, 'Left': 180, 'Up': 270 };
             let trial_locations;
-            let trial_directions;
+            let trial_rotations;
             
             const total_targets = trial.grid_rows * trial.grid_cols;
             trial_locations = jsPsych.randomization.shuffle([...Array(total_targets).keys()]);
-            trial_directions = jsPsych.randomization.sampleWithReplacement(Object.keys(directions), total_targets);
+            
+            // Handle rotation angles - if empty array, use no rotation; otherwise sample from provided angles
+            if (!trial.rotation_angles || trial.rotation_angles.length === 0) {
+                trial_rotations = new Array(total_targets).fill(0);
+            } else {
+                trial_rotations = jsPsych.randomization.sampleWithReplacement(trial.rotation_angles, total_targets);
+            }
             
             for (let i = 0; i < total_targets; i++) {
                 const location = location_cords(trial_locations[i])
@@ -383,7 +409,7 @@ var jsPsychFixPointCalibration = (function (jspsych) {
                 target_presentation_time.push({
                     index: i,
                     loc: location,
-                    dir: trial_directions[i],
+                    rotation: trial_rotations[i],
                     time: performance.now(),
                 });
             }
@@ -392,20 +418,33 @@ var jsPsychFixPointCalibration = (function (jspsych) {
             return target_presentation_time;
         }        generate_responses(trial) {
             var responses = [];
-            const total_targets = trial.grid_rows * trial.grid_cols;
             
-            for (let i = 0; i < total_targets; i++) {
-                responses.push({
-                    rt: Math.floor(this.jsPsych.randomization.sampleExGaussian(500, 100, 0.01, true)),
-                    key_press: this.jsPsych.pluginAPI.getValidKey(trial.choices),
-                    wrong_keypresses: Math.floor(Math.random() * 4)
-                });
+            // Only generate responses for interactive trials (not fixed duration)
+            if (trial.target_duration === null) {
+                const total_targets = trial.grid_rows * trial.grid_cols;
+                
+                for (let i = 0; i < total_targets; i++) {
+                    if (trial.clickable_targets) {
+                        responses.push({
+                            rt: Math.floor(this.jsPsych.randomization.sampleExGaussian(500, 100, 0.01, true)),
+                            key_press: null,
+                            wrong_inputs: Math.floor(Math.random() * 4)
+                        });
+                    } else {
+                        responses.push({
+                            rt: Math.floor(this.jsPsych.randomization.sampleExGaussian(500, 100, 0.01, true)),
+                            key_press: this.jsPsych.pluginAPI.getValidKey(trial.choices),
+                            wrong_inputs: Math.floor(Math.random() * 4)
+                        });
+                    }
+                }
             }
+            // For fixed duration trials, return empty responses array
             return responses;
         }
     }
-    FixPointCalibrationPlugin.info = info;
+    StimulusMatrixDisplayPlugin.info = info;
 
-    return FixPointCalibrationPlugin;
+    return StimulusMatrixDisplayPlugin;
 
 })(jsPsychModule);

@@ -19,7 +19,7 @@ The `docs` folder for each plugin or extension contains its own README file docu
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-audio-visual-button-response/docs/jspsych-audio-visual-response.md">plugin-audiovisual-response </a>
 
-<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-fix-point-calibration/docs/jspsych-fix-point-calibration.md">plugin-fix-point-calibration</a>
+<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-stimulus-matrix-display/docs/jspsych-stimulus-matrix-display.md">plugin-stimulus-matrix-display</a>
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-smooth-pursuit-calibration/docs/jspsych-smooth-pursuit-calibration.md">plugin-smooth-pursuit-calibration </a>
 
@@ -27,6 +27,21 @@ The `docs` folder for each plugin or extension contains its own README file docu
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-youtube-button-response/docs/jspsych-youtube-button-response.md">plugin-youtube-button-response </a>
 
+## Example Stimuli
+
+AVOKE examples use standardized research databases to ensure reproducibility and scientific validity:
+
+### Face Stimuli
+- **Chicago Face Database (CFD)**: A validated set of high-resolution face photographs with norming data
+  - Citation: Ma, D. S., Correll, J., & Wittenbrink, B. (2015). The Chicago face database: A free stimulus set of faces and norming data. *Behavior Research Methods*, 47(4), 1122-1135.
+  - Available at: https://www.chicagofacedb.org/
+
+### Visual Stimuli  
+- **International Affective Picture System (IAPS)**: Standardized emotional images for research
+  - Citation: Lang, P. J., Bradley, M. M., & Cuthbert, B. N. (2008). International affective picture system (IAPS): Affective ratings of pictures and instruction manual. *Technical Report A-8*, University of Florida, Gainesville, FL.
+  - Available through: https://csea.phhp.ufl.edu/media.html
+
+**Note**: Researchers should obtain proper licenses for these databases before using them in their studies. The example file names provided in AVOKE are for demonstration purposes only.
 
 ## Citation
 

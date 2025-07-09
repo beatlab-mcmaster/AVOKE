@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="../src/index.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body></body>
+<script>
+
+  const jsPsych = initJsPsych({
+    on_finish: function () {
+      //test();
+      jsPsych.data.displayData('json');
+    }
+  });
+
+  let timeline = [];
+  
+  const intro_trial = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the stimulus-matrix-display trial demo. <br> Your task is to respond to targets using arrow keys or clicks. </p> <img src="./fixedFigureALT.svg" alt="Example Image" style="max-width:100%; height:auto;">',
+    choices: ['Continue'],
+  };
+  timeline.push(intro_trial);
+
+  const text_trial = {
+    type: jsPsychStimulusMatrixDisplay,
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+    clickable_targets: false,
+    fixation_target: "E", // Letter E as target
+    target_size: 50,
+    grid_rows: 3, // 3x3 grid (9 targets)
+    grid_cols: 3,
+  };
+  timeline.push(text_trial);
+
+  const transition_trial1 = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:36px; line-height:1.5;">Next: Image targets</p>',
+    choices: ['Continue'],
+  };
+  timeline.push(transition_trial1);
+
+  const image_trial = {
+    type: jsPsychStimulusMatrixDisplay,
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+    target_duration: 2000, // 2 seconds per target
+    clickable_targets: false,
+    target_image: 'example.png', // Chicago Face Database example
+    target_size: 60, // Larger size for image visibility
+    grid_rows: 4, // 4x4 grid (16 targets)
+    grid_cols: 4,
+  };
+  timeline.push(image_trial);
+
+  const transition_trial2 = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:36px; line-height:1.5;">Next: Clickable targets</p>',
+    choices: ['Continue'],
+  };
+  timeline.push(transition_trial2);
+
+  const clickable_trial = {
+    type: jsPsychStimulusMatrixDisplay,
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+    target_duration: null, // Wait for user interaction
+    clickable_targets: true, // Enable click interactions
+    fixation_target: "●", // Bullet point as target
+    target_size: 45,
+    grid_rows: 3, // 3x3 grid (9 targets)
+    grid_cols: 3,
+    // rotation_angles: [], // No rotation for clickable targets (default)
+  };
+  timeline.push(clickable_trial);
+
+  const transition_trial3 = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:36px; line-height:1.5;">Next: Custom rotation angles</p>',
+    choices: ['Continue'],
+  };
+  timeline.push(transition_trial3);
+
+  const rotation_trial = {
+    type: jsPsychStimulusMatrixDisplay,
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+    target_duration: 2000, // 2 seconds per target
+    clickable_targets: false,
+    fixation_target: "E", // Arrow-like character
+    target_size: 50,
+    grid_rows: 2, // 2x2 grid (4 targets)
+    grid_cols: 2,
+    rotation_angles: [0, 45, 90, 135, 180, 225, 270, 315], // 8 possible rotations
+  };
+  timeline.push(rotation_trial);
+  jsPsych.run(timeline);
+
+  function test() {
+    const data = jsPsych.data.get().values(); // Convert jsPsych data to an array
+
+    let test_results = "";
+
+    // Filter out trials that are of type "stimulus-matrix-display"
+    const matrixTrials = data.filter(trial => trial.trial_type === "stimulus-matrix-display");
+
+    // Loop through all matrix display trials in the data
+    matrixTrials.forEach((trial, trialIndex) => {
+      // Add trial data as a collapsible section
+      const trialLabel = trial.trial_type ? `Trial Data (${trial.trial_type})` : "Trial Data";
+      test_results += `<details><summary>${trialLabel} #${trialIndex + 1}</summary>
+        <pre style="text-align:left; font-family:monospace; background:#f8f8f8; padding:8px; border-radius:4px;">${JSON.stringify(trial, null, 2)}</pre>
+      </details>`;
+
+      // --- Test 1: Valid Key Presses ---
+      if (trial.response && trial.response.length > 0 && trial.choices) {
+        trial.response.forEach((r, i) => {
+          if (!trial.choices.includes(r.key_press)) {
+            test_results += `<p>❌ Invalid key press in response ${i + 1}: "${r.key_press}" is not in allowed choices [${trial.choices.join(", ")}]</p>`;
+          } else {
+            test_results += `<p>✔️ Valid key press in response ${i + 1}: "${r.key_press}"</p>`;
+          }
+        });
+      } else if (trial.target_duration !== null) {
+        test_results += `<p>✔️ No responses recorded for fixed duration trial (${trial.target_duration}ms per target).</p>`;
+      } else {
+        test_results += `<p>❌ Missing response or choices data for valid key press test.</p>`;
+      }
+
+      // --- Test 2: Total Wrong Keypresses Calculation ---
+      if (trial.response && trial.response.length > 0 && typeof trial.total_wrong_inputs !== "undefined") {
+        const sumWrong = trial.response.reduce((acc, r) => acc + (r.wrong_inputs || 0), 0);
+        if (sumWrong === trial.total_wrong_inputs) {
+          test_results += `<p>✔️ Total wrong inputs matches sum of individual wrong inputs (${sumWrong}).</p>`;
+        } else {
+          test_results += `<p>❌ Total wrong inputs mismatch: sum is ${sumWrong}, but total_wrong_inputs is ${trial.total_wrong_inputs}.</p>`;
+        }
+      } else if (trial.target_duration !== null) {
+        test_results += `<p>✔️ No wrong inputs recorded for fixed duration trial.</p>`;
+      } else {
+        test_results += `<p>❌ Missing response or total_wrong_inputs data for wrong inputs test.</p>`;
+      }
+
+      // --- Test 3: Presentation Location Bounds ---
+      if (trial.presentation && trial.canvas_size) {
+        trial.presentation.forEach((p, i) => {
+          const [x, y] = p.loc;
+          const [canvasHeight, canvasWidth] = trial.canvas_size;
+          if (x < 0 || x > canvasWidth || y < 0 || y > canvasHeight) {
+            test_results += `<p>❌ Presentation ${i + 1}: Location (${x}, ${y}) is out of canvas bounds (${canvasWidth}x${canvasHeight}).</p>`;
+          } else {
+            test_results += `<p>✔️ Presentation ${i + 1}: Location (${x}, ${y}) is within canvas bounds.</p>`;
+          }
+        });
+      } else {
+        test_results += `<p>❌ Missing presentation or canvas_size data for location bounds test.</p>`;
+      }
+    });
+
+    // Update the display with the test results
+    jsPsych.getDisplayElement().innerHTML = test_results;
+  }
+</script>
+
+</html>

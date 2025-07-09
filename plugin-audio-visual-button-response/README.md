@@ -20,6 +20,11 @@ jsPsych 8.0.0
 
 See [documentation](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-audio-visual-button-response/docs/jspsych-audio-visual-response.md)
 
+## Example Stimuli
+
+The example files use standardized research images:
+- **Visual stimuli**: International Affective Picture System (IAPS) - Lang, P. J., Bradley, M. M., & Cuthbert, B. N. (2008). International affective picture system (IAPS): Affective ratings of pictures and instruction manual. *Technical Report A-8*, University of Florida, Gainesville, FL.
+
 ## Author / Citation
 
 Created by Shreshth Saxena & Jackson Shi

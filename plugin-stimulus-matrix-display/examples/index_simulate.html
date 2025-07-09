@@ -20,14 +20,14 @@
 
   let timeline = [];
 
-  var trial1 = {
-  type: jsPsychHtmlButtonResponse,
-  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the fix-point-calibration trial demo. <br> Your task is to click the arrow key corresponding to the direction of the letter E. </p> <img src="./fixedFigureALT.svg" alt="Example Image" style="max-width:100%; height:auto;">',
-  choices: ['Continue'],
+  const intro_trial = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the stimulus-matrix-display trial demo. <br> Your task is to respond to targets using arrow keys or clicks. </p> <img src="./fixedFigureALT.svg" alt="Example Image" style="max-width:100%; height:auto;">',
+    choices: ['Continue'],
   };
-  timeline.push(trial1);
+  timeline.push(intro_trial);
 
-  // drawing function to be used in the calibration trial, draws the target 'E' on the canvas
+  // drawing function to be used in the matrix display trial, draws the target 'E' on the canvas
   function drawE(c, target, location, text_size, degree = 0) {
     let ctx = c.getContext("2d");
     ctx.clearRect(0, 0, c.width, c.height)
@@ -41,15 +41,16 @@
     ctx.fillText(target, location[0], location[1]);
     ctx.restore()
   };
-  const trial = {
-    type: jsPsychFixPointCalibration,
+  const custom_trial = {
+    type: jsPsychStimulusMatrixDisplay,
     stimulus: drawE, // reference to the drawing function
     canvas_size: [window.innerHeight - 120, window.innerWidth - 120], // size of the canvas with 120px margin
     grid_rows: 3, // 3x3 grid (9 targets)
     grid_cols: 3,
+    rotation_angles: [0, 90, 180, 270], // Classic 4-direction setup
   };
 
-  timeline.push(trial);
+  timeline.push(custom_trial);
   jsPsych.simulate(timeline);
 
   function test() {
@@ -57,11 +58,11 @@
 
     let test_results = "";
 
-    // Filter out trials that are of type "fix-point-calibration"
-    const calibrationTrials = data.filter(trial => trial.trial_type === "fix-point-calibration");
+    // Filter out trials that are of type "stimulus-matrix-display"
+    const matrixTrials = data.filter(trial => trial.trial_type === "stimulus-matrix-display");
 
-    // Loop through all calibration trials in the data
-    calibrationTrials.forEach((trial, trialIndex) => {
+    // Loop through all matrix display trials in the data
+    matrixTrials.forEach((trial, trialIndex) => {
       // Add trial data as a collapsible section
       const trialLabel = trial.trial_type ? `Trial Data (${trial.trial_type})` : "Trial Data";
       test_results += `<details><summary>${trialLabel} #${trialIndex + 1}</summary>
@@ -69,7 +70,7 @@
       </details>`;
 
       // --- Test 1: Valid Key Presses ---
-      if (trial.response && trial.choices) {
+      if (trial.response && trial.response.length > 0 && trial.choices) {
         trial.response.forEach((r, i) => {
           if (!trial.choices.includes(r.key_press)) {
             test_results += `<p>❌ Invalid key press in response ${i + 1}: "${r.key_press}" is not in allowed choices [${trial.choices.join(", ")}]</p>`;
@@ -77,20 +78,24 @@
             test_results += `<p>✔️ Valid key press in response ${i + 1}: "${r.key_press}"</p>`;
           }
         });
+      } else if (trial.target_duration !== null) {
+        test_results += `<p>✔️ No responses recorded for fixed duration trial (${trial.target_duration}ms per target).</p>`;
       } else {
         test_results += `<p>❌ Missing response or choices data for valid key press test.</p>`;
       }
 
-      // --- Test 2: Total Wrong Keypresses Calculation ---
-      if (trial.response && typeof trial.total_wrong_keypresses !== "undefined") {
-        const sumWrong = trial.response.reduce((acc, r) => acc + (r.wrong_keypresses || 0), 0);
-        if (sumWrong === trial.total_wrong_keypresses) {
-          test_results += `<p>✔️ Total wrong keypresses matches sum of individual wrong keypresses (${sumWrong}).</p>`;
+      // --- Test 2: Total Wrong Inputs Calculation ---
+      if (trial.response && trial.response.length > 0 && typeof trial.total_wrong_inputs !== "undefined") {
+        const sumWrong = trial.response.reduce((acc, r) => acc + (r.wrong_inputs || 0), 0);
+        if (sumWrong === trial.total_wrong_inputs) {
+          test_results += `<p>✔️ Total wrong inputs matches sum of individual wrong inputs (${sumWrong}).</p>`;
         } else {
-          test_results += `<p>❌ Total wrong keypresses mismatch: sum is ${sumWrong}, but total_wrong_keypresses is ${trial.total_wrong_keypresses}.</p>`;
+          test_results += `<p>❌ Total wrong inputs mismatch: sum is ${sumWrong}, but total_wrong_inputs is ${trial.total_wrong_inputs}.</p>`;
         }
+      } else if (trial.target_duration !== null) {
+        test_results += `<p>✔️ No wrong inputs recorded for fixed duration trial.</p>`;
       } else {
-        test_results += `<p>❌ Missing response or total_wrong_keypresses data for wrong keypresses test.</p>`;
+        test_results += `<p>❌ Missing response or total_wrong_inputs data for wrong inputs test.</p>`;
       }
 
       // --- Test 3: Presentation Location Bounds ---
