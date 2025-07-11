@@ -49,11 +49,12 @@ Parameter | Type | Default Value | Description
 ----------|------|---------------|------------
 using_setup_plugin|boolean|false|If using this extension with the [video-capture-setup plugin](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md), then true.
 default_camera_options|boolean|false|If using default camera parameters, then true.
-jatos|boolean|null|If used in a JATOS experiment, then true.
+record_audio|boolean|false|If recording audio from the stream as well, then true.
 download_local_only|boolean|true|Whether or not the resulting video should be locally downloaded.
 video_width|numeric|640|The width of the video capture in pixels.
 video_height|numeric|480|The height of the video capture in pixels.
 framerate|numeric|26|The frames per second of the video capture.
+jatos|boolean|false|If used in a JATOS experiment, then true.
 
 ### Trial Parameters
 
@@ -72,11 +73,13 @@ Parameter | Type | Default Value | Description
 filename|string|""|The name of the output video file.
 using_setup_plugin|boolean|false|Whether or not the setup plugin is being used alongside this extension.
 default_camera_options|boolean|false|Whether or not the default camera options should be used, or if it should detect the options of the video input device.
-jatos|boolean|null|Whether or not JATOS is being used with this extension.
+record_audio|boolean|false|Whether or not to record audio along with the webcam video.
 download_local_only|boolean|true|Whether or not the video file should be downloaded locally afterwards.
 video_width|numeric|640|The default frame width of the camera.
 video_height|numeric|480|The default frame height of the camera.
 framerate|numeric|26|The frames per second of the video input device.
+jatos|boolean|null|Whether or not JATOS is being used with this extension.
+
 
 ## Data Generated
 
