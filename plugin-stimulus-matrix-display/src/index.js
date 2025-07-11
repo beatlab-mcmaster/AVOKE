@@ -13,7 +13,7 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
             choices: {
                 type: jspsych.ParameterType.KEYS,
                 pretty_name: "Choices",
-                default: ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"],
+                default: "ALL_KEYS",
             },            
             
             /* The target to be displayed */
@@ -221,17 +221,10 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
 
             // function to handle responses by the subject
             var after_response = (info) => {
-                // Find the expected direction based on the rotation angle
-                const rotation_angle = trial_rotations[i];
-                let expected_direction = null;
-                
-                // Map rotation angles to direction names for keyboard responses
-                if (rotation_angle === 0) expected_direction = 'Right';
-                else if (rotation_angle === 90) expected_direction = 'Down';
-                else if (rotation_angle === 180) expected_direction = 'Left';
-                else if (rotation_angle === 270) expected_direction = 'Up';
-                
-                if (expected_direction && (info.key).toLowerCase() === ("Arrow" + expected_direction).toLowerCase()) {
+                // verify if the response is valid for the current target
+                correct_response = trial.choices === "ALL_KEYS" ? "" : trial.choices[i];
+
+                if (trial.choices === "ALL_KEYS" || (info.key).toLowerCase() === correct_response.toLowerCase()) {
                     this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
                     display_element.querySelector("#stimulus-matrix-display-stimulus").className += " responded";
                     responses.push({
@@ -334,7 +327,7 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                                 }
                             };
                         } else {
-                            let keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
+                            var keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
                                 callback_function: after_response,
                                 rt_method: "performance",
                                 persist: true,
