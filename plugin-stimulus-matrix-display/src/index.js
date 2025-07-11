@@ -14,7 +14,9 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 type: jspsych.ParameterType.KEYS,
                 pretty_name: "Choices",
                 default: ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"],
-            },            /* The target to be displayed */
+            },            
+            
+            /* The target to be displayed */
             fixation_target: {
                 type: jspsych.ParameterType.STRING,
                 pretty_name: "Fixation target",
@@ -28,7 +30,7 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 default: null,
             },
 
-            /* The size of the fix-point target */
+            /* The size of the visual target */
             target_size: {
                 type: jspsych.ParameterType.INT,
                 pretty_name: "Target size",
@@ -42,14 +44,14 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 default: null,
             },
 
-            /* Number of rows in the calibration grid */
+            /* Number of rows in the presentation grid */
             grid_rows: {
                 type: jspsych.ParameterType.INT,
                 pretty_name: "Grid rows",
                 default: 3,
             },
 
-            /* Number of columns in the calibration grid */
+            /* Number of columns in the presentation grid */
             grid_cols: {
                 type: jspsych.ParameterType.INT,
                 pretty_name: "Grid columns", 
@@ -81,6 +83,12 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 array: true,
                 pretty_name: "Rotation angles",
                 default: [],
+            },
+            /** Whether to display cursor on the screen or not */
+            disable_cursor: {
+                type: jspsych.ParameterType.BOOL,
+                pretty_name: "Disable cursor on screen",
+                default: true,
             },
         },
     };
@@ -202,8 +210,11 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 };
                 // clear the display
                 display_element.innerHTML = "";
-                //enable cursor again
-                document.documentElement.style.cursor = "auto";
+                if (trial.disable_cursor && !trial.clickable_targets) {
+                    //enable cursor again
+                    document.documentElement.style.cursor = "auto";
+                }
+                
                 // move on to the next trial
                 this.jsPsych.finishTrial(trial_data);
             };
@@ -259,11 +270,11 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                     c.onclick = null;
                     c.onmousemove = null;
 
-                    if (trial.clickable_targets) {
-                        document.documentElement.style.cursor = "default";
-                    } else {
+                    if (trial.disable_cursor && !trial.clickable_targets) {
                         document.documentElement.style.cursor = "none";
-                    }                    const location = location_cords(trial_locations[i]);
+                    }                    
+                    
+                    const location = location_cords(trial_locations[i]);
                     
                     // Determine target and type
                     const target = trial.target_image !== null ? trial.target_image : trial.fixation_target;

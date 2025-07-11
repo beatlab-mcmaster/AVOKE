@@ -9,7 +9,7 @@ This plugin implements a stimulus matrix display trial used for eyetracking expe
 ### In browser
 
 ```js
-<script src="https://unpkg.com/@AVOKE/plugin-fix-point-calibration@1.0.0"></script>
+<script src="https://unpkg.com/@AVOKE/plugin-stimulus-matrix-display@1.0.0"></script>
 ``` -->
 
 ## Compatibility

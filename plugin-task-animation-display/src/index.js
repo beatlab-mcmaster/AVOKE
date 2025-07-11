@@ -1,8 +1,8 @@
-var jsPsychSmoothPursuitCalibration = (function (jspsych) {
+var jsPsychPathAnimationDisplay = (function (jspsych) {
     'use strict';
 
     const info = {
-        name: "smooth-pursuit-calibration",
+        name: "path-animation-display",
         parameters: {
             /** Filepath to image. */
             stimulus: {
@@ -28,71 +28,85 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
                 pretty_name: "Starting location",
                 default: [0,0],
             },
-            /** Set the number of repetitions for the animation */
-            repetitions: {
-                type: jspsych.ParameterType.INT,
-                pretty_name: "Repetitions",
-                default: 1,
-            },
             /** Set the desired path for the target to travel */
             path_shape: {
                 type: jspsych.ParameterType.STRING,
                 pretty_name: "Path shape",
                 default: "rectangle", //or line
             },
-            /** Maintain the aspect ratio after setting width or height */
-            maintain_aspect_ratio: {
+            /** Breadth/Height of the path (only used for rectangle path) */
+            path_breadth: {
+                type: jspsych.ParameterType.INT,
+                pretty_name: "Path breadth/height",
+                default: 800,
+            },
+            /** Length/Width of the path  */
+            path_length: {
+                type: jspsych.ParameterType.INT,
+                pretty_name: "Path length/width",
+                default: 600,
+            },
+            /** Slope of the line in degrees. Only used if path_shape is 'line' */   
+            path_slope: {
+                type: jspsych.ParameterType.FLOAT,
+                pretty_name: "Line slope",
+                default: 0, 
+            },
+            /** Set the number of repetitions for the animation */
+            repetitions: {
+                type: jspsych.ParameterType.INT,
+                pretty_name: "Repetitions",
+                default: 1,
+            },
+            /** Whether to move the target clockwise or anti-clockwise */
+            clockwise: {
                 type: jspsych.ParameterType.BOOL,
-                pretty_name: "Maintain aspect ratio",
+                pretty_name: "Clockwise",
                 default: true,
             },
-            /* Duration of smooth pursuit path */
+            /* Duration of animation path */
             animation_duration: {
                 type: jspsych.ParameterType.INT,
                 pretty_name: 'Animation duration',
                 default: 1000,
             },
             /** Array containing the key(s) the subject is allowed to press to respond to the stimulus. */
-            /**
-             * This array contains the key(s) that the participant is allowed to press in order to start
-             * to the animation. Keys should be specified as characters (e.g., `'a'`, `'q'`, `' '`, `'Enter'`, `'ArrowDown'`) - see
-             * {@link https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values this page}
-             * and
-             * {@link https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/ this page (event.key column)}
-             * for more examples. Any key presses that are not listed in the
-             * array will be ignored. The default value of `"ALL_KEYS"` means that all keys will be accepted as valid responses.
-             * Specifying `"NO_KEYS"` will mean that no responses are allowed.
-             */
             choices: {
                 type: jspsych.ParameterType.KEYS,
                 pretty_name: "Choices",
                 default: "ALL_KEYS",
             },
-            /** Height of the rectangular path */
-            path_height: {
-                type: jspsych.ParameterType.INT,
-                pretty_name: "Image width",
-                default: 800,
+            /** Whether to store timestamps and locations of each target presentation */
+            save_presentation_locations: {
+                type: jspsych.ParameterType.BOOL,
+                pretty_name: "Save presentation locations",
+                default: false,
             },
-            /** Width of the rectangular path */
-            path_width: {
-                type: jspsych.ParameterType.INT,
-                pretty_name: "Image width",
-                default: 600,
+            /** Whether to display cursor on the screen or not */
+            disable_cursor: {
+                type: jspsych.ParameterType.BOOL,
+                pretty_name: "Disable cursor on screen",
+                default: true,
+            },
+            /** Optional custom function for path coordinates. Should accept (progress, trial) and return [x, y] */
+            custom_path_function: {
+                type: jspsych.ParameterType.FUNCTION,
+                pretty_name: "Custom path function",
+                default: null,
             },
         },
     };
     /**
-     * **smooth-pursuit-calibration**
+     * **task-animation-display**
      *
-     * Use this plugin for implementing a smooth-pursuit calibration in eyetracking studies.
-     * The calibration trial presents a target that moves along a rectangular path.
+     * Use this plugin for implementing a task-animation-display.
+     * The trial presents a target that moves along a pre-defined or custom path.
      *
      * 
      * @author Shreshth Saxena, Jackson Shi
-     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-smooth-pursuit-calibration/docs/jspsych-smooth-pursuit-calibration.md}}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-task-animation-display/docs/jspsych-task-animation-display.md}}
      */
-    class SmoothPursuitCalibrationPlugin {
+    class TaskAnimationDisplayPlugin {
         constructor(jsPsych) {
             this.jsPsych = jsPsych;
         }
@@ -103,66 +117,86 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
             let response = { key: null, rt: null };
             let target_presentation_time = [];
             let current_repetition = 1;
-            const path_length = trial.path_shape == "line" ? 2*trial.path_width : 2 * (trial.path_width + trial.path_height)
-            
+            const first_vertex = trial.clockwise ? trial.path_length : trial.path_breadth;
+            const second_vertex = trial.clockwise ? trial.path_breadth : trial.path_length;
+            const total_length = trial.path_shape == "line" ? 2 * trial.path_length : 2 * (trial.path_length + trial.path_breadth)
+            const radians = trial.path_slope * (Math.PI / 180);
+
             // function to calculate coordinates of the target at a given progress
             const location_coordinates = (progress) => {
-                let perimeter = progress * path_length;
-                if (trial.path_shape == "rectangle"){
-                    if (progress > 0.5) {
-                        perimeter -= (path_length / 2);
-                        if (perimeter > trial.path_width) {
-                            return [0, ((path_length / 2) - perimeter)]
+                // if a custom path function is provided, use it
+                if (typeof trial.custom_path_function === "function") {
+                    return trial.custom_path_function(progress, trial);
+                }
+
+                // otherwise, use the default rectangle or line path logic
+                let perimeter = progress * total_length;
+                let coords = []
+                switch (trial.path_shape) {
+                    case "rectangle":
+                        if (progress > 0.5) {
+                            perimeter -= (total_length / 2);
+                            if (perimeter > first_vertex) {
+                                // fourth quarter of the path
+                                coords = [0, ((total_length / 2) - perimeter)]
+                            } else {
+                                // third quarter of the path
+                                coords = [first_vertex - perimeter, second_vertex]
+                            }
                         } else {
-                            return [trial.path_width - perimeter, trial.path_height]
+                            if (perimeter > first_vertex) {
+                                // second quarter of the path
+                                coords = [first_vertex, (perimeter - first_vertex)]
+                            } else {
+                                // first quarter of the path
+                                coords = [perimeter, 0]
+                            }   
                         }
-                    } else {
-                        if (perimeter > trial.path_width) {
-                            return [trial.path_width, (perimeter - trial.path_width)]
-                        } else {
-                            return [perimeter, 0]
+                        return trial.clockwise ? coords : [coords[1], coords[0]]; //reverse x and y coordinates if anti-clockwise
+                    case "line":
+                        if (progress >= 0.25 && progress <= 0.75){
+                            // second and third quarter of the path
+                            perimeter = (total_length / 2) - perimeter;
+                        } else if (progress > 0.75){
+                            // fourth quarter of the path
+                            perimeter -= total_length                             
                         }
-                    }
-                } else if (trial.path_shape == "line"){
-                    // move first quarter to the right, then reverse and move last quarter of the path to the right as well.
-                    if (progress >= 0.25 && progress <= 0.75){
-                        // moving to the left 
-                        return [trial.path_width - (perimeter-0.5*trial.path_width), 0]
-                    } else if (progress < 0.25){
-                        //moving to the right for the first quarter
-                        return [trial.path_width/2 + perimeter, 0]
-                    } else {
-                        //moving to the right for the last quarter
-                        return [perimeter - 0.75*path_length, 0]
-                    }
+                        coords =  [perimeter * Math.cos(radians), - (perimeter * Math.sin(radians))]
+                        if (!trial.clockwise) coords = coords.map(x => -x);
+                        return coords
+
+                    default:
+                        console.error("Invalid path shape specified. Use 'rectangle' or 'line'.");
+                        return [0, 0];
                 }
             }
 
-            // disable cursor visibility
-            document.documentElement.style.cursor = "none";
+            if (trial.disable_cursor) {
+                // disable cursor visibility
+                document.documentElement.style.cursor = "none";
+            }
 
-            let html = '<div class="virtual-window"><img src="' + trial.stimulus + '" id="smooth-pursuit-target"> </div>';
             // update the page content
+            let html = '<div class="virtual-window"><img src="' + trial.stimulus + '" id="task-animation-display-target"> </div>';
             display_element.innerHTML = html;
-            let img = display_element.querySelector("#smooth-pursuit-target");
+            let img = display_element.querySelector("#task-animation-display-target");
             img.style.position = 'absolute';
             img.style.left = trial.starting_location[0] + 'px';
             img.style.top = trial.starting_location[1] + 'px';
             img.style.height = trial.stimulus_height + 'px';
             img.style.width = trial.stimulus_width + 'px';
+            img.style.willChange = 'transform';
 
-            // function to end trial when it is time
             const end_trial = (end_time) => {
                 // kill any remaining setTimeout handlers
                 this.jsPsych.pluginAPI.clearAllTimeouts();
-                // kill keyboard listeners
                 if (typeof keyboardListener !== "undefined") {
                     this.jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
                 }
                 // gather the data to store for the trial
                 const trial_data = {
                     response: response,
-                    target_presentation_time: target_presentation_time,
+                    target_presentation_time: trial.save_presentation_locations ? target_presentation_time : "NA",
                     path_shape: trial.path_shape,
                     repetitions_set: trial.repetitions,
                     path_width: trial.path_width,
@@ -173,8 +207,11 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
                 };
                 // clear the display
                 display_element.innerHTML = "";
-                //enable cursor again
-                document.documentElement.style.cursor = "auto";
+
+                if (trial.disable_cursor) {
+                    //enable cursor again
+                    document.documentElement.style.cursor = "auto";
+                }
                 // move on to the next trial
                 this.jsPsych.finishTrial(trial_data);
             };
@@ -186,17 +223,19 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
                 let progress = elapsed_time / trial.animation_duration;
 
                 const location = location_coordinates(progress)
-                const x_pad = trial.path_shape == "line" ? trial.starting_location[0] - (trial.path_width/2) : trial.starting_location[0]
-                img.style.left = (x_pad + location[0]) + 'px'
-                img.style.top = (trial.starting_location[1] + location[1]) + 'px'
+                img.style.transform = `translate(${Math.floor( location[0])}px, ${Math.floor( location[1])}px)`;
 
-                target_presentation_time.push({
-                    repetition: current_repetition,
-                    repetition_start_time: start_time,
-                    repetition_elapsed_time: elapsed_time,
-                    ratio: progress,
-                    loc: location,
-                });
+                if (trial.save_presentation_locations) {
+                    // save the target presentation time and location
+                    target_presentation_time.push({
+                        repetition: current_repetition,
+                        repetition_start_time: start_time,
+                        repetition_elapsed_time: elapsed_time,
+                        ratio: progress,
+                        loc: location,
+                    });
+                }
+                
                 if (progress < 1) {
                     //repetition completed
                     requestAnimationFrame(animate);
@@ -215,7 +254,7 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
             let after_response = (info) => {
                 // after a valid response, the stimulus will have the CSS class 'responded'
                 // which can be used to provide visual feedback that a response was recorded
-                display_element.querySelector("#smooth-pursuit-target").className +=
+                display_element.querySelector("#task-animation-display-target").className +=
                     " responded";
                 // only record the first response
                 response = info
@@ -282,20 +321,20 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
           
           generate_target_presentation_time(trial) {
             let target_presentation_time = [];
-            const path_length = 2 * (trial.path_width + trial.path_height);
+            const total_length = 2 * (trial.path_length + trial.path_breadth);
           
             const location_coordinates = (progress) => {
-              let perimeter = progress * path_length;
+              let perimeter = progress * total_length;
               if (progress > 0.5) {
-                perimeter -= (path_length / 2);
-                if (perimeter > trial.path_width) {
-                  return [0, ((path_length / 2) - perimeter)];
+                perimeter -= (total_length / 2);
+                if (perimeter > trial.path_length) {
+                  return [0, ((total_length / 2) - perimeter)];
                 } else {
-                  return [trial.path_width - perimeter, trial.path_height];
+                  return [trial.path_length - perimeter, trial.path_breadth];
                 }
               } else {
-                if (perimeter > trial.path_width) {
-                  return [trial.path_width, (perimeter - trial.path_width)];
+                if (perimeter > trial.path_length) {
+                  return [trial.path_length, (perimeter - trial.path_length)];
                 } else {
                   return [perimeter, 0];
                 }
@@ -323,8 +362,8 @@ var jsPsychSmoothPursuitCalibration = (function (jspsych) {
           }
           
         }
-    SmoothPursuitCalibrationPlugin.info = info;
+    TaskAnimationDisplayPlugin.info = info;
 
-    return SmoothPursuitCalibrationPlugin;
+    return TaskAnimationDisplayPlugin;
 
 })(jsPsychModule);
