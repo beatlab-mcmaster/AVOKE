@@ -97,16 +97,16 @@ var jsPsychPathAnimationDisplay = (function (jspsych) {
         },
     };
     /**
-     * **task-animation-display**
+     * **path-animation-display**
      *
-     * Use this plugin for implementing a task-animation-display.
+     * Use this plugin for implementing a path-animation-display.
      * The trial presents a target that moves along a pre-defined or custom path.
      *
      * 
      * @author Shreshth Saxena, Jackson Shi
-     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-task-animation-display/docs/jspsych-task-animation-display.md}}
+     * @see {@link {https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-path-animation-display/docs/jspsych-path-animation-display.md}}
      */
-    class TaskAnimationDisplayPlugin {
+    class PathAnimationDisplayPlugin {
         constructor(jsPsych) {
             this.jsPsych = jsPsych;
         }
@@ -177,9 +177,9 @@ var jsPsychPathAnimationDisplay = (function (jspsych) {
             }
 
             // update the page content
-            let html = '<div class="virtual-window"><img src="' + trial.stimulus + '" id="task-animation-display-target"> </div>';
+            let html = '<div class="virtual-window"><img src="' + trial.stimulus + '" id="path-animation-display-target"> </div>';
             display_element.innerHTML = html;
-            let img = display_element.querySelector("#task-animation-display-target");
+            let img = display_element.querySelector("#path-animation-display-target");
             img.style.position = 'absolute';
             img.style.left = trial.starting_location[0] + 'px';
             img.style.top = trial.starting_location[1] + 'px';
@@ -254,7 +254,7 @@ var jsPsychPathAnimationDisplay = (function (jspsych) {
             let after_response = (info) => {
                 // after a valid response, the stimulus will have the CSS class 'responded'
                 // which can be used to provide visual feedback that a response was recorded
-                display_element.querySelector("#task-animation-display-target").className +=
+                display_element.querySelector("#path-animation-display-target").className +=
                     " responded";
                 // only record the first response
                 response = info
@@ -362,8 +362,8 @@ var jsPsychPathAnimationDisplay = (function (jspsych) {
           }
           
         }
-    TaskAnimationDisplayPlugin.info = info;
+    PathAnimationDisplayPlugin.info = info;
 
-    return TaskAnimationDisplayPlugin;
+    return PathAnimationDisplayPlugin;
 
 })(jsPsychModule);

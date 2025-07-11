@@ -1,10 +1,10 @@
-# task-animation-display plugin
+# path-animation-display plugin
 
 This plugin presents an image target that moves along a path with a shape and pace determined by the experimenter. The target will begin moving after a keypress and the trial will end when the target finishes travelling along the path.
 
 ## Using a Plugin
 
-Please visit [this jsPsych tutorial](https://www.jspsych.org/v8/overview/plugins/) to learn the basics of setting up a jsPsych plugin. Feel free to cross-reference our [demo code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-task-animation-display/examples/index.html) to get a better idea of how to implement this plugin in a working demo experiment. You'll find further detail about parameters and data output below.
+Please visit [this jsPsych tutorial](https://www.jspsych.org/v8/overview/plugins/) to learn the basics of setting up a jsPsych plugin. Feel free to cross-reference our [demo code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-path-animation-display/examples/index.html) to get a better idea of how to implement this plugin in a working demo experiment. You'll find further detail about parameters and data output below.
 
 ## Parameters
 
@@ -51,23 +51,23 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 Using the CDN-hosted JavaScript file:
 
 ```js
-<script src="https://unpkg.com/@jspsych-contrib/plugin-task-animation-display"></script>
+<script src="https://unpkg.com/@jspsych-contrib/plugin-tapath-animation-display"></script>
 ```
 
 Using the JavaScript file downloaded from a GitHub release dist archive:
 
 ```js
-<script src="jspsych/plugin-task-animation-display.js"></script>
+<script src="jspsych/plugin-tapath-animation-display.js"></script>
 ```
 
 Using NPM:
 
 ```
-npm install @jspsych-contrib/plugin-task-animation-display
+npm install @jspsych-contrib/plugin-tapath-animation-display
 ```
 
 ```js
-import {jsPsychPathAnimationDisplay} from '@jspsych-contrib/plugin-task-animation-display';
+import {jsPsychPathAnimationDisplay} from '@jspsych-contrib/plugin-tapath-animation-display';
 ``` -->
 
 ## Examples

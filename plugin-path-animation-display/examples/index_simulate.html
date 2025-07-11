@@ -22,7 +22,7 @@
 
   var trial1 = {
     type: jsPsychHtmlButtonResponse,
-    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the task-animation-display trial demo. <br> On the next page, push the spacebar to begin, then follow the moving target with your gaze. <br> When the target pauses, push the space bar again. </p>',
+    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the path-animation-display trial demo. <br> On the next page, push the spacebar to begin, then follow the moving target with your gaze. <br> When the target pauses, push the space bar again. </p>',
     choices: ['Continue'],
     };
   timeline.push(trial1);
@@ -65,8 +65,8 @@
 
     let test_results = "";
 
-    // Filter out trials that are of type "task-animation-display"
-    const animationTrials = data.filter(trial => trial.trial_type === "task-animation-display");
+    // Filter out trials that are of type "path-animation-display"
+    const animationTrials = data.filter(trial => trial.trial_type === "path-animation-display");
 
     // Loop through all calibration trials in the data
     animationTrials.forEach((trial, trialIndex) => {
