@@ -23,6 +23,7 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |canvas_size|array of numbers|[166, 296]|Array containing the height (first value) and width (second value) of the canvas element, in pixels.|
 |clickable_targets|boolean|false|If true, the targets can be interacted with using a left-click of the mouse.|
 |rotation_angles|array of numbers|[]|Array of rotation angles (in degrees) to apply to targets. If empty array (default), no rotation is applied. If provided, angles are randomly sampled for each target. Use jsPsych.randomization functions to control order externally. Example: [0, 90, 180, 270] for cardinal directions, or [0] for no rotation.|
+|require_direction_match|boolean|false|If true, requires user to press arrow key corresponding to target rotation direction. Only works with keyboard input (not clickable targets). When enabled, only the correct directional key will advance to the next target.|
 
 ## Data Generated
 
@@ -206,5 +207,47 @@ The plugin now includes built-in drawing capabilities, making it extremely easy 
   grid_cols: 3
 }
 ```
+
+### Direction Matching (Directional Response Required)
+```javascript
+// Basic direction matching - requires correct arrow key for each rotation
+{
+  type: jsPsychStimulusMatrixDisplay,
+  fixation_target: "E",
+  rotation_angles: [0, 90, 180, 270], // 4 cardinal directions
+  require_direction_match: true, // Must press matching arrow key
+  grid_rows: 3,
+  grid_cols: 3
+}
+
+// Advanced direction matching with 8 directions
+{
+  type: jsPsychStimulusMatrixDisplay,
+  fixation_target: "E",
+  rotation_angles: [0, 45, 90, 135, 180, 225, 270, 315],
+  require_direction_match: true,
+  target_size: 60, // Larger size for better visibility of rotation
+  grid_rows: 2,
+  grid_cols: 2
+}
+
+// Direction matching with custom target
+{
+  type: jsPsychStimulusMatrixDisplay,
+  fixation_target: "→", // Arrow character for clearer direction indication
+  rotation_angles: [0, 90, 180, 270],
+  require_direction_match: true,
+  target_size: 50,
+  grid_rows: 3,
+  grid_cols: 3
+}
+```
+
+**Direction Mapping for `require_direction_match: true`:**
+- 0° (facing right) → Right arrow key
+- 90° (facing down) → Down arrow key
+- 180° (facing left) → Left arrow key
+- 270° (facing up) → Up arrow key
+- Other angles are mapped to the nearest cardinal direction
 
 No `stimulus` parameter needed! The plugin handles everything automatically.

@@ -53,7 +53,7 @@
     path_length: window.innerWidth, // The width of the path in pixels
     repetitions: 2, // The number of times the target will move along the path
     starting_location:[window.innerWidth/2 - 40, window.innerHeight/2 - 40],  // The starting location of the target
-    // save_presentation_locations: true // Whether to save presentation locations
+    save_presentation_locations: true // Whether to save presentation locations
   };
 
   timeline.push(trial_line);
@@ -76,9 +76,9 @@
       </details>`;
 
       // --- Bounds Test ---
-      if (trial.path_width !== undefined && trial.path_height !== undefined && trial.target_presentation_time) {
-        const pathWidth = trial.path_width;
-        const pathHeight = trial.path_height;
+      if (trial.path_length !== undefined && trial.path_breadth !== undefined && trial.target_presentation_time) {
+        const pathLength = trial.path_length;
+        const pathBreadth = trial.path_breadth;
         const targetLocations = trial.target_presentation_time;
 
         let outOfBounds = false;
@@ -88,7 +88,7 @@
           const [x, y] = entry.loc; // Extract x and y coordinates
 
           // Validate x and y coordinates based on path dimensions
-          if (x < 0 || x > pathWidth || (pathHeight > 0 && (y < 0 || y > pathHeight))) {
+          if (x < 0 || x > pathLength || (pathBreadth > 0 && (y < 0 || y > pathBreadth))) {
             outOfBounds = true;
             console.log(`Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).`);
             test_results += `<p>❌ Trial ${trialIndex + 1}, Target ${index + 1}: Out of bounds at location (${x}, ${y}).</p>`;
@@ -100,11 +100,11 @@
         }
       } else {
         // Provide feedback if required data is missing for bounds check
-        if (trial.path_width === undefined) {
-          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing path_width.</p>`;
+        if (trial.path_length === undefined) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing path_length.</p>`;
         }
-        if (trial.path_height === undefined) {
-          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing path_height.</p>`;
+        if (trial.path_breadth === undefined) {
+          test_results += `<p>❌ Trial ${trialIndex + 1}: Missing path_breadth.</p>`;
         }
         if (!trial.target_presentation_time) {
           test_results += `<p>❌ Trial ${trialIndex + 1}: Missing target_presentation_time.</p>`;

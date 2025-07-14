@@ -18,11 +18,15 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |starting_location|array of numbers|[0,0]|Set the starting location for the target.|
 |repetitions|numeric|1|Set the number of repetitions for the animation to play.|
 |path_shape|string|"rectangle"|Set the desired path shape for the target to travel, currently supporting "rectangle" or "line".|
-|maintain_aspect_ratio|boolean|true|Maintain the aspect ratio of the image after setting width or height.|
-|animation_duration|numeric|1000|Set the time it takes for the trial to complete the rectangular path.|
+|path_breadth|numeric|800|Height/breadth of the rectangular path in pixels (only used for rectangle path).|
+|path_length|numeric|600|Length/width of the path in pixels.|
+|path_slope|numeric|0|Slope of the line in degrees. Only used if path_shape is 'line'.|
+|clockwise|boolean|true|Whether to move the target clockwise or anti-clockwise around the path.|
+|animation_duration|numeric|1000|Set the time it takes for the trial to complete the path.|
 |choices|array of strings|"ALL_KEYS"|Array containing the key(s) the subject is allowed to press to begin the trial animation.|
-|path_height|numeric|800|Height of the rectangular path in pixels.|
-|path_width|numeric|600|Width of the rectangular path in pixels.|
+|save_presentation_locations|boolean|false|Whether to store timestamps and locations of each target presentation.|
+|disable_cursor|boolean|true|Whether to display cursor on the screen or not.|
+|custom_path_function|function|null|Optional custom function for path coordinates. Should accept (progress, trial) and return [x, y].|
 
 ## Data Generated
 
@@ -32,19 +36,20 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 | --------- | ------- | ---------------------------------------- |
 |response|dictionary|Contains the key pressed and response time of the participant.|
 |response:key|string|The key that the participant pressed to start the trial.|
-|response:rt|numeric|The time between the beginning of the trial and the response in milliseconds. '|
-|target_presentation_time|dictionary|Contains a variety of information about the presentation of the target. Specific details on each key-value pair is provided below.|
-|target_presentation_time:repetition|numeric|The number of repetitions of the path that have been done so far.
+|response:rt|numeric|The time between the beginning of the trial and the response in milliseconds.|
+|target_presentation_time|array of dictionaries or "NA"|Contains a variety of information about the presentation of the target if save_presentation_locations is true, otherwise "NA". Specific details on each key-value pair is provided below.|
+|target_presentation_time:repetition|numeric|The number of repetitions of the path that have been done so far.|
 |target_presentation_time:repetition_start_time|numeric|The timestamp in milliseconds when the repetition has been started.|
 |target_presentation_time:repetition_elapsed_time|numeric|The time in milliseconds from since the repetition has begun.|
 |target_presentation_time:ratio|numeric|This ratio represents how much of the path the target has progressed through so far.|
 |target_presentation_time:loc|array of numbers|The coordinates of the target on its path based on the ratio value.|
 |path_shape|string|The path shape that the target takes.|
-|path_width|numeric|The width of the target's path in pixels.|
-|path_height|numeric|The height of the target's path in pixels.|
+|repetitions_set|numeric|The number of repetitions that were set for the animation.|
+|path_length|numeric|The length/width parameter used for the target's path in pixels.|
+|path_breadth|numeric|The breadth/height parameter used for the target's path in pixels.|
 |animation_duration|numeric|The time length that the target takes to complete its path.|
-|start_time|numeric|A high resolution timestamp of the when the animation begins in milliseconds, obtained via `'performance.now()'`.|
-|end_time|numeric|A high resolution timestamp of the when the animation ends in milliseconds, obtained via `'performance.now()'`.
+|start_time|numeric|A high resolution timestamp of when the animation begins in milliseconds, obtained via `performance.now()`.|
+|end_time|numeric|A high resolution timestamp of when the animation ends in milliseconds, obtained via `performance.now()`.|
 
 <!-- ## Install
 
@@ -97,7 +102,7 @@ import {jsPsychPathAnimationDisplay} from '@jspsych-contrib/plugin-tapath-animat
     stimulus_height: 40, // The height of the target image in pixels
     path_shape: "line", // The shape of the path
     path_slope: 0, // The slope of the line in degrees
-    path_length: window.innerWidth, // The width of the path in pixels
+    path_length: window.innerWidth, // The length of the path in pixels
     repetitions: 2, // The number of times the target will move along the path
     starting_location:[window.innerWidth/2 - 40, window.innerHeight/2 - 40],  // The starting location of the target
     save_presentation_locations: true // Whether to save presentation locations

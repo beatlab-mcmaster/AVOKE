@@ -23,7 +23,7 @@
   
   const intro_trial = {
     type: jsPsychHtmlButtonResponse,
-    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the stimulus-matrix-display trial demo. <br> Your task is to respond to targets using arrow keys or clicks. </p> <img src="./fixedFigureALT.svg" alt="Example Image" style="max-width:100%; height:auto;">',
+    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the stimulus-matrix-display trial demo. <br> Your task is to respond to targets using arrow keys that match the direction the "E" is facing. </p> <img src="./fixedFigureALT.svg" alt="Example Image" style="max-width:100%; height:auto;">',
     choices: ['Continue'],
   };
   timeline.push(intro_trial);
@@ -36,6 +36,8 @@
     target_size: 50,
     grid_rows: 3, // 3x3 grid (9 targets)
     grid_cols: 3,
+    rotation_angles: [0, 90, 180, 270], // 4 cardinal directions
+    require_direction_match: true, // Require matching arrow key to rotation
   };
   timeline.push(text_trial);
 
@@ -118,10 +120,15 @@
       // --- Test 1: Valid Key Presses ---
       if (trial.response && trial.response.length > 0 && trial.choices) {
         trial.response.forEach((r, i) => {
-          if (!trial.choices.includes(r.key_press)) {
+          // Handle case where choices can be "ALL_KEYS" (string) or an array
+          if (trial.choices === "ALL_KEYS") {
+            test_results += `<p>✔️ Valid key press in response ${i + 1}: "${r.key_press}" (all keys allowed)</p>`;
+          } else if (Array.isArray(trial.choices) && !trial.choices.includes(r.key_press)) {
             test_results += `<p>❌ Invalid key press in response ${i + 1}: "${r.key_press}" is not in allowed choices [${trial.choices.join(", ")}]</p>`;
-          } else {
+          } else if (Array.isArray(trial.choices)) {
             test_results += `<p>✔️ Valid key press in response ${i + 1}: "${r.key_press}"</p>`;
+          } else {
+            test_results += `<p>⚠️ Unknown choices format for response ${i + 1}: "${r.key_press}"</p>`;
           }
         });
       } else if (trial.target_duration !== null) {

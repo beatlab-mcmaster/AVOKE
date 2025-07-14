@@ -72,10 +72,15 @@
       // --- Test 1: Valid Key Presses ---
       if (trial.response && trial.response.length > 0 && trial.choices) {
         trial.response.forEach((r, i) => {
-          if (!trial.choices.includes(r.key_press)) {
+          // Handle case where choices can be "ALL_KEYS" (string) or an array
+          if (trial.choices === "ALL_KEYS") {
+            test_results += `<p>✔️ Valid key press in response ${i + 1}: "${r.key_press}" (all keys allowed)</p>`;
+          } else if (Array.isArray(trial.choices) && !trial.choices.includes(r.key_press)) {
             test_results += `<p>❌ Invalid key press in response ${i + 1}: "${r.key_press}" is not in allowed choices [${trial.choices.join(", ")}]</p>`;
-          } else {
+          } else if (Array.isArray(trial.choices)) {
             test_results += `<p>✔️ Valid key press in response ${i + 1}: "${r.key_press}"</p>`;
+          } else {
+            test_results += `<p>⚠️ Unknown choices format for response ${i + 1}: "${r.key_press}"</p>`;
           }
         });
       } else if (trial.target_duration !== null) {

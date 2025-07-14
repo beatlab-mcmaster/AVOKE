@@ -84,6 +84,15 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 pretty_name: "Rotation angles",
                 default: [],
             },
+            /**
+             * If true, requires user to press arrow key corresponding to target rotation direction.
+             * Only works with keyboard input (not clickable targets).
+             */
+            require_direction_match: {
+                type: jspsych.ParameterType.BOOL,
+                pretty_name: "Require direction match",
+                default: false,
+            },
             /** Whether to display cursor on the screen or not */
             disable_cursor: {
                 type: jspsych.ParameterType.BOOL,
@@ -142,6 +151,24 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 ctx.fillText(target, location[0], location[1]);
                 ctx.restore();
             }
+        }
+
+        // Helper function to get the correct arrow key for a given rotation
+        getDirectionFromRotation(rotation) {
+            // Normalize rotation to 0-359 degrees
+            const normalizedRotation = ((rotation % 360) + 360) % 360;
+            
+            // Map rotation to arrow keys (assuming 0° = right-facing)
+            if (normalizedRotation >= 315 || normalizedRotation < 45) {
+                return "ArrowRight";
+            } else if (normalizedRotation >= 45 && normalizedRotation < 135) {
+                return "ArrowDown"; 
+            } else if (normalizedRotation >= 135 && normalizedRotation < 225) {
+                return "ArrowLeft";
+            } else if (normalizedRotation >= 225 && normalizedRotation < 315) {
+                return "ArrowUp";
+            }
+            return "ArrowRight"; // Default fallback
         }
 
         trial(display_element, trial) {
@@ -221,10 +248,23 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
 
             // function to handle responses by the subject
             var after_response = (info) => {
-                // verify if the response is valid for the current target
-                correct_response = trial.choices === "ALL_KEYS" ? "" : trial.choices[i];
+                var isValidResponse = false;
+                
+                if (trial.choices === "ALL_KEYS") {
+                    isValidResponse = true;
+                } else if (Array.isArray(trial.choices)) {
+                    if (trial.require_direction_match && !trial.clickable_targets) {
+                        // Check if the pressed key matches the required direction for current target
+                        const currentRotation = trial_rotations[i];
+                        const requiredKey = this.getDirectionFromRotation(currentRotation);
+                        isValidResponse = (info.key).toLowerCase() === requiredKey.toLowerCase();
+                    } else {
+                        // Accept any valid choice
+                        isValidResponse = trial.choices.some(choice => (info.key).toLowerCase() === choice.toLowerCase());
+                    }
+                }
 
-                if (trial.choices === "ALL_KEYS" || (info.key).toLowerCase() === correct_response.toLowerCase()) {
+                if (isValidResponse) {
                     this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
                     display_element.querySelector("#stimulus-matrix-display-stimulus").className += " responded";
                     responses.push({
@@ -245,7 +285,7 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
             // function to handle click responses
             var after_click = (event) => {
                 responses.push({
-                    key_press: null,
+                    key_press: "click",
                     rt: performance.now() - target_presentation_time[target_presentation_time.length - 1].time,
                     input_time: performance.now(),
                     wrong_inputs: this.wrong_inputs,
@@ -431,7 +471,7 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                     if (trial.clickable_targets) {
                         responses.push({
                             rt: Math.floor(this.jsPsych.randomization.sampleExGaussian(500, 100, 0.01, true)),
-                            key_press: null,
+                            key_press: "click",
                             wrong_inputs: Math.floor(Math.random() * 4)
                         });
                     } else {
