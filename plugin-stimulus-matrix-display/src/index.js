@@ -13,8 +13,10 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
             choices: {
                 type: jspsych.ParameterType.KEYS,
                 pretty_name: "Choices",
-                default: ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"],
-            },            /* The target to be displayed */
+                default: "ALL_KEYS",
+            },            
+            
+            /* The target to be displayed */
             fixation_target: {
                 type: jspsych.ParameterType.STRING,
                 pretty_name: "Fixation target",
@@ -28,7 +30,7 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 default: null,
             },
 
-            /* The size of the fix-point target */
+            /* The size of the visual target */
             target_size: {
                 type: jspsych.ParameterType.INT,
                 pretty_name: "Target size",
@@ -42,14 +44,14 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 default: null,
             },
 
-            /* Number of rows in the calibration grid */
+            /* Number of rows in the presentation grid */
             grid_rows: {
                 type: jspsych.ParameterType.INT,
                 pretty_name: "Grid rows",
                 default: 3,
             },
 
-            /* Number of columns in the calibration grid */
+            /* Number of columns in the presentation grid */
             grid_cols: {
                 type: jspsych.ParameterType.INT,
                 pretty_name: "Grid columns", 
@@ -81,6 +83,12 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 array: true,
                 pretty_name: "Rotation angles",
                 default: [],
+            },
+            /** Whether to display cursor on the screen or not */
+            disable_cursor: {
+                type: jspsych.ParameterType.BOOL,
+                pretty_name: "Disable cursor on screen",
+                default: true,
             },
         },
     };
@@ -202,25 +210,21 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 };
                 // clear the display
                 display_element.innerHTML = "";
-                //enable cursor again
-                document.documentElement.style.cursor = "auto";
+                if (trial.disable_cursor && !trial.clickable_targets) {
+                    //enable cursor again
+                    document.documentElement.style.cursor = "auto";
+                }
+                
                 // move on to the next trial
                 this.jsPsych.finishTrial(trial_data);
             };
 
             // function to handle responses by the subject
             var after_response = (info) => {
-                // Find the expected direction based on the rotation angle
-                const rotation_angle = trial_rotations[i];
-                let expected_direction = null;
-                
-                // Map rotation angles to direction names for keyboard responses
-                if (rotation_angle === 0) expected_direction = 'Right';
-                else if (rotation_angle === 90) expected_direction = 'Down';
-                else if (rotation_angle === 180) expected_direction = 'Left';
-                else if (rotation_angle === 270) expected_direction = 'Up';
-                
-                if (expected_direction && (info.key).toLowerCase() === ("Arrow" + expected_direction).toLowerCase()) {
+                // verify if the response is valid for the current target
+                correct_response = trial.choices === "ALL_KEYS" ? "" : trial.choices[i];
+
+                if (trial.choices === "ALL_KEYS" || (info.key).toLowerCase() === correct_response.toLowerCase()) {
                     this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
                     display_element.querySelector("#stimulus-matrix-display-stimulus").className += " responded";
                     responses.push({
@@ -259,11 +263,11 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                     c.onclick = null;
                     c.onmousemove = null;
 
-                    if (trial.clickable_targets) {
-                        document.documentElement.style.cursor = "default";
-                    } else {
+                    if (trial.disable_cursor && !trial.clickable_targets) {
                         document.documentElement.style.cursor = "none";
-                    }                    const location = location_cords(trial_locations[i]);
+                    }                    
+                    
+                    const location = location_cords(trial_locations[i]);
                     
                     // Determine target and type
                     const target = trial.target_image !== null ? trial.target_image : trial.fixation_target;
@@ -323,7 +327,7 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                                 }
                             };
                         } else {
-                            let keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
+                            var keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
                                 callback_function: after_response,
                                 rt_method: "performance",
                                 persist: true,

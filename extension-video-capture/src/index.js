@@ -105,7 +105,7 @@ var jsPsychVideoCapture = (function(jspsych) {
         }
     
         //Called when an instance of jsPsych is first initialized (Once per experiment)
-        initialize(params = { "using_setup_plugin": false, "default_camera_options": false, "jatos": null, "download_local_only": true , "video_width": 640, "video_height": 480, "framerate": 26}) {
+        initialize(params = { "using_setup_plugin": false, "default_camera_options": false, "record_audio":false, "download_local_only": true , "video_width": 640, "video_height": 480, "framerate": 26, "jatos": null}) {
             
             this.jatosInstance = params.jatos;
             this.downloadLocalOnly = params.download_local_only
@@ -114,7 +114,7 @@ var jsPsychVideoCapture = (function(jspsych) {
             }
 
             this.constraintObj = {
-                audio: false,
+                audio: params.record_audio, //if true, will record audio as well
                 video: {
                     facingMode: "user", 
                     deviceId: 0, //should be updated in webcam-setup-plugin

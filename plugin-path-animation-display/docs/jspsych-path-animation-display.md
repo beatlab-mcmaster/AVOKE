@@ -1,10 +1,10 @@
-# smooth-pursuit-calibration plugin
+# path-animation-display plugin
 
 This plugin presents an image target that moves along a path with a shape and pace determined by the experimenter. The target will begin moving after a keypress and the trial will end when the target finishes travelling along the path.
 
 ## Using a Plugin
 
-Please visit [this jsPsych tutorial](https://www.jspsych.org/v8/overview/plugins/) to learn the basics of setting up a jsPsych plugin. Feel free to cross-reference our [demo code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-smooth-pursuit-calibration/examples/index.html) to get a better idea of how to implement this plugin in a working demo experiment. You'll find further detail about parameters and data output below.
+Please visit [this jsPsych tutorial](https://www.jspsych.org/v8/overview/plugins/) to learn the basics of setting up a jsPsych plugin. Feel free to cross-reference our [demo code](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-path-animation-display/examples/index.html) to get a better idea of how to implement this plugin in a working demo experiment. You'll find further detail about parameters and data output below.
 
 ## Parameters
 
@@ -51,23 +51,23 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 Using the CDN-hosted JavaScript file:
 
 ```js
-<script src="https://unpkg.com/@jspsych-contrib/plugin-smooth-pursuit-calibration"></script>
+<script src="https://unpkg.com/@jspsych-contrib/plugin-tapath-animation-display"></script>
 ```
 
 Using the JavaScript file downloaded from a GitHub release dist archive:
 
 ```js
-<script src="jspsych/plugin-smooth-pursuit-calibration.js"></script>
+<script src="jspsych/plugin-tapath-animation-display.js"></script>
 ```
 
 Using NPM:
 
 ```
-npm install @jspsych-contrib/plugin-smooth-pursuit-calibration
+npm install @jspsych-contrib/plugin-tapath-animation-display
 ```
 
 ```js
-import {jsPsychSmoothPursuitCalibration} from '@jspsych-contrib/plugin-smooth-pursuit-calibration';
+import {jsPsychPathAnimationDisplay} from '@jspsych-contrib/plugin-tapath-animation-display';
 ``` -->
 
 ## Examples
@@ -76,25 +76,30 @@ import {jsPsychSmoothPursuitCalibration} from '@jspsych-contrib/plugin-smooth-pu
 
 ```javascript
   const trial_rect = {
-    type: jsPsychSmoothPursuitCalibration,
+    type: jsPsychPathAnimationDisplay,
     stimulus: 'SP_target.png', // The path to the target image file
-    animation_duration: 10000, // The duration of the animation in milliseconds
+    animation_duration: 5000, // The duration of the animation in milliseconds
     stimulus_width: 40, // The width of the target image in pixels
     stimulus_height: 40, // The height of the target image in pixels
-    path_height: window.innerHeight - 40, // The height of the path in pixels, with a 40px margin accounting for target size
-    path_width: window.innerWidth - 40,  // The width of the path in pixels, with a 40px margin accounting for target size
-    repetitions: 2, // The number of times the target will move along the path
-    starting_location:[0,0] // The starting location of the target
+    path_breadth: window.innerHeight - 40, // The height of the path in pixels, with a 40px margin accounting for target size
+    path_length: window.innerWidth - 40,  // The width of the path in pixels, with a 40px margin accounting for target size
+    repetitions: 1, // The number of times the target will move along the path
+    starting_location:[0,0], // The starting location of the target
+    clockwise: false, // Whether the target moves clockwise along the path
   };
+  timeline.push(trial_rect)
 
   const trial_line = {
-    type: jsPsychSmoothPursuitCalibration,
+    type: jsPsychPathAnimationDisplay,
     stimulus: 'SP_target.png', // The path to the target image file
-    animation_duration: 10000, // The duration of the animation in milliseconds
+    animation_duration: 5000, // The duration of the animation in milliseconds
+    stimulus_width: 40, // The width of the target image in pixels
+    stimulus_height: 40, // The height of the target image in pixels
     path_shape: "line", // The shape of the path
-    path_height: 0, // The height of the path in pixels
-    path_width: 1400, // The width of the path in pixels
-    repetitions: 5, // The number of times the target will move along the path
-    starting_location:[window.innerWidth/2, window.innerHeight/2],  // The starting location of the target
+    path_slope: 0, // The slope of the line in degrees
+    path_length: window.innerWidth, // The width of the path in pixels
+    repetitions: 2, // The number of times the target will move along the path
+    starting_location:[window.innerWidth/2 - 40, window.innerHeight/2 - 40],  // The starting location of the target
+    save_presentation_locations: true // Whether to save presentation locations
   };
 ```

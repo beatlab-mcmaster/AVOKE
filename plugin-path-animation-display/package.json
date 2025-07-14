@@ -1,7 +1,7 @@
 {
-  "name": "@avoke/plugin-smooth-pursuit-calibration",
+  "name": "@avoke/plugin-path-animation-display",
   "version": "0.0.1",
-  "description": "This plugin implements a smooth pursuit calibration trial used for eyetracking experiments.",
+  "description": "This plugin implements a path animation display trial.",
   "unpkg": "dist/index.browser.min.js",
   "files": [
     "index.js",
@@ -14,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/beatlab-mcmaster/AVOKE.git",
-    "directory": "plugin-smooth-pursuit-calibration"
+    "directory": "plugin-path-animation-display"
   },
   "author": "Shreshth Saxena (https://github.com/ShreshthSaxena)",
   "contributors": [
@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/beatlab-mcmaster/AVOKE/issues"
   },
-  "homepage": "https://github.com/beatlab-mcmaster/AVOKE/tree/main/plugin-smooth-pursuit-calibration",
+  "homepage": "https://github.com/beatlab-mcmaster/AVOKE/tree/main/plugin-path-animation-display",
   "devDependencies": {
     "@jspsych/config": "^3.1.0",
     "jspsych": "^8.0.0"
@@ -38,6 +38,8 @@
     "example": "examples"
   },
   "keywords": [
+    "path",
+    "animation",
     "smooth-pursuit",
     "calibration",
     "eye-tracking"

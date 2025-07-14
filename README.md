@@ -21,7 +21,7 @@ The `docs` folder for each plugin or extension contains its own README file docu
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-stimulus-matrix-display/docs/jspsych-stimulus-matrix-display.md">plugin-stimulus-matrix-display</a>
 
-<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-smooth-pursuit-calibration/docs/jspsych-smooth-pursuit-calibration.md">plugin-smooth-pursuit-calibration </a>
+<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-path-animation-display/docs/jspsych-path-animation-display.md">plugin-path-animation-display </a>
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md">plugin-video-capture-setup </a>
 

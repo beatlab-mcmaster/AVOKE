@@ -22,34 +22,40 @@
 
   var trial1 = {
     type: jsPsychHtmlButtonResponse,
-    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the smooth-pursuit trial demo. <br> On the next page, push the spacebar to begin, then follow the moving target with your gaze. <br> When the target pauses, push the space bar again. </p>',
+    stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the path-animation-display trial demo. <br> On the next page, push the spacebar to begin, then follow the moving target with your gaze. <br> When the target pauses, push the space bar again. </p>',
     choices: ['Continue'],
     };
   timeline.push(trial1);
 
+ 
   const trial_rect = {
-    type: jsPsychSmoothPursuitCalibration,
+    type: jsPsychPathAnimationDisplay,
     stimulus: 'SP_target.png', // The path to the target image file
-    animation_duration: 10000, // The duration of the animation in milliseconds
+    animation_duration: 5000, // The duration of the animation in milliseconds
     stimulus_width: 40, // The width of the target image in pixels
     stimulus_height: 40, // The height of the target image in pixels
-    path_height: window.innerHeight - 40, // The height of the path in pixels, with a 40px margin accounting for target size
-    path_width: window.innerWidth - 40,  // The width of the path in pixels, with a 40px margin accounting for target size
+    path_breadth: window.innerHeight - 40, // The height of the path in pixels, with a 40px margin accounting for target size
+    path_length: window.innerWidth - 40,  // The width of the path in pixels, with a 40px margin accounting for target size
     repetitions: 1, // The number of times the target will move along the path
-    starting_location:[0,0] // The starting location of the target
+    starting_location:[0,0], // The starting location of the target
+    clockwise: false, // Whether the target moves clockwise along the path
   };
-  timeline.push(trial_rect)
+  // timeline.push(trial_rect)
 
   const trial_line = {
-    type: jsPsychSmoothPursuitCalibration,
+    type: jsPsychPathAnimationDisplay,
     stimulus: 'SP_target.png', // The path to the target image file
-    animation_duration: 10000, // The duration of the animation in milliseconds
+    animation_duration: 5000, // The duration of the animation in milliseconds
+    stimulus_width: 40, // The width of the target image in pixels
+    stimulus_height: 40, // The height of the target image in pixels
     path_shape: "line", // The shape of the path
-    path_height: 0, // The height of the path in pixels
-    path_width: 1400, // The width of the path in pixels
+    path_slope: 0, // The slope of the line in degrees
+    path_length: window.innerWidth, // The width of the path in pixels
     repetitions: 2, // The number of times the target will move along the path
-    starting_location:[window.innerWidth/2, window.innerHeight/2],  // The starting location of the target
+    starting_location:[window.innerWidth/2 - 40, window.innerHeight/2 - 40],  // The starting location of the target
+    // save_presentation_locations: true // Whether to save presentation locations
   };
+
 
   timeline.push(trial_line);
   jsPsych.simulate(timeline);
@@ -59,11 +65,11 @@
 
     let test_results = "";
 
-    // Filter out trials that are of type "smooth-pursuit-calibration"
-    const calibrationTrials = data.filter(trial => trial.trial_type === "smooth-pursuit-calibration");
+    // Filter out trials that are of type "path-animation-display"
+    const animationTrials = data.filter(trial => trial.trial_type === "path-animation-display");
 
     // Loop through all calibration trials in the data
-    calibrationTrials.forEach((trial, trialIndex) => {
+    animationTrials.forEach((trial, trialIndex) => {
       // Add trial data as a collapsible section with left-aligned, indented JSON
       const trialLabel = trial.trial_type ? `Trial Data (${trial.trial_type})` : "Trial Data";
       test_results += `<details><summary>${trialLabel} #${trialIndex + 1}</summary>
