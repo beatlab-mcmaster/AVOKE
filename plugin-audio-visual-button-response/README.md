@@ -22,8 +22,13 @@ See [documentation](https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-a
 
 ## Example Stimuli
 
-The example files use standardized research images:
-- **Visual stimuli**: International Affective Picture System (IAPS) - Lang, P. J., Bradley, M. M., & Cuthbert, B. N. (2008). International affective picture system (IAPS): Affective ratings of pictures and instruction manual. *Technical Report A-8*, University of Florida, Gainesville, FL.
+The example files use standardized research images: 
+
+**Visual stimuli**: 
+- **The Unexpected Visitor**: Oil on canvas painting by Ilya Rezpin, 1884–88. 
+  - Available through: www.ilyarepin.org/
+
+- **International Affective Picture System (IAPS)** - Lang, P. J., Bradley, M. M., & Cuthbert, B. N. (2008). International affective picture system (IAPS): Affective ratings of pictures and instruction manual. *Technical Report A-8*, University of Florida, Gainesville, FL.
 
 ## Author / Citation
 

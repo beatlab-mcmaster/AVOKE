@@ -31,7 +31,7 @@
 
   const trial = {
     type: jsPsychYouTubeButtonResponse,
-    stimulus: 'https://www.youtube.com/embed/jfKfPfyJRdk',
+    stimulus: 'https://www.youtube.com/embed/OdCCX59Do80',
     choices: ['Button 1', 'Button 2', 'Button 3'],
     prompt: '<p>Click next to proceed</p>', // Prompt text
     controls: true, // Enable YouTube player controls
@@ -41,9 +41,14 @@
     background_colour: '#808080', // Set the background colour to black
     log_after_every: 1000, // Log player info every second
     show_slider: true,
+    slider_prompt: "Please use the slider to respond",
     multi_button_response: true,
     response_ends_trial: false,
     buffering_timeout: 30000, // End trial after 30 seconds of buffering/paused state
+    button_html: function (choice, choice_index) {
+          const colors = ['#000077', '#007700', '#770000'] // using a different color for each button
+          return '<button class="form-btn" id="button-' + choice_index + '"style="background-color:'+ colors[choice_index] + '; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin: 5px;">' + choice + '</button>';
+        },
   };
 
   timeline.push(trial);

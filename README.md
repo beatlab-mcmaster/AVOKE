@@ -37,6 +37,9 @@ AVOKE examples use standardized research databases to ensure reproducibility and
   - Available at: https://www.chicagofacedb.org/
 
 ### Visual Stimuli  
+- **The Unexpected Visitor**: Oil on canvas painting by Ilya Rezpin, 1884–88. 
+  - Available through: www.ilyarepin.org/
+
 - **International Affective Picture System (IAPS)**: Standardized emotional images for research
   - Citation: Lang, P. J., Bradley, M. M., & Cuthbert, B. N. (2008). International affective picture system (IAPS): Affective ratings of pictures and instruction manual. *Technical Report A-8*, University of Florida, Gainesville, FL.
   - Available through: https://csea.phhp.ufl.edu/media.html

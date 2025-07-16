@@ -38,13 +38,18 @@
     type: jsPsychAudioVisualButtonResponse,
     choices: ['Button 1', 'Button 2', 'Button 3'], // Add more buttons to test multi-click
     audio_stimulus: 'example.wav',
-    image_stimulus: 'example.png', // International Affective Picture System example
+    image_stimulus: 'example.jpg', // The Unexpected Visitor (example image)
     maintain_aspect_ratio: true,
     stimulus_height: 1000,
     show_slider: true,
+    slider_prompt: "Please use the slider to respond",
     multi_button_response: true, // <-- Enable multi-button response logging
-    response_ends_trial: false,  // <-- Trial will not end on button click
-    trial_duration: 5000,        // <-- End trial after 5 seconds (for testing)
+    response_ends_trial: true,  // <-- Trial will not end on button click
+    // trial_duration: 5000,        // <-- End trial after 5 seconds (for testing)
+    button_html: function (choice, choice_index) {
+          const colors = ['#000077', '#007700', '#770000'] // using a different color for each button
+          return '<button class="form-btn" id="button-' + choice_index + '"style="background-color:'+ colors[choice_index] + '; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin: 5px;">' + choice + '</button>';
+        },
   };
   timeline.push(trial);
 
