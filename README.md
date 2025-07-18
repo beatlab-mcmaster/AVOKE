@@ -17,7 +17,7 @@ The `docs` folder for each plugin or extension contains its own README file docu
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/extension-video-capture/docs/jspsych-video-capture.md">extension-video-capture </a>
 
-<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-audio-visual-button-response/docs/jspsych-audio-visual-response.md">plugin-audiovisual-response </a>
+<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-audio-visual-response/docs/jspsych-audio-visual-response.md">plugin-audiovisual-response </a>
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-stimulus-matrix-display/docs/jspsych-stimulus-matrix-display.md">plugin-stimulus-matrix-display</a>
 
@@ -25,7 +25,7 @@ The `docs` folder for each plugin or extension contains its own README file docu
 
 <a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-video-capture-setup/docs/jspsych-video-capture-setup.md">plugin-video-capture-setup </a>
 
-<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-youtube-button-response/docs/jspsych-youtube-button-response.md">plugin-youtube-button-response </a>
+<a href="https://github.com/beatlab-mcmaster/AVOKE/blob/main/plugin-youtube-response/docs/jspsych-youtube-response.md">plugin-youtube-response </a>
 
 ## Example Stimuli
 
