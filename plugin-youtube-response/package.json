@@ -1,0 +1,58 @@
+{
+  "name": "@avoke/plugin-youtube-response",
+  "version": "0.0.1",
+  "description": "A plugin for displaying a YouTube stream or video and getting a button response",
+  "unpkg": "dist/index.browser.min.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "scripts": {
+    "build": "babel index.js --presets @babel/preset-env,minify --source-maps --out-file dist/index.browser.min.js",
+    "build:watch": "npm run build -- --watch",
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beatlab-mcmaster/AVOKE.git",
+    "directory": "plugin-youtube-response"
+  },
+  "author": "Jackson Shi (https://github.com/JacksonShi8)",
+  "contributors": [
+    {
+      "name": "Shreshth Saxena",
+      "url": "https://github.com/ShreshthSaxena"
+    },
+    {
+      "name": "Josh de Leeuw",
+      "url": "https://github.com/jodeleeuw"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/beatlab-mcmaster/AVOKE/issues"
+  },
+  "homepage": "https://github.com/beatlab-mcmaster/AVOKE/tree/main/plugin-youtube-response",
+  "devDependencies": {
+    "@jspsych/config": "^1.3.3",
+    "jest": "^29.7.0",
+    "jspsych": "^8.0.0"
+  },
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "keywords": [
+    "youtube",
+    "video",
+    "stimulus",
+    "button",
+    "response",
+    "livestream",
+    "live",
+    "broadcast",
+    "eye-tracking",
+    "youtube-api"
+  ]
+}
