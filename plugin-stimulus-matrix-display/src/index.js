@@ -74,14 +74,37 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
                 default: false,
             },
             /**
-             * Array of rotation angles (in degrees) to apply to targets. If empty array, no rotation is applied.
-             * If provided, should contain rotation angles to sample from. Use jsPsych.randomization 
-             * functions to randomize order externally if needed.
+             * Array of rotation angles (in degrees) to randomly sample from for each target. 
+             * If empty array, no rotation is applied. Each target gets a randomly selected 
+             * angle from this array using jsPsych.randomization.sampleWithReplacement().
              */
             rotation_angles: {
                 type: jspsych.ParameterType.INT,
                 array: true,
-                pretty_name: "Rotation angles",
+                pretty_name: "Rotation angles pool",
+                default: [],
+            },
+            /**
+             * Array specifying the order of target locations (0-indexed grid positions).
+             * If empty array, locations will be randomized. If provided, should contain indices
+             * corresponding to grid positions (0 to grid_rows*grid_cols-1).
+             */
+            target_locations: {
+                type: jspsych.ParameterType.INT,
+                array: true,
+                pretty_name: "Target locations",
+                default: [],
+            },
+            /**
+             * Array of predetermined rotation angles (in degrees) for each target in sequence.
+             * If empty array, uses rotation_angles parameter for random sampling. If provided, should 
+             * contain one rotation value for each target in the presentation order.
+             * Takes priority over rotation_angles when both are specified.
+             */
+            rotation_sequence: {
+                type: jspsych.ParameterType.INT,
+                array: true,
+                pretty_name: "Rotation sequence",
                 default: [],
             },
             /**
@@ -106,8 +129,20 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
      *
      * Use this plugin for implementing matrix-based stimulus display in eyetracking and other studies.
      * The trial presents stimuli on a customizable grid (default 3x3).
-     * Targets can optionally be rotated using the rotation_angles parameter.
-     * User responds with the correct direction arrow key or by clicking on targets.
+     * 
+     * Rotation Control:
+     * - Use rotation_angles to randomly sample rotation angles for each target
+     * - Use rotation_sequence to specify exact rotations for each target in order
+     * - rotation_sequence takes priority over rotation_angles when both are provided
+     * 
+     * Location Control:
+     * - Use target_locations to specify exact presentation order of grid positions
+     * - If empty array, locations will be randomized automatically
+     * 
+     * Response Modes:
+     * - Keyboard: User responds with arrow keys (optionally matching rotation direction)
+     * - Clickable: User clicks directly on targets
+     * 
      * Use the "fixation_target" to change displayed target, default target is the letter 'E'.
      *
      * @author  Shreshth Saxena, Jackson Shi (modified from Josh de Leeuw and Chris Jungerius)
@@ -198,10 +233,18 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
             let trial_rotations;
             
             const total_targets = trial.grid_rows * trial.grid_cols;
-            trial_locations = jsPsych.randomization.shuffle([...Array(total_targets).keys()]);
             
-            // Handle rotation angles - if empty array, use no rotation; otherwise sample from provided angles
-            if (!trial.rotation_angles || trial.rotation_angles.length === 0) {
+            // Handle target locations - use provided array or randomize if empty
+            if (trial.target_locations && trial.target_locations.length > 0) {
+                trial_locations = trial.target_locations;
+            } else {
+                trial_locations = jsPsych.randomization.shuffle([...Array(total_targets).keys()]);
+            }
+            
+            // Handle target rotations - priority: rotation_sequence > rotation_angles > no rotation
+            if (trial.rotation_sequence && trial.rotation_sequence.length > 0) {
+                trial_rotations = trial.rotation_sequence;
+            } else if (!trial.rotation_angles || trial.rotation_angles.length === 0) {
                 trial_rotations = new Array(total_targets).fill(0);
             } else {
                 trial_rotations = jsPsych.randomization.sampleWithReplacement(trial.rotation_angles, total_targets);
@@ -438,10 +481,18 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
             let trial_rotations;
             
             const total_targets = trial.grid_rows * trial.grid_cols;
-            trial_locations = jsPsych.randomization.shuffle([...Array(total_targets).keys()]);
             
-            // Handle rotation angles - if empty array, use no rotation; otherwise sample from provided angles
-            if (!trial.rotation_angles || trial.rotation_angles.length === 0) {
+            // Handle target locations - use provided array or randomize if empty
+            if (trial.target_locations && trial.target_locations.length > 0) {
+                trial_locations = trial.target_locations;
+            } else {
+                trial_locations = jsPsych.randomization.shuffle([...Array(total_targets).keys()]);
+            }
+            
+            // Handle target rotations - priority: rotation_sequence > rotation_angles > no rotation
+            if (trial.rotation_sequence && trial.rotation_sequence.length > 0) {
+                trial_rotations = trial.rotation_sequence;
+            } else if (!trial.rotation_angles || trial.rotation_angles.length === 0) {
                 trial_rotations = new Array(total_targets).fill(0);
             } else {
                 trial_rotations = jsPsych.randomization.sampleWithReplacement(trial.rotation_angles, total_targets);

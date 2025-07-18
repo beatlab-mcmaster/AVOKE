@@ -47,7 +47,8 @@
     canvas_size: [window.innerHeight - 120, window.innerWidth - 120], // size of the canvas with 120px margin
     grid_rows: 3, // 3x3 grid (9 targets)
     grid_cols: 3,
-    rotation_angles: [0, 90, 180, 270], // Classic 4-direction setup
+    rotation_angles: [0, 90, 180, 270], // Random sampling from these 4 directions
+    // Alternative: rotation_sequence: [0, 90, 0, 90, 180, 270, 180, 270, 0] // Exact rotations for each target
   };
 
   timeline.push(custom_trial);

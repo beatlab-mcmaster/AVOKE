@@ -96,9 +96,30 @@
     target_size: 50,
     grid_rows: 2, // 2x2 grid (4 targets)
     grid_cols: 2,
-    rotation_angles: [0, 45, 90, 135, 180, 225, 270, 315], // 8 possible rotations
+    rotation_angles: [0, 45, 90, 135, 180, 225, 270, 315], // 8 possible rotations (random sampling)
   };
   timeline.push(rotation_trial);
+
+  const transition_trial4 = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:36px; line-height:1.5;">Next: Predetermined rotation sequence</p>',
+    choices: ['Continue'],
+  };
+  timeline.push(transition_trial4);
+
+  const sequence_trial = {
+    type: jsPsychStimulusMatrixDisplay,
+    canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+    target_duration: 2000, // 2 seconds per target
+    clickable_targets: false,
+    fixation_target: "E",
+    target_size: 50,
+    grid_rows: 2, // 2x2 grid (4 targets)
+    grid_cols: 2,
+    target_locations: [0, 1, 3, 2], // Specific order: top-left, top-right, bottom-right, bottom-left
+    rotation_sequence: [0, 90, 180, 270], // Exact rotations for each target in order
+  };
+  timeline.push(sequence_trial);
   jsPsych.run(timeline);
 
   function test() {

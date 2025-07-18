@@ -1,6 +1,17 @@
 # stimulus-matrix-display plugin
 
-This plugin implements a stimulus matrix display trial used for eyetracking experiments and other research studies. A target ('E' by default) appears in random locations on a blank canvas based on a customizable grid layout. The target can appear with custom rotation angles if specified, or with no rotation by default. The participant must look at the target and respond with an arrow key by default, or click on the targets when clickable mode is enabled. When using keyboard responses with rotation, the correct direction corresponds to where the lines of the 'E' are headed (0° = Right, 90° = Down, 180° = Left, 270° = Up). After a correct response, a new target will appear. The plugin supports flexible grid sizes (e.g., 3x3, 4x4, 5x3, etc.) and can use either text characters or images as targets. When using time-based display, targets automatically advance after a specified duration without requiring user input.
+This plugin implements a stimulus matrix display trial used for eyetracking experiments and other research studies. A target ('E' by default) appears in locations on a blank canvas based on a customizable grid layout. 
+
+**Rotation Control:**
+- Use `rotation_angles` to randomly sample rotation angles for each target
+- Use `rotation_sequence` to specify exact rotations for each target in order  
+- `rotation_sequence` takes priority over `rotation_angles` when both are provided
+
+**Location Control:**
+- Use `target_locations` to specify exact presentation order of grid positions
+- If empty array, locations will be randomized automatically
+
+The participant must look at the target and respond with an arrow key by default, or click on the targets when clickable mode is enabled. When using keyboard responses with rotation, the correct direction corresponds to where the lines of the 'E' are headed (0° = Right, 90° = Down, 180° = Left, 270° = Up). After a correct response, a new target will appear. The plugin supports flexible grid sizes (e.g., 3x3, 4x4, 5x3, etc.) and can use either text characters or images as targets. When using time-based display, targets automatically advance after a specified duration without requiring user input.
 
 ## Using a Plugin
 
@@ -22,7 +33,9 @@ In addition to the [parameters available in all plugins](https://www.jspsych.org
 |grid_cols|numeric|3|Number of columns in the display grid. Combined with grid_rows, determines the total number of targets (grid_rows × grid_cols).|
 |canvas_size|array of numbers|[166, 296]|Array containing the height (first value) and width (second value) of the canvas element, in pixels.|
 |clickable_targets|boolean|false|If true, the targets can be interacted with using a left-click of the mouse.|
-|rotation_angles|array of numbers|[]|Array of rotation angles (in degrees) to apply to targets. If empty array (default), no rotation is applied. If provided, angles are randomly sampled for each target. Use jsPsych.randomization functions to control order externally. Example: [0, 90, 180, 270] for cardinal directions, or [0] for no rotation.|
+|rotation_angles|array of numbers|[]|Array of rotation angles (in degrees) to randomly sample from for each target. If empty array (default), no rotation is applied. Each target gets a randomly selected angle from this array. Example: [0, 90, 180, 270] will randomly assign one of these rotations to each target.|
+|target_locations|array of numbers|[]|Array specifying the order of target locations using 0-indexed grid positions. If empty array (default), locations will be randomized. If provided, should contain indices from 0 to (grid_rows × grid_cols - 1). Example: [4, 0, 8, 2] for a 3×3 grid.|
+|rotation_sequence|array of numbers|[]|Array of predetermined rotation angles (in degrees) for each target in sequence. If empty array (default), uses rotation_angles behavior. If provided, should contain one rotation value for each target. Takes priority over rotation_angles when both are specified. Example: [0, 90, 0, 180] for specific rotations.|
 |require_direction_match|boolean|false|If true, requires user to press arrow key corresponding to target rotation direction. Only works with keyboard input (not clickable targets). When enabled, only the correct directional key will advance to the next target.|
 
 ## Data Generated
