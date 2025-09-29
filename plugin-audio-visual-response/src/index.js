@@ -528,7 +528,7 @@ var jsPsychAudioVisualResponse = (function (jspsych) {
         // Multi-button response logic
         if (trial.multi_button_response) {
           multiButtonResponses.push({
-            button_index: parseInt(choice),
+            button: parseInt(choice),
             button_text: trial.choices[choice],
             timestamp: getTimestamp(),
           });
@@ -543,11 +543,12 @@ var jsPsychAudioVisualResponse = (function (jspsych) {
               response.slider_value = slider.value;
             }
           }
-          // disable all the buttons after a response
-          disable_buttons();
-          if (trial.response_ends_trial) {
-            end_trial();
-          }
+          disable_buttons(); // disable all the buttons after a response
+        }
+
+        // End trial if response_ends_trial is True
+        if (trial.response_ends_trial) {
+          end_trial();
         }
       }
 
