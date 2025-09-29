@@ -29,7 +29,7 @@
 
   var trial1 = {
   type: jsPsychHtmlButtonResponse,
-  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the audio-visual trial demo. <br> You will see an image stimulus with an audio stimulus playing alongside it. <br> Press Next to end the trial.</p>',
+  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the audio-visual trial demo. <br> You will see an image stimulus with an audio stimulus playing alongside it. Use the buttons and slider to provide input.  <br> This demo trial will not end with any of the inputs, please close the browser tab to end trial. To end trial with a user response or after specified duration, update the plugin parameters in your experiment.</p>',
   choices: ['Continue'],
   };
   timeline.push(trial1);
@@ -44,8 +44,8 @@
     show_slider: true,
     slider_prompt: "Please use the slider to respond",
     multi_button_response: true, // <-- Enable multi-button response logging
-    response_ends_trial: true,  // <-- Trial will not end on button click
-    // trial_duration: 5000,        // <-- End trial after 5 seconds (for testing)
+    response_ends_trial: true,  // <-- This parameter is only applicable when multi_button_response is false
+    // trial_duration: 5000,        // <-- End trial after 5 seconds 
     button_html: function (choice, choice_index) {
           const colors = ['#000077', '#007700', '#770000'] // using a different color for each button
           return '<button class="form-btn" id="button-' + choice_index + '"style="background-color:'+ colors[choice_index] + '; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin: 5px;">' + choice + '</button>';
