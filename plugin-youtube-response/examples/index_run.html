@@ -24,7 +24,7 @@
 
   var trial1 = {
   type: jsPsychHtmlButtonResponse,
-  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the youtube-response trial demo. <br> Watch the video for as long as you like and press the Next button to end the trial.</p>',
+  stimulus: '<p style="font-size:48px; line-height:1.5;">Hello! Press the button to initiate the youtube-response trial demo. <br> Watch the video for as long as you like. Button clicks and slider input will be stored in trial data. <br> This demo trial will not end with any of the inputs, please close the browser tab to end trial. To end trial with a user response or after specified duration, update the plugin parameters in your experiment.</p>',
   choices: ['Continue'],
   };
   timeline.push(trial1);
@@ -43,7 +43,7 @@
     show_slider: true,
     slider_prompt: "Please use the slider to respond",
     multi_button_response: true,
-    response_ends_trial: false,
+    response_ends_trial: false, // Only valid if multi_button_response is false
     buffering_timeout: 30000, // End trial after 30 seconds of buffering/paused state
     button_html: function (choice, choice_index) {
           const colors = ['#000077', '#007700', '#770000'] // using a different color for each button
