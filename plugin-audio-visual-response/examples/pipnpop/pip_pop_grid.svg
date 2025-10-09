@@ -1,0 +1,30 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- 4x4 grid of circles for pip and pop experiment -->
+  
+  <!-- Row 1 -->
+  <circle cx="62.5" cy="62.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="187.5" cy="62.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="312.5" cy="62.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="437.5" cy="62.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  
+  <!-- Row 2 -->
+  <circle cx="62.5" cy="187.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="187.5" cy="187.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="312.5" cy="187.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="437.5" cy="187.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  
+  <!-- Row 3 -->
+  <circle cx="62.5" cy="312.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="187.5" cy="312.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="312.5" cy="312.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="437.5" cy="312.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  
+  <!-- Row 4 -->
+  <circle cx="62.5" cy="437.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="187.5" cy="437.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="312.5" cy="437.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  <circle cx="437.5" cy="437.5" r="25" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+  
+  <!-- Grid background -->
+  <rect x="0" y="0" width="500" height="500" fill="none" stroke="#ccc" stroke-width="2"/>
+</svg>
