@@ -6,7 +6,8 @@
 ## Demo
 Example trials for each plugin and extension. 
 
-<a href="https://beatlab-mcmaster.github.io/AVOKE/">View Demo </a>
+<!-- <a href="https://beatlab-mcmaster.github.io/AVOKE/">View Demo </a> -->
+[![Click here to launch demo webpage](https://img.shields.io/badge/Click%20here%20to%20launch%20demo%20webpage-2e8b57?style=for-the-badge&logo=github)](https://beatlab-mcmaster.github.io/AVOKE/)
 
 ## About the project
 As web-based experiments become increasingly popular, the need for accessible, efficient research methods is greater than ever. However, current open-source frameworks sometimes lack detailed documentation, leaving many novice researchers struggling to create their experiments without significant time investments in learning the required technical skills. To meet this demand and further the capabilities of web-based experiments, we propose AVOKE—a diverse set of experimentation plugins and extensions built on top of jsPsych, an open-source JavaScript library for web-based behavioural experiments. AVOKE includes the code and documentation needed for novice researchers to easily integrate a variety of audiovisual stimuli in their experiments. Currently, AVOKE supports temporally-precise presentation of audiovisual stimuli (e.g., external media sources like YouTube, moving objects, etc.), as well as the collection of behavioural responses, like keypresses and video capture (e.g., for recording face videos or participants). All features have been developed according to jsPsych standards and validated through numerous tests developed in Jest—an established open-source JavaScript testing framework.  
