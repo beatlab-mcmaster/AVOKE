@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>McGurk Effect Experiment</title>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="../../plugin-audio-visual-response/src/index.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body></body>
+<script>
+  const jsPsych = initJsPsych({
+    on_finish: function () {
+      jsPsych.data.displayData('json');
+    }
+  });
+
+  let timeline = [];
+
+  // Randomize audio and image files 
+  let audio_files = jsPsych.randomization.shuffle(Array.from({ length: 8 }, (_, i) => `assets/audios/2.${i + 1}.mp3`));
+  let image_files = jsPsych.randomization.shuffle(Array.from({ length: 8 }, (_, i) => `assets/images/2.${i + 1}.webp`));
+
+  var preload = {
+    type: jsPsychPreload,
+    auto_preload: true
+  };
+
+  var ins = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `<p style="font-size:42px; line-height:1.5;">
+                In the next few trials, you will watch short clips of a person speaking. </br>
+                After each clip, indicate what syllable you heard using one of the three buttons. </br>
+                There are no right or wrong answers — respond based on what you perceive. </br>
+                Trials will proceed automatically after 10 seconds if no response is provided.
+            </p>`,
+  choices: ['Continue'],
+  };
+  timeline.push(ins);
+    
+  for (let i = 0; i < 8; i++) { 
+    timeline.push({
+        type: jsPsychAudioVisualResponse,
+        choices: ['ta', 'ga', 'ba'], 
+        audio_stimulus: audio_files[i],
+        image_stimulus: image_files[i],
+        render_on_canvas: false, // needs to be false for animations
+        maintain_aspect_ratio: true,
+        stimulus_height: 1000,
+        show_slider: false,
+        multi_button_response: false, 
+        response_ends_trial: true,  
+        trial_duration: 10000,        // <-- End trial after 10 seconds regardless of response
+        button_html: function (choice, choice_index) {
+            const colors = ['#000077', '#007700', '#770000'] // using a different color for each button
+            return '<button class="form-btn" id="button-' + choice_index + '"style="background-color:'+ colors[choice_index] + '; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin: 5px;">' + choice + '</button>';
+        },
+    });
+  }
+
+  var insEnd = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<p style="font-size:42px; line-height:1.5;"> Thank you! The experiment is now complete. </br> Click the button below to view the recorded data from this experiment.</p>',
+        choices: ['End Experiment'],
+        };
+  timeline.push(insEnd);
+
+  jsPsych.run(timeline);
+
+</script>
+</html>

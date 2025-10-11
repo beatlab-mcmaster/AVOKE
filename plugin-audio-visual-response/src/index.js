@@ -219,7 +219,49 @@ var jsPsychAudioVisualResponse = (function (jspsych) {
         return slider_html;
       }
 
-      // hold the .resolve() function from the Promise that ends the trial
+      function createButtonGroup(parent) {
+        // display buttons
+        const buttonGroupElement = document.createElement("div");
+        buttonGroupElement.id = "jspsych-av-response-btngroup";
+        buttonGroupElement.style.position = "absolute";
+        buttonGroupElement.style.bottom = "10px";
+        buttonGroupElement.style.right = "10px";
+
+        if (trial.button_layout === "grid") {
+          buttonGroupElement.classList.add("jspsych-btn-group-grid");
+          if (trial.grid_rows === null && trial.grid_columns === null) {
+            throw new Error(
+              "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
+            );
+          }
+          const n_cols =
+            trial.grid_columns === null
+              ? Math.ceil(trial.choices.length / trial.grid_rows)
+              : trial.grid_columns;
+          const n_rows =
+            trial.grid_rows === null
+              ? Math.ceil(trial.choices.length / trial.grid_columns)
+              : trial.grid_rows;
+          buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
+          buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
+        } else if (trial.button_layout === "flex") {
+          buttonGroupElement.classList.add("jspsych-btn-group-flex");
+        }
+
+        for (let choiceIndex = 0; choiceIndex < trial.choices.length; choiceIndex++) {
+          const choice = trial.choices[choiceIndex];
+          buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
+          const buttonElement = buttonGroupElement.lastChild;
+          buttonElement.setAttribute("data-choice", choiceIndex.toString());
+          buttonElement.addEventListener("click", function () {
+            after_response(choiceIndex);
+          });
+        }
+
+        parent.appendChild(buttonGroupElement);
+        return buttonGroupElement;
+      }
+
       let trial_complete;
       // setup stimulus
       let context = this.jsPsych.pluginAPI.audioContext();
@@ -292,47 +334,6 @@ var jsPsychAudioVisualResponse = (function (jspsych) {
         };
         getHeightWidth(); // call now, in case image loads immediately (is cached)
 
-      // display buttons
-      const buttonGroupElement = document.createElement("div");
-      buttonGroupElement.id = "jspsych-av-response-btngroup";
-
-      buttonGroupElement.style.position = "absolute";
-      buttonGroupElement.style.bottom = "10px";
-      buttonGroupElement.style.right = "10px";
-
-      if (trial.button_layout === "grid") {
-        buttonGroupElement.classList.add("jspsych-btn-group-grid");
-        if (trial.grid_rows === null && trial.grid_columns === null) {
-          throw new Error(
-            "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
-          );
-        }
-        const n_cols =
-          trial.grid_columns === null
-            ? Math.ceil(trial.choices.length / trial.grid_rows)
-            : trial.grid_columns;
-        const n_rows =
-          trial.grid_rows === null
-            ? Math.ceil(trial.choices.length / trial.grid_columns)
-            : trial.grid_rows;
-        buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
-        buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
-      } else if (trial.button_layout === "flex") {
-        buttonGroupElement.classList.add("jspsych-btn-group-flex");
-      }
-
-      for (let choiceIndex = 0; choiceIndex < trial.choices.length; choiceIndex++) {
-        const choice = trial.choices[choiceIndex];
-        buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
-        const buttonElement = buttonGroupElement.lastChild;
-        buttonElement.setAttribute("data-choice", choiceIndex.toString());
-        buttonElement.addEventListener("click", function () {
-          after_response(choiceIndex);
-        });
-      }
-
-      display_element.appendChild(buttonGroupElement);
-
         // add canvas to screen and draw image
         if (img.complete && Number.isFinite(width) && Number.isFinite(height)) {
           // if image has loaded and width/height have been set, then draw it now
@@ -341,7 +342,9 @@ var jsPsychAudioVisualResponse = (function (jspsych) {
           ctx.drawImage(img, 0, 0, width, height);
           image_drawn = true;
         }
+
         // add buttons to screen
+        const buttonGroupElement = createButtonGroup(display_element);
         const parentDiv = document.getElementById('virtual-window-content');
         parentDiv.insertBefore(buttonGroupElement, canvas.nextElementSibling);
 
@@ -356,68 +359,49 @@ var jsPsychAudioVisualResponse = (function (jspsych) {
       } else {
 
         // display stimulus as an image element
-        console.log("rendering on img")
-        html = '<div id="virtual-window-content"><img src="' + trial.image_stimulus + '" id="jspsych-av-response-stimulus">';
-
-
-        //display buttons
-        let buttons = [];
-        if (Array.isArray(trial.button_html)) {
-          if (trial.button_html.length == trial.choices.length) {
-            buttons = trial.button_html;
-          } else {
-            console.error("Error in audiovisual-response plugin. The length of the button_html array does not equal the length of the choices array");
-          }
-        } else {
-          for (let i = 0; i < trial.choices.length; i++) {
-            buttons.push(trial.button_html);
-          }
-        }
-        html += '<div id="jspsych-av-response-btngroup" style="border: none;">';
-        for (let i = 0; i < trial.choices.length; i++) {
-          let str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-          html +=
-            '<div class="form-btn jspsych-av-response-button" style="border: none;" id="jspsych-av-response-button-' +
-            i +
-            '" data-choice="' +
-            i +
-            '">' +
-            str +
-            "</div>";
-        }
-        html += "</div></div>";
-        // show prompt if there is one
-        if (trial.prompt !== null) {
-          html += trial.prompt;
-        }
+        html = '<div id="virtual-window-content"><img src="' + trial.image_stimulus + '" id="jspsych-av-response-stimulus"></div>';
+        
         // insert slider below buttons if enabled
         if (trial.show_slider) {
           html += getSliderHTML();
         }
+        // show prompt if there is one
+        if (trial.prompt !== null) {
+          html += trial.prompt;
+        }
         display_element.innerHTML = html;
+        
+        const parentDiv = document.getElementById('virtual-window-content');
+        const sliderElement = document.getElementById('jspsych-av-slider');
+        // create the buttons and insert before the slider (if slider exists)
+        const buttonGroupElement = createButtonGroup(parentDiv);
+        if (sliderElement) {
+          parentDiv.insertBefore(buttonGroupElement, sliderElement);
+        } else {
+          parentDiv.appendChild(buttonGroupElement);
+        }
+
         // set image dimensions after image has loaded (so that we have access to naturalHeight/naturalWidth)
         let img = display_element.querySelector("#jspsych-av-response-stimulus");
-        if (trial.stimulus_height !== null) {
-          height = trial.stimulus_height;
-          if (trial.stimulus_width == null && trial.maintain_aspect_ratio) {
-            width = img.naturalWidth * (trial.stimulus_height / img.naturalHeight);
+        
+        img.onload = () => {
+          if (trial.maintain_aspect_ratio) {
+            const widthRatio = trial.stimulus_width / img.naturalWidth;
+            const heightRatio = trial.stimulus_height / img.naturalHeight;
+            const scale_factor = Math.min(widthRatio, heightRatio);
+
+            width = img.naturalWidth * scale_factor;
+            height = img.naturalHeight * scale_factor;
+          } else {
+            height = trial.stimulus_height;
+            width = trial.stimulus_width;
           }
-        } else {
-          height = img.naturalHeight;
-        }
-        if (trial.stimulus_width !== null) {
-          width = trial.stimulus_width;
-          if (trial.stimulus_height == null && trial.maintain_aspect_ratio) {
-            height = img.naturalHeight * (trial.stimulus_width / img.naturalWidth);
-          }
-        } else if (!(trial.stimulus_height !== null && trial.maintain_aspect_ratio)) {
-          // if stimulus width is null, only use the image's natural width if the width value wasn't set
-          // in the if statement above, based on a specified height and maintain_aspect_ratio = true
-          width = img.naturalWidth;
-        }
-        img.style.height = height.toString() + "px";
-        img.style.width = width.toString() + "px";
-        response.imageDisplayTime = getTimestamp();
+
+          img.style.width = `${width}px`;
+          img.style.height = `${height}px`;
+          response.imageDisplayTime = getTimestamp();
+        };
+        
       }
 
       // add slider value update event listener

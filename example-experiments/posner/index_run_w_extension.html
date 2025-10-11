@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Posner + video capture</title>
+  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <script src="../../plugin-stimulus-matrix-display/src/index.js"></script>
+  <script src="../../plugin-video-capture-setup/src/index.js"></script>
+  <script src="../../extension-video-capture/src/index.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css">
+</head>
+
+<body></body>
+<script>
+  const jsPsych = initJsPsych({
+    on_finish: function () {
+      jsPsych.data.displayData('json');
+    },
+    extensions: [{ type: jsPsychVideoCapture,
+         params:{
+          "using_setup_plugin": true,
+          "default_camera_options": true,
+          "timeslice": null,
+          "download_local_only": true,
+          "video_width": 640, 
+          "video_height": 480, 
+          "framerate": 26 //min framerate to allow
+         }
+       }],
+  });
+
+  let timeline = [];
+
+  // randomize display direction for 8 trials (0=left; 1=right)
+  const directions = jsPsych.randomization.sampleWithReplacement([0,1], 8);
+  const congruent = jsPsych.randomization.sampleWithReplacement([true,false], 8);
+
+  var ins0 = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<p style="font-size:42px; line-height:1.5;"> Press "Start" to initiate the experiment.</p>',
+        choices: ['Start'],
+        };
+  timeline.push(ins0);
+
+  const cameraSetup = {
+        type: jspsychVideoCaptureSetupPlugin, // plugin designed with this extension in mind
+        instructions: `Below you'll see the output of recorded video. Move your camera to obtain the desired view and press Continue. </br>
+                        Recorded videos will be downloaded locally at the end of each trial. </br>
+                        This experiment is for demonstration only. All data and recordings will remain on your computer and will not be uploaded or shared.`, // plugin parameter
+        error_message: `The camera capture cannot be retrieved. Please try another device.`, // plugin parameter
+        button_text: "Continue", // plugin parameter
+        extensions: [{ type: jsPsychVideoCapture, params:{'setup': true} }, 
+        ],
+    };
+  timeline.push(cameraSetup);
+  
+  var ins = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `<p style="font-size:42px; line-height:1.5;">
+                In the next few trials, you will see a fixation cross followed by a green circle. </br> 
+                Press the <strong>left arrow key</strong> if you see the circle on the left, and the <strong>right arrow key</strong> if it appears on the right side of the screen. </br>
+                Every trial, you will see a yellow X, which is a cue. Do not respond to the it, just ignore it. </br>
+            </p>`,
+  choices: ['Continue'],
+  };
+  timeline.push(ins);
+  // capturing video for the fixation trial to verify that the user is attending to the target.
+  for (let i = 0; i < 8; i++) { 
+    timeline.push({
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `<p style="font-size:100px">+</p>`,
+        trial_duration: 1000,
+        extensions: [{ type: jsPsychVideoCapture, params:{'filename': `fixation_${i}`} }] // naming files with trial index
+    });
+
+    timeline.push({
+        type: jsPsychStimulusMatrixDisplay,
+        choices: [''], 
+        target_image: "assets/yellow_x.svg",
+        target_size: 120,
+        target_duration: 200,
+        grid_rows: 1,
+        grid_cols: 2,
+        canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+        target_locations: [congruent[i] ? directions[i] : 1-directions[i]],
+        disable_cursor: false
+    });
+
+    timeline.push({
+        type: jsPsychStimulusMatrixDisplay,
+        choices: ['ArrowLeft', 'ArrowRight'], 
+        target_image: "assets/green_circle.svg",
+        target_size: 200,
+        grid_rows: 1,
+        grid_cols: 2,
+        canvas_size: [window.innerHeight - 120, window.innerWidth - 120],
+        target_locations: [directions[i]],
+        disable_cursor: false,
+        data: {
+            direction: directions[i] == 0 ? 'left' : 'right',
+            congruent: congruent[i]
+        }
+    });
+  }
+
+  var insEnd = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<p style="font-size:42px; line-height:1.5;"> Thank you! The experiment is now complete. </br> Click the button below to view the recorded data from this experiment.</p>',
+        choices: ['End Experiment'],
+        };
+  timeline.push(insEnd);
+
+  jsPsych.run(timeline);
+
+</script>
+</html>

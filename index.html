@@ -79,9 +79,8 @@
     <i class="fa fa-remove"></i>
   </a>
   <a class="w3-bar-item w3-button w3-hover-black" href="#about">About</a>
-  <a class="w3-bar-item w3-button w3-hover-black" href="#plugin-demos">Plugin Demos</a>
-  <a class="w3-bar-item w3-button w3-hover-black" href="#extension-demo">Extension Demo</a>
-  <a class="w3-bar-item w3-button w3-hover-black" href="#plugin-tests">Plugin Tests</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#plugin-demos">AVOKE components</a>
+  <a class="w3-bar-item w3-button w3-hover-black" href="#example-experiments">Example Experiments</a>
 </nav>
 
 <!-- Overlay effect when opening sidebar on small screens -->
@@ -92,16 +91,24 @@
 
   <div class="w3-container w3-padding-32">
     <header class="w3-center w3-padding-32">
-<h1 class="w3-xxxlarge" style="color:#2e8b57;">
-  <img src="assets/AVOKE.png" alt="AVOKE Logo" style="max-width: 100%; height: 160px;">
-</h1>
-      
+      <h1 class="w3-xxxlarge" style="color:#2e8b57;">
+        <img src="assets/AVOKE.png" alt="AVOKE Logo" style="max-width: 100%; height: 160px;">
+      </h1>
     </header>
 
     <div id="about">
       <div class="avoke-section-title">About</div>
       <p class="avoke-about">
-        As web-based experiments become increasingly popular, the need for accessible, efficient research methods is greater than ever. However, current open-source frameworks sometimes lack detailed documentation, leaving many novice researchers struggling to create their experiments without significant time investments in learning the required technical skills. To meet this demand and further the capabilities of web-based experiments, we propose AVOKE—a diverse set of experimentation plugins and extensions built on top of jsPsych, an open-source JavaScript library for web-based behavioural experiments. AVOKE includes the code and documentation needed for novice researchers to easily integrate a variety of audiovisual stimuli in their experiments. Currently, AVOKE supports temporally-precise presentation of audiovisual stimuli (e.g., external media sources like YouTube, moving objects, etc.), as well as the collection of behavioural responses, like keypresses and video capture (e.g., for recording face videos or participants). All features have been developed according to jsPsych standards and validated through numerous tests developed using simulate functions.
+
+        AVOKE is a free and open-source toolbox for creating web-based behavioural experiments. Built on top of the popular
+        jsPsych library, AVOKE makes it easy to design experiments that use audiovisual stimuli—including videos, animations,
+        and even YouTube clips—with precise timing and reliable data collection.
+        
+        Whether you’re a student, researcher, or hobbyist, AVOKE helps you build experiments quickly without needing advanced
+        coding skills. It includes clear documentation, ready-to-use components, demo examples, and tools for collecting
+        responses such as keypresses or webcam recordings.  All features have been developed following community standards for 
+        code reusability and comprehensive documentation, and have been validated through numerous tests developed using simulate functions.
+        We invite you to explore, use, and contribute to AVOKE to help make web experiments more creative, accessible, and reproducible!.
       </p>
     </div>
     <div class="avoke-about" style="margin-bottom:20px;">
@@ -113,7 +120,7 @@
     <div id="plugin-demos">
 
       <!-- Audio-visual-response Demo -->
-      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;" id = "audio-visual-response">
         <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
           <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
             Audio-visual-response
@@ -122,19 +129,17 @@
             This plugin allows for displaying an image and playing an audio file simultaneously, and records responses generated with a button click. The included parameters allow for adjustment of trial duration, visual stimuli size, time delay before the button can be interacted with and more. The trial can be set to end when a button response is received or after the audio stimulus is finished playing.
           </p>
           <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
-            <a href="plugin-audio-visual-response/examples/demo/index_run.html" target="_blank" class="w3-button w3-green w3-large" style="min-width:100px;">Demo</a>
-            <a href="plugin-audio-visual-response/examples/demo/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
-            <a href="plugin-audio-visual-response/examples/pipnpop/index_run.html" target="_blank" class="w3-button w3-purple w3-large" style="min-width:100px; background-color:#7B1FA2 !important; color:#fff !important;">Pip & Pop</a>
+            <a href="plugin-audio-visual-response/examples/index_run.html" target="_blank" class="w3-button w3-green w3-large" style="min-width:100px;">Demo</a>
+            <a href="plugin-audio-visual-response/examples/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
           </div>
         </div>
-        <!-- Audio-visual-response Demo image -->
         <div style="flex:0 0 320px; max-width:320px; min-width:0; display:flex; align-items:center; justify-content:center; padding-left:48px;">
           <img src="assets/audiovisualFigureALT.svg" alt="Audio-visual-response Demo" style="width:100%; max-width:320px; height:auto;">
         </div>
       </div>
 
       <!-- Stimulus-matrix-display Demo -->
-      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;" id = "stimulus-matrix-display">
         <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
           <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
             Stimulus-matrix-display
@@ -152,7 +157,7 @@
         </div>
       </div>
 
-      <!-- path-animation-display Demo -->
+      <!-- Path-animation-display Demo -->
       <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
         <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
           <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
@@ -189,13 +194,11 @@
           <img src="assets/youtubeFigure.svg" alt="Youtube-response Demo" style="width:175%; max-width:clamp(0px, 90vw, 427px); height:auto;">
         </div>
       </div>
-    </div>
 
-    <!-- Extension Demo Section -->
-    <div id="extension-demo" style="margin-top:48px;">
-      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+      <!-- Video-capture-extension Demo -->
+      <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;" id = "video-capture-extension">
         <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
-          <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+          <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;" >
             Video-capture-extension/Video-capture-setup
           </h2>
           <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
@@ -206,14 +209,99 @@
             <a href="plugin-video-capture-setup/examples (see jspsych-video-capture-extension examples instead)/index_simulate.html" target="_blank" class="w3-button w3-blue w3-large" style="min-width:100px;">Test</a>
           </div>
         </div>
-        <!-- Video-capture-extension Demo image -->
         <div style="flex:0 0 320px; max-width:320px; min-width:0; display:flex; align-items:center; justify-content:center; padding-left:48px;">
           <img src="assets/webcamFigure.svg" alt="Video-capture-extension Demo" style="width:100%; max-width:320px; height:auto;">
         </div>
       </div>
     </div>
 
+
+
+
+  <!-- Example Experiments Section -->
+<hr style="border: none; height: 2px; background: linear-gradient(to right, #ccc, #888, #ccc); width: 70%; margin: 80px auto;">
+
+  <div id="example-experiments" style="margin-top:80px;">
+    <div class="avoke-section-title" style="font-size: 2.5em; font-weight: bold;">Example Experiments</div>
+    <p class = "avoke-about"> 
+      Below are some classic experimental paradigms replicated using AVOKE components. These examples provide open materials to demonstrate the toolbox in action and help you get started building your own experiments from scratch.
+    </p>
+  
+    <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+      <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+        <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+          McGurk Effect
+        </h2>
+        <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
+          The McGurk effect is a perceptual illusion that highlights how auditory and visual information are integrated during
+          speech perception. In this experiment, participants are presented with randomly paired audio and visual stimuli and
+          asked to identify the perceived syllable. This implementation is built with AVOKE's <a href="#audio-visual-response">audio-visual-response</a> plugin.</br></br>
+
+          <span style="font-size:0.95em; color:#555;">
+            McGurk effect study: McGurk & MacDonald (1976).
+            <a href="https://doi.org/10.1038/264746a0" target="_blank" style="font-size:0.95em;">
+              https://doi.org/10.1038/264746a0
+            </a>
+          </span><br>
+          <span style="font-size:0.95em; color:#555;">
+            Experiment stimuli sourced from: Magnotti et al. (2020).
+            <a href="https://doi.org/10.1016/j.cortex.2020.10.002" target="_blank" style="font-size:0.95em;">
+              https://doi.org/10.1016/j.cortex.2020.10.002
+            </a>
+          </span>
+
+        </p>
+        <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+          <a href="example-experiments/mcgurk/index_run.html" target="_blank" class="w3-button w3-green w3-large"
+            style="min-width:100px;">Run experiment</a>
+          <a href="https://github.com/beatlab-mcmaster/avoke/example-experiments/mcgurk/index_run.html" target="_blank" class="w3-button w3-blue w3-large"
+            style="min-width:100px;">src</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+      <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+        <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+          Posner Cueing Task
+        </h2>
+        <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
+          The Posner cueing task is a classic paradigm in attention research that investigates the spatial
+          orienting of attention. In this experiment, participants are presented with a cue indicating the
+          likely location of a target stimulus, allowing researchers to measure the effects of spatial
+          attention on reaction times and accuracy. This implementation is built with AVOKE's <a href="#stimulus-matrix-display">stimulus-matrix-display</a> plugin.
+        </p>
+        <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+          <a href="example-experiments/posner/index_run.html" target="_blank" class="w3-button w3-green w3-large"
+            style="min-width:100px;">Run experiment</a>
+          <a href="https://github.com/beatlab-mcmaster/avoke/example-experiments/posner/index_run.html" target="_blank" class="w3-button w3-blue w3-large"
+            style="min-width:100px;">src</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="w3-row-padding" style="display: flex; align-items: center; margin-bottom:40px;">
+      <div style="flex:1 1 0; min-width:200px; display:flex; flex-direction:column; justify-content:flex-start;">
+        <h2 class="avoke-section-title" style="margin-top:40px; margin-bottom:20px;">
+          Posner Cueing Task with Webcam Video Capture
+        </h2>
+        <p class="avoke-about" style="margin-left:10px; margin-top:0; margin-bottom:20px;">
+          Same as the standard Posner cueing task, but with webcam video capture enabled to record videos during the fixation trial. This implementation is built with AVOKE's <a href="#stimulus-matrix-display">stimulus-matrix-display</a> plugin along with the <a href="#video-capture-plugin">video-capture extension and setup plugin</a>.
+        </p>
+        <div style="display: flex; align-items: center; gap: 16px; margin-left:10px; margin-top:0;">
+          <a href="example-experiments/posner/index_run_w_extension.html" target="_blank" class="w3-button w3-green w3-large"
+            style="min-width:100px;">Run experiment</a>
+          <a href="https://github.com/beatlab-mcmaster/avoke/example-experiments/posner/index_run_w_extension.html" target="_blank" class="w3-button w3-blue w3-large"
+            style="min-width:100px;">src</a>
+        </div>
+      </div>
+    </div>
+  
+  
+  
+  
   </div>
+</div>
 
 </div>
 

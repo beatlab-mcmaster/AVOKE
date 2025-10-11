@@ -210,8 +210,6 @@ var jsPsychStimulusMatrixDisplay = (function (jspsych) {
             // Set choices for clickable or keyboard targets
             if (trial.clickable_targets) {
                 trial.choices = [];
-            } else {
-                trial.choices = ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"];
             }
 
             let target_presentation_time = [];
