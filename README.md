@@ -1,5 +1,7 @@
 # "AVOKE: an open-source web-based experimentation toolbox for evoking audiovisual responses"
-[![DOI](https://zenodo.org/badge/954170154.svg)](https://doi.org/10.5281/zenodo.16581810)
+
+[![DOI](https://img.shields.io/badge/Paper-10.1145%2F3706598.3713910-002200)](https://doi.org/10.7717/peerj.20544)
+[![DOI](https://img.shields.io/badge/Code-10.1145%2F3706598.3713910-002200)](https://doi.org/10.5281/zenodo.16581810)
 
 **Contributors:** Jackson Shi, Shreshth Saxena, Lauren Fink
 
